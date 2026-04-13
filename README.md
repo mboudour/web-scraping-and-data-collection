@@ -8,8 +8,8 @@ The workshop focuses on how researchers can collect information from online sour
 
 Pedagogically, the workshop progresses from **source identification**, to **data preparation**, to **participant-specific adaptation**. Across the three days, participants learn how structured information can be collected from websites, how raw outputs can be cleaned and standardized, and how the workflow can be adapted to their own URLs, spreadsheets, or existing datasets. The workshop also includes an explicit discussion of the **ethics of web scraping and digital data collection**, emphasizing responsible use, transparency, and research judgment.
 
-## Manuscript
+## Manuscript about the Workshop
 
-A PDF version of the manuscript is available here:
+A manuscript describing the workshope is available here:
 
 [Web Scraping and Data Collection Manuscript](./web_scraping_and_data_collection_paper.pdf)
