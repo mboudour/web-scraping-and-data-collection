@@ -15,3 +15,9 @@ Pedagogically, the workshop progresses from **source identification**, to **data
 A manuscript describing the workshope is available here:
 
 [Web Scraping and Data Collection Manuscript](./web_scraping_and_data_collection_paper.pdf)
+
+## Workshop Slides
+
+- [Day 1: From Web Source to Raw Dataset](./day1_slides.pdf)
+- [Day 2: From Raw Output to Usable Data](./day2_slides.pdf)
+- [Day 3: From Shared Workflow to Participants’ Own Data](./day3_slides.pdf)
