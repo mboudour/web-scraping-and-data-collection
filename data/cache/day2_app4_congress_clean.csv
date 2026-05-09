@@ -1,0 +1,51 @@
+Number,Type,Title,Chamber,Congress,LatestActionDate,LatestAction,UpdateDate,UpdateYear,UpdateMonth
+1,SRES,A resolution establishing a Committee to Inform the President of the United States that a quorum of each House is assembled.,Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)",2024-04-17,2024,4
+3,SRES,"A resolution to elect Patty Murray, a Senator from the State of Washington, to be President pro tempore of the Senate of the United States.",Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)",2024-04-17,2024,4
+4,SRES,A resolution notifying the President of the United States of the election of a President pro tempore.,Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)",2025-05-27,2025,5
+6,SRES,A resolution fixing the hour of daily meeting of the Senate.,Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)",2024-04-17,2024,4
+2,SRES,A resolution informing the House of Representatives that a quorum of the Senate is assembled.,Senate,118,2023-01-03,Message on Senate action sent to the House.,2024-04-17,2024,4
+8,SRES,A resolution to make effective appointment of Senate Legal Counsel.,Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)",2024-04-17,2024,4
+9,SRES,A resolution to make effective appointment of Deputy Senate Legal Counsel.,Senate,118,2023-01-03,"Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)",2024-04-17,2024,4
+5,SRES,A resolution notifying the House of Representatives of the election of a President pro tempore.,Senate,118,2023-01-03,Message on Senate action sent to the House.,2024-04-17,2024,4
+7,SRES,A resolution fixing the hour of daily meeting of the Senate.,Senate,118,2023-01-03,"Submitted in the Senate. Placed on Senate Legislative Calendar under Over, Under the Rule. (text: CR S20)",2024-04-17,2024,4
+8,HJRES,Proposing an amendment to the Constitution of the United States to require that the Supreme Court of the United States be composed of nine justices.,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2025-12-05,2025,12
+27,HR,Prosecutors Need to Prosecute Act,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2025-05-27,2025,5
+49,HR,REVIEW Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2025-12-05,2025,12
+53,HR,FIND Act,House,118,2023-01-09,Referred to the House Committee on Oversight and Accountability.,2025-12-05,2025,12
+208,HR,Pet Safety and Protection Act of 2023,House,118,2023-01-09,Referred to the House Committee on Agriculture.,2025-05-27,2025,5
+31,HR,COVER Now Act,House,118,2023-01-09,Referred to the House Committee on Energy and Commerce.,2024-07-24,2024,7
+32,HR,Keeping Texas School Construction Costs Down Act of 2023,House,118,2023-01-09,Referred to the House Committee on Ways and Means.,2025-05-27,2025,5
+36,HR,Patrick Underwood Federal Law Enforcement Protection Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-06-11,2024,6
+37,HR,David Dorn Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-07-24,2024,7
+129,HR,"To require the Secretary of Defense to ensure drop boxes are maintained on military installations for the deposit of unused prescription drugs, and for other purposes.",House,118,2023-01-09,Referred to the House Committee on Armed Services.,2025-06-06,2025,6
+130,HR,Thin Blue Line Act,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2025-12-05,2025,12
+138,HR,Private Student Loan Bankruptcy Fairness Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-07-24,2024,7
+143,HR,"To prohibit the transfer or release of individuals detained at United States Naval Station, Guantanamo Bay, Cuba, to the United States.",House,118,2023-01-09,Referred to the House Committee on Armed Services.,2025-06-06,2025,6
+144,HR,Adjusting Davis-Bacon for Inflation Act,House,118,2023-01-09,Referred to the House Committee on Education and the Workforce.,2025-07-21,2025,7
+146,HR,Old Glory Only Act,House,118,2023-01-09,Referred to the House Committee on Foreign Affairs.,2024-07-24,2024,7
+147,HR,Teddy Roosevelt Fair Competition and Public Trust Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-07-24,2024,7
+148,HR,JUSTICE Act of 2023,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-07-24,2024,7
+149,HR,Protecting Our Democracy by Preventing Foreign Citizens from Voting Act,House,118,2023-01-09,Referred to the House Committee on Oversight and Accountability.,2025-12-05,2025,12
+164,HR,Close Biden’s Open Border Act,House,118,2023-01-09,"Referred to the Committee on Appropriations, and in addition to the Committee on Foreign Affairs, for a period to be subsequently determined by the Speaker, in each case for consideration of such provisions as fall within the jurisdiction of the committee concerned.",2024-07-24,2024,7
+38,HR,Concealed Carry Reciprocity Act,House,118,2023-01-09,Referred to the House Committee on the Judiciary.,2024-12-11,2024,12
+151,HR,NFA SBS Act,House,118,2023-01-09,"Referred to the Committee on Ways and Means, and in addition to the Committee on the Judiciary, for a period to be subsequently determined by the Speaker, in each case for consideration of such provisions as fall within the jurisdiction of the committee concerned.",2024-07-24,2024,7
+145,HR,RUSH WAS RIGHT Act of 2023,House,118,2023-01-20,Referred to the Subcommittee on Communications and Technology.,2025-05-27,2025,5
+3,HCONRES,"Expressing the sense of Congress condemning the recent attacks on pro-life facilities, groups, and churches.",House,118,2023-01-23,Received in the Senate and referred to the Committee on the Judiciary.,2025-07-21,2025,7
+175,HR,Heartbeat Protection Act of 2023,House,118,2023-01-24,Sponsor introductory remarks on measure. (CR H271-272),2024-12-31,2024,12
+159,HR,Chance to Compete Act of 2023,House,118,2023-01-25,Received in the Senate and Read twice and referred to the Committee on Homeland Security and Governmental Affairs.,2025-05-27,2025,5
+132,HR,Protecting Local Communities from Harmful Algal Blooms Act,House,118,2023-02-01,"Referred to the Subcommittee on Economic Development, Public Buildings, and Emergency Management.",2024-07-24,2024,7
+139,HR,SHOW UP Act of 2023,House,118,2023-02-02,Received in the Senate and Read twice and referred to the Committee on Homeland Security and Governmental Affairs.,2025-05-27,2025,5
+29,HR,Border Safety and Security Act of 2023,House,118,2023-02-08,Referred to the Subcommittee on Border Security and Enforcement.,2025-05-27,2025,5
+150,HR,Protecting American Energy Production Act,House,118,2023-02-21,Referred to the Subcommittee on Energy and Mineral Resources.,2025-12-05,2025,12
+186,HR,Water Supply Permitting Coordination Act,House,118,2023-02-21,"Referred to the Subcommittee on Water, Wildlife, and Fisheries.",2024-07-24,2024,7
+189,HR,Action Versus No Action Act,House,118,2023-02-21,Referred to the Subcommittee on Federal Lands.,2025-01-24,2025,1
+209,HR,Permitting for Mining Needs Act of 2023,House,118,2023-02-28,Subcommittee Hearings Held.,2025-05-27,2025,5
+11,HJRES,Proposing an amendment to the Constitution of the United States to limit the number of terms that a Member of Congress may serve.,House,118,2023-09-28,Motion to Report Measure Defeated by the Yeas and Nays:: 17 - 19.,2025-12-05,2025,12
+190,HR,Saving Gig Economy Taxpayers Act,House,118,2024-12-10,"Placed on the Union Calendar, Calendar No. 696.",2025-05-27,2025,5
+33,HR,"Medicare Dental, Vision, and Hearing Benefit Act of 2023",House,118,2024-12-17,Referred to the Subcommittee on Health.,2024-12-21,2024,12
+34,HR,Assuring Medicare’s Promise Act of 2023,House,118,2024-12-17,Referred to the Subcommittee on Health.,2024-12-21,2024,12
+35,HR,Close the Medigap Act of 2023,House,118,2024-12-17,Referred to the Subcommittee on Health.,2024-12-21,2024,12
+134,HR,To amend title XVIII of the Social Security Act to remove geographic requirements and expand originating sites for telehealth services.,House,118,2024-12-17,Referred to the Subcommittee on Health.,2025-05-27,2025,5
+152,HR,Hearing Protection Act,House,118,2024-12-17,Referred to the Subcommittee on Health.,2025-12-05,2025,12
+188,HR,Proven Forest Management Act of 2022,House,118,2024-12-18,"Reported (Amended) by the Committee on Natural Resources. H. Rept. 118-926, Part I.",2025-05-27,2025,5
+133,HR,MERIT Act,House,118,2024-12-19,"Placed on the Union Calendar, Calendar No. 779.",2025-05-27,2025,5

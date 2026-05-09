@@ -9,7 +9,12 @@ import streamlit as st
 
 st.set_page_config(page_title="Day 3 — From Shared Workflow to Own Data", page_icon="🔍", layout="wide")
 
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "cache")
+# Robust cache path — works locally and on Streamlit Cloud
+import pathlib
+_repo_root = pathlib.Path(__file__).resolve().parent
+if _repo_root.name == "pages":
+    _repo_root = _repo_root.parent
+CACHE_DIR = str(_repo_root / "data" / "cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 def load_clean_csv(filename):

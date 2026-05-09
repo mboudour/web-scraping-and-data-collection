@@ -9,7 +9,12 @@ import streamlit as st
 
 st.set_page_config(page_title="Day 2 — From Raw Output to Usable Data", page_icon="🧹", layout="wide")
 
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "cache")
+# Robust cache path — works locally and on Streamlit Cloud
+import pathlib
+_repo_root = pathlib.Path(__file__).resolve().parent
+if _repo_root.name == "pages":
+    _repo_root = _repo_root.parent
+CACHE_DIR = str(_repo_root / "data" / "cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -224,34 +229,40 @@ elif app_choice == "App 4 — GovInfo Congress (Clean)":
     if raw_data is None or clean_df is None:
         st.error("Cache files not found.")
     else:
-        packages = raw_data.get("packages", [])
+        bills = raw_data.get("bills", [])
         raw_df = pd.DataFrame([{
-            "packageId": p.get("packageId"),
-            "title": str(p.get("title", ""))[:60],
-            "dateIssued": p.get("dateIssued"),
-            "congress": p.get("congress"),
-            "docClass": p.get("docClass"),
-        } for p in packages])
+            "number": b.get("number"),
+            "type": b.get("type"),
+            "title": str(b.get("title", ""))[:60],
+            "originChamber": b.get("originChamber"),
+            "congress": b.get("congress"),
+            "latestActionDate": b.get("latestAction", {}).get("actionDate"),
+            "updateDate": b.get("updateDate"),
+        } for b in bills])
 
         st.subheader("Raw vs. Cleaned: Side-by-Side Comparison")
-        show_comparison(raw_df, clean_df, "Raw", "Cleaned")
+        show_comparison(raw_df, clean_df, "Raw (Congress.gov)", "Cleaned")
 
         st.subheader("Cleaning Operations Applied")
         st.markdown("""
-1. Parsed `dateIssued` string to `datetime` object; extracted `Year` and `Month`
-2. Stripped leading/trailing whitespace from `title`
-3. Standardized `docClass` labels to uppercase
-4. Dropped records with missing `packageId` or `dateIssued`
+1. Extracted `latestActionDate` from nested `latestAction` object
+2. Parsed `updateDate` string to `datetime`; extracted `Year` and `Month`
+3. Stripped leading/trailing whitespace from `title`
+4. Standardized `type` labels to uppercase
+5. Dropped records with missing `number`
         """)
 
-        st.subheader("Bills by Document Class (Cleaned)")
-        if "DocClass" in clean_df.columns:
-            st.bar_chart(clean_df["DocClass"].value_counts())
+        st.subheader("Bills by Type (Cleaned)")
+        if "Type" in clean_df.columns:
+            st.bar_chart(clean_df["Type"].value_counts())
+        elif "type" in clean_df.columns:
+            st.bar_chart(clean_df["type"].value_counts())
 
         with st.expander("📌 Day 2 Teaching Note"):
             st.markdown("""
+- The `latestAction` field is a **nested object** — extracting it is a flattening operation.
 - Date parsing is one of the most common cleaning tasks in web-derived data.
-- The `docClass` field encodes bill type — standardizing it enables consistent grouping.
+- The `type` field encodes bill category — standardizing it enables consistent grouping.
             """)
 
 # ── App 5: World Bank clean ───────────────────────────────────────────────────
