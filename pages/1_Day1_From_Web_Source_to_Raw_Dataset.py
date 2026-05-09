@@ -258,35 +258,36 @@ including legislative bills from Congress.
     cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json")
 
     def fetch_congress():
-        api_key = "DEMO_KEY"
-        url = f"https://api.govinfo.gov/collections/BILLS/2023-01-01T00:00:00Z"
-        params = {"pageSize": 50, "api_key": api_key}
-        r = requests.get(url, params=params, timeout=30)
+        url = "https://api.congress.gov/v3/bill/118"
+        params = {"format": "json", "limit": 50, "api_key": "DEMO_KEY"}
+        r = requests.get(url, params=params, timeout=30 )
         r.raise_for_status()
         return r.json()
 
     with st.spinner("Loading GovInfo data…"):
         try:
             data = load_or_fetch_json(cache_path, fetch_congress)
-            packages = data.get("packages", [])
-            st.success(f"Loaded {len(packages)} bill records.")
-
+            bills = data.get("bills", [])
+            st.success(f"Loaded {len(bills)} bill records from the 118th Congress.")
             st.subheader("Raw JSON Structure (first record)")
-            if packages:
-                st.json(packages[0], expanded=True)
-
+            if bills:
+                st.json(bills[0], expanded=True)
             st.subheader("Flat Preview Table")
             df = pd.DataFrame([{
-                "Package ID": p.get("packageId", ""),
-                "Title": str(p.get("title", ""))[:70],
-                "Date Issued": p.get("dateIssued", ""),
-                "Congress": p.get("congress", ""),
-                "Doc Class": p.get("docClass", ""),
-            } for p in packages])
+                "Number": b.get("number", ""),
+                "Type": b.get("type", ""),
+                "Title": str(b.get("title", ""))[:70],
+                "Chamber": b.get("originChamber", ""),
+                "Congress": b.get("congress", ""),
+                "Latest Action Date": b.get("latestAction", {}).get("actionDate", ""),
+                "Latest Action": str(b.get("latestAction", {}).get("text", ""))[:60],
+            } for b in bills])
             st.dataframe(df, use_container_width=True)
+            st.subheader("Bills by Type")
+            st.bar_chart(df["Type"].value_counts())
+            st.subheader("Bills by Chamber of Origin")
+            st.bar_chart(df["Chamber"].value_counts())
 
-            st.subheader("Bills by Document Class")
-            st.bar_chart(df["Doc Class"].value_counts())
 
             with st.expander("📌 Day 1 Teaching Note"):
                 st.markdown("""
