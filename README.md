@@ -2,6 +2,8 @@
 
 [instats workshop](https://instats.org/seminar/web-scraping-and-data-collection)
 
+[Streamlit app](https://web-scraping-and-data-collection-eka6jxww6jd68jhxyeowdi.streamlit.app/)
+
 This repository accompanies a **three-day academic workshop** on web scraping and data collection designed for **early-career academic professionals** and **advanced doctoral students** in **Health Sciences, Life Sciences, and the Social Sciences**.
 
 The workshop is conceived as a **no-code research methods seminar**. Participants are not expected to code. Instead, they work through a guided workflow supported by scripts in **Python** and **R** and an accessible interface through which they can upload, process, inspect, and export data. The central aim is to show how web-based information can be transformed into structured research material in a practical, methodologically coherent, and accessible way.
