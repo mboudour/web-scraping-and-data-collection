@@ -1,0 +1,96 @@
+CountryCode,CountryName,Year,Population
+AFE,Africa Eastern and Southern,2020,694446100.0
+AFW,Africa Western and Central,2020,474569351.0
+ARB,Arab World,2020,453723239.0
+CSS,Caribbean small states,2020,4459302.0
+CEB,Central Europe and the Baltics,2020,101215763.0
+EAR,Early-demographic dividend,2020,3396051187.0
+EAS,East Asia & Pacific,2020,2369420882.0
+EAP,East Asia & Pacific (excluding high income),2020,2121866294.0
+TEA,East Asia & Pacific (IDA & IBRD countries),2020,2095759417.0
+EMU,Euro area,2020,346986142.0
+ECS,Europe & Central Asia,2020,923664467.0
+ECA,Europe & Central Asia (excluding high income),2020,250351240.0
+TEC,Europe & Central Asia (IDA & IBRD countries),2020,462842288.0
+EUU,European Union,2020,446870959.0
+FCS,Fragile and conflict affected situations,2020,994901090.0
+HPC,Heavily indebted poor countries (HIPC),2020,847743308.0
+IBD,IBRD only,2020,4878296727.0
+IBT,IDA & IBRD total,2020,6666470352.0
+IDB,IDA blend,2020,626440308.0
+IDX,IDA only,2020,1161733317.0
+IDA,IDA total,2020,1788173625.0
+LTE,Late-demographic dividend,2020,2316152451.0
+LCN,Latin America & Caribbean,2020,645498186.0
+LAC,Latin America & Caribbean (excluding high income),2020,578091505.0
+TLA,Latin America & the Caribbean (IDA & IBRD countries),2020,630051021.0
+LDC,Least developed countries: UN classification,2020,1083636132.0
+LMY,Low & middle income,2020,6313913801.0
+MEA,"Middle East, North Africa, Afghanistan & Pakistan",2020,756405281.0
+MNA,"Middle East, North Africa, Afghanistan & Pakistan (excluding high income)",2020,692532027.0
+TMN,"Middle East, North Africa, Afghanistan & Pakistan (IDA & IBRD)",2020,687728758.0
+MIC,Middle income,2020,5753270728.0
+NAC,North America,2020,369670740.0
+OED,OECD members,2020,1369310195.0
+OSS,Other small states,2020,12417333.0
+PSS,Pacific island small states,2020,2595522.0
+PST,Post-demographic dividend,2020,1117007476.0
+PRE,Pre-demographic dividend,2020,998624261.0
+SST,Small states,2020,19472157.0
+SAS,South Asia,2020,1621073417.0
+TSA,South Asia (IDA & IBRD),2020,1621073417.0
+SSF,Sub-Saharan Africa,2020,1169015451.0
+SSA,Sub-Saharan Africa (excluding high income),2020,1049999318.0
+TSS,Sub-Saharan Africa (IDA & IBRD countries),2020,1169015451.0
+WLD,World,2020,7854748424.0
+AFG,Afghanistan,2020,39068979.0
+ALB,Albania,2020,2528480.0
+DZA,Algeria,2020,44042091.0
+ASM,American Samoa,2020,49761.0
+AND,Andorra,2020,77380.0
+AGO,Angola,2020,33451132.0
+ATG,Antigua and Barbuda,2020,91846.0
+ARG,Argentina,2020,45191965.0
+ARM,Armenia,2020,2961500.0
+ABW,Aruba,2020,108587.0
+AUS,Australia,2020,25649248.0
+AUT,Austria,2020,8916864.0
+AZE,Azerbaijan,2020,10093121.0
+BHS,"Bahamas, The",2020,395863.0
+BHR,Bahrain,2020,1472204.0
+BGD,Bangladesh,2020,166298024.0
+BRB,Barbados,2020,281698.0
+BLR,Belarus,2020,9379952.0
+BEL,Belgium,2020,11538604.0
+BLZ,Belize,2020,390812.0
+BEN,Benin,2020,13070169.0
+BMU,Bermuda,2020,64382.0
+BTN,Bhutan,2020,770006.0
+BOL,Bolivia,2020,11816299.0
+BIH,Bosnia and Herzegovina,2020,3299349.0
+BWA,Botswana,2020,2365894.0
+BRA,Brazil,2020,208660842.0
+VGB,British Virgin Islands,2020,37135.0
+BRN,Brunei Darussalam,2020,447404.0
+BGR,Bulgaria,2020,6550696.0
+BFA,Burkina Faso,2020,21478690.0
+BDI,Burundi,2020,12617036.0
+CPV,Cabo Verde,2020,514679.0
+KHM,Cambodia,2020,16725474.0
+CMR,Cameroon,2020,26210558.0
+CAN,Canada,2020,38028638.0
+CYM,Cayman Islands,2020,68684.0
+CAF,Central African Republic,2020,5026628.0
+TCD,Chad,2020,17224679.0
+CHI,Channel Islands,2020,166235.0
+CHL,Chile,2020,19370624.0
+CHN,China,2020,1411100000.0
+COL,Colombia,2020,50629997.0
+COM,Comoros,2020,802163.0
+COD,"Congo, Dem. Rep.",2020,95989998.0
+COG,"Congo, Rep.",2020,5752791.0
+CRI,Costa Rica,2020,5034320.0
+CIV,Cote d'Ivoire,2020,28915449.0
+HRV,Croatia,2020,3914206.0
+CUB,Cuba,2020,11176354.0
+CUW,Curacao,2020,155482.0

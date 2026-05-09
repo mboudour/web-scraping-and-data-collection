@@ -1,0 +1,458 @@
+{
+    "count": 286428,
+    "message": null,
+    "nextPage": "https://api.govinfo.gov/collections/BILLS/2023-01-01T00:00:00Z?offset=50&pageSize=50",
+    "previousPage": null,
+    "packages": [
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-23",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:42Z",
+            "packageId": "BILLS-119hr8463ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8463ih/summary",
+            "title": "Pre-Payment Fraud Prevention and Treasury Data Access Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:37Z",
+            "packageId": "BILLS-119hr8499ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8499ih/summary",
+            "title": "Saving Lives on Campuses Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-23",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:33Z",
+            "packageId": "BILLS-119hr8476ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8476ih/summary",
+            "title": "No Antisemitism in Education Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-23",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:33Z",
+            "packageId": "BILLS-119hr8471ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8471ih/summary",
+            "title": "Preventing Risky Importation of Monkeys to Avoid Toxic Exposures Act; PRIMATE Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:27Z",
+            "packageId": "BILLS-119hr8512ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8512ih/summary",
+            "title": "To amend the FISA Amendments Act of 2008 to extend the authorities of title VII of the Foreign Intelligence Surveillance Act of 1978 through April 20, 2029, and for other purposes."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-23",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:27Z",
+            "packageId": "BILLS-119hr8486ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8486ih/summary",
+            "title": "Data Driven Suicide Prevention and Outreach Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:44:23Z",
+            "packageId": "BILLS-119hr8496ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8496ih/summary",
+            "title": "Marine Mammal Climate Change Protection Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:36Z",
+            "packageId": "BILLS-119hr8651ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8651ih/summary",
+            "title": "Advancing Safe Medications for Moms and Babies Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:36Z",
+            "packageId": "BILLS-119hr3863rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr3863rh/summary",
+            "title": "VA Mental Health Outreach and Engagement Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hjres",
+            "lastModified": "2026-05-05T05:16:36Z",
+            "packageId": "BILLS-119hjres172ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres172ih/summary",
+            "title": "Proposing an amendment to the Constitution of the United States to protect United States citizenship."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:30Z",
+            "packageId": "BILLS-119hr8365rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8365rh/summary",
+            "title": "Monitor Accountability Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:30Z",
+            "packageId": "BILLS-119hr8352rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8352rh/summary",
+            "title": "Criminal History Access Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:25Z",
+            "packageId": "BILLS-119hr8662ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8662ih/summary",
+            "title": "To provide assisted living assistance through Medicaid and low-income housing tax credit."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:25Z",
+            "packageId": "BILLS-119hr2137rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr2137rh/summary",
+            "title": "Review Every Veterans Claim Act of 2025"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:20Z",
+            "packageId": "BILLS-119hr8652ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8652ih/summary",
+            "title": "You Own the Data Act; YODA"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:20Z",
+            "packageId": "BILLS-119hr8504ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8504ih/summary",
+            "title": "Rural Health Resilience Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:15Z",
+            "packageId": "BILLS-119hr5213rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr5213rh/summary",
+            "title": "No Federal Funds for Cashless Bail Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-05T05:16:10Z",
+            "packageId": "BILLS-119hr1163rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr1163rh/summary",
+            "title": "Prove It Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "s",
+            "lastModified": "2026-05-05T05:12:24Z",
+            "packageId": "BILLS-119s4390is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4390is/summary",
+            "title": "Ending Discrimination in Government Contracting Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hjres",
+            "lastModified": "2026-05-05T05:12:24Z",
+            "packageId": "BILLS-119hjres174ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres174ih/summary",
+            "title": "Proposing an amendment to the Constitution of the United States to provide for term limits for justices of the Supreme Court."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:19Z",
+            "packageId": "BILLS-119hres1252ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1252ih/summary",
+            "title": "Resolution memorializing law enforcement officers killed in the line of duty."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hjres",
+            "lastModified": "2026-05-05T05:12:19Z",
+            "packageId": "BILLS-119hjres175ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres175ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to the withdrawal of the rule relating to Consumer Financial Protection Circular 2024\u201302: Deceptive Marketing Practices About the Speed or Cost of Sending a Remittance Transfer."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:14Z",
+            "packageId": "BILLS-119hres1254ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1254ih/summary",
+            "title": "Recognizing the roles and contributions of elementary and secondary school teachers in building and enhancing the civic, cultural, and economic well-being of the United States."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:14Z",
+            "packageId": "BILLS-119hres1253ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1253ih/summary",
+            "title": "Expressing the sense of the House of Representatives that public servants should be commended for their dedication and continued service to the United States, including their commitment to defending the Constitution and delivering essential services to United States citizens, and in doing so, supporting the United States economy, during Public Service Recognition Week and throughout the year."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:14Z",
+            "packageId": "BILLS-119hres1228ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1228ih/summary",
+            "title": "Directing the Committee on Oversight and Government Reform of the House of Representatives to initiate or intervene in judicial proceedings."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:09Z",
+            "packageId": "BILLS-119hres1255ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1255ih/summary",
+            "title": "Supporting the designation of the week of May 4 through May 8, 2026, as Teacher Appreciation Week."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hjres",
+            "lastModified": "2026-05-05T05:12:09Z",
+            "packageId": "BILLS-119hjres173ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres173ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to the withdrawal of the rule relating to Consumer Financial Protection Circular 2023\u201302: Reopening Deposit Accounts That Consumers Previously Closed."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:12:04Z",
+            "packageId": "BILLS-119hres1256ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1256ih/summary",
+            "title": "Expressing support for the designation of May 6, 2026, as National Maternal Mental Health Awareness Day and prioritizing the goals and ideals of raising awareness and understanding of maternal mental health conditions."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:11:59Z",
+            "packageId": "BILLS-119hres1257ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1257ih/summary",
+            "title": "Expressing support for the designation of May 5, 2026, as the National Day of Awareness for Missing and Murdered Indigenous Women and Girls."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "s",
+            "lastModified": "2026-05-05T05:09:28Z",
+            "packageId": "BILLS-119s4394is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4394is/summary",
+            "title": "Promoting Police Leadership Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:18Z",
+            "packageId": "BILLS-119sres722is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres722is/summary",
+            "title": "Addressing the politicization of war crimes allegations against allied special operations forces."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:18Z",
+            "packageId": "BILLS-119sres720ats",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres720ats/summary",
+            "title": "Recognizing the significance of Asian American, Native Hawaiian, and Pacific Islander Heritage Month as an important time to celebrate the significant contributions of Asian Americans, Native Hawaiians, and Pacific Islanders to the history of the United States."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:18Z",
+            "packageId": "BILLS-119sres712is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres712is/summary",
+            "title": "Expressing the sense of the Senate in support of general elections in Venezuela."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hres",
+            "lastModified": "2026-05-05T05:09:18Z",
+            "packageId": "BILLS-119hres1258ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1258ih/summary",
+            "title": "Expressing support for the designation of May 2026 as National Brain Tumor Awareness Month."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:08Z",
+            "packageId": "BILLS-119sres713is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres713is/summary",
+            "title": "Supporting the United States dollar as the reserve currency of the world and combating the economic influence of the People\u2019s Republic of China."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:07Z",
+            "packageId": "BILLS-119sres718ats",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres718ats/summary",
+            "title": "A resolution commending and congratulating the University of California, Los Angeles Bruins women\u2019s basketball team for winning the 2026 National Collegiate Athletic Association Division I Women\u2019s Basketball National Championship."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "s",
+            "lastModified": "2026-05-05T05:09:07Z",
+            "packageId": "BILLS-119s4396is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4396is/summary",
+            "title": "Social Security Caregiver Credit Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:09:03Z",
+            "packageId": "BILLS-119sres716is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres716is/summary",
+            "title": "Expressing the sense of the Senate regarding critical elements of the United States policy towards the People's Republic of China."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:08:54Z",
+            "packageId": "BILLS-119sres714is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres714is/summary",
+            "title": "Supporting the designation of May 10, 2026, as National Asian American, Native Hawaiian, and Pacific Islander Mental Health Day."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "sres",
+            "lastModified": "2026-05-05T05:08:54Z",
+            "packageId": "BILLS-119sres709is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119sres709is/summary",
+            "title": "Supporting the goals and ideals of National Nurses Week, to be observed from May 6 through May 12, 2026."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hres",
+            "lastModified": "2026-05-04T13:21:06Z",
+            "packageId": "BILLS-119hres1238ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1238ih/summary",
+            "title": "Encouraging greater public-private sector collaboration to promote financial literacy for students and young adults."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hres",
+            "lastModified": "2026-05-04T13:21:00Z",
+            "packageId": "BILLS-119hres1237ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1237ih/summary",
+            "title": "Stop Telling other People Resolution; STOP Resolution"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hres",
+            "lastModified": "2026-05-04T13:20:52Z",
+            "packageId": "BILLS-119hres1247ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1247ih/summary",
+            "title": "Major Richard Star Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hjres",
+            "lastModified": "2026-05-04T13:20:52Z",
+            "packageId": "BILLS-119hjres166ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres166ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to the withdrawal of the rule relating to Bulletin 2015\u201307 re: in-person collection of consumer debt."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hres",
+            "lastModified": "2026-05-04T13:20:45Z",
+            "packageId": "BILLS-119hres1249ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hres1249ih/summary",
+            "title": "Unhoused Persons Bill of Rights"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hjres",
+            "lastModified": "2026-05-04T13:20:45Z",
+            "packageId": "BILLS-119hjres164ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres164ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to the withdrawal of the rule relating to Equal Credit Opportunity (Regulation B); Revocations or Unfavorable Changes to the Terms of Existing Credit Arrangements."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hjres",
+            "lastModified": "2026-05-04T13:20:34Z",
+            "packageId": "BILLS-119hjres161ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hjres161ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to the withdrawal of the rule relating to Bulletin 2012\u201304: Lending discrimination (April 18, 2012)."
+        },
+        {
+            "congress": "118",
+            "dateIssued": "2023-04-03",
+            "docClass": "hjres",
+            "lastModified": "2026-05-03T16:42:46Z",
+            "packageId": "BILLS-118hjres50ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-118hjres50ih/summary",
+            "title": "Providing for congressional disapproval under chapter 8 of title 5, United States Code, of the rule submitted by the Bureau of Consumer Financial Protection relating to Small Business Lending Under the Equal Credit Opportunity Act (Regulation B)."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-01",
+            "docClass": "hr",
+            "lastModified": "2026-05-02T03:15:14Z",
+            "packageId": "BILLS-119hr8646rh",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8646rh/summary",
+            "title": "Agriculture, Rural Development, Food and Drug Administration, and Related Agency Appropriations Act, 2027"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-02T03:15:14Z",
+            "packageId": "BILLS-119hr8613ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8613ih/summary",
+            "title": "To providing access to certain memorials on Federal property during Government shutdown, and for other purposes."
+        }
+    ]
+}

@@ -1,0 +1,1126 @@
+{
+    "studies": [
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04016662",
+                    "briefTitle": "Automated Insulin Delivery in Elderly With Type 1 Diabetes (AIDE T1D)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Jaeb Center for Health Research"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05936203",
+                    "briefTitle": "Management of Prolonged Aerobic exeRcise in Patients With Type 1 Diabetes on Advanced Technologies"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Federico II University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type1diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04088461",
+                    "briefTitle": "Effect of Linagliptin + Metformin on Patients Who do Not Achieve Normoglucemia With Metformine"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Universidad de Guanajuato"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Prediabetic State",
+                        "Impaired Glucose Tolerance",
+                        "Insulin Resistance"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05228561",
+                    "briefTitle": "The Effect of Mobile Application Supported Diabetes Education On Type 2 Diabetes Self-Management And Blood Sugar Level"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Ege University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2",
+                        "Education",
+                        "Mobile Applications",
+                        "Self-Management"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05404061",
+                    "briefTitle": "The Poor Responders Study"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Imperial College London"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Bariatric Surgery Candidate",
+                        "Obesity, Morbid",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04039503",
+                    "briefTitle": "A Study of Tirzepatide (LY3298176) Versus Placebo in Participants With Type 2 Diabetes Inadequately Controlled on Insulin Glargine With or Without Metformin"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Eli Lilly and Company"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03523403",
+                    "briefTitle": "Obesity-related Health Benefits of Apples"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Guelph"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Obesity, Abdominal",
+                        "Hyperlipidemias",
+                        "Inflammation",
+                        "Dysbiosis"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03313661",
+                    "briefTitle": "Co-administration of Cabergoline and Gliclazide Improve Glycemic Parameters and Lipid Profile in T2DM Patients"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Sherief Abd-Elsalam"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00217061",
+                    "briefTitle": "Effect of a Decision Aid About Statin Use in Patients With Type 2 Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Mayo Clinic"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Dyslipidemia",
+                        "Hypercholesterolemia",
+                        "Cardiovascular Disease"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT07142161",
+                    "briefTitle": "A Study on the Safety, Preliminary Efficacy, and Cellular Kinetics of Allo-CD7 CAR-T Cells in T1DM"
+                },
+                "statusModule": {
+                    "overallStatus": "ACTIVE_NOT_RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Nanjing Bioheng Biotech Co., Ltd."
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01215903",
+                    "briefTitle": "Fish Gelatin Supplement and Omega-3 Supplement in Obese or Overweight Subjects With Insulin Resistance"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Laval University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Insulin Resistance",
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01752127",
+                    "briefTitle": "COmparison of Xience PrimE Versus REsolute Integrity in Diabetes or Small Vessel Disease"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Chonbuk National University Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Angioplasty, Balloon, Coronary"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04800861",
+                    "briefTitle": "Glycemic Control in Diabetic Hospitalized Patients"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "AlFayhaa General Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04953442",
+                    "briefTitle": "Fit 24 Technology Intervention YOUTH"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Baylor College of Medicine"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00192803",
+                    "briefTitle": "Non-Insulin Dependent Diabetes Mellitus (NIDDM) and Angiotensin Converting Enzyme 2 (ACE2): Diabetic Patients Treated With Antihypertensive Drugs"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Rambam Health Care Campus"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "NIDDM"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06710340",
+                    "briefTitle": "Research on Effects of Acute Consumption of Nuts in Obese Diabetic Women"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Raquel Ballarin"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes",
+                        "Obesity"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05614089",
+                    "briefTitle": "Human Versus Analogue Insulin for Youth With Type 1 Diabetes in Low-Resource Settings"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Jing Luo"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 1",
+                        "Type 1 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04118374",
+                    "briefTitle": "A Study to Determine Iatrogenic Hyperinsulinemia's Contribution to Insulin Resistance and Endothelial Dysfunction in Type 1 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Vanderbilt University Medical Center"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 1"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03316690",
+                    "briefTitle": "The Interaction Between Metformin and Physical Training"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Kristian Karstoft"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Impaired Glucose Tolerance",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05971524",
+                    "briefTitle": "Effect of Oral 6-bromotryptophan on Safety, Pharmacokinetics and Efficacy in Metabolic Syndrome Individuals"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Nordin Hanssen"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Metabolic Syndrome",
+                        "Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00575159",
+                    "briefTitle": "A Study to Assess the Safety of Single Doses of GSK189075 in Subjects With Type 1 Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "GlaxoSmithKline"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 1"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03202680",
+                    "briefTitle": "Lean Beef Consumption and Insulin Sensitivity in Men and Women With Risk Factors for Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Midwest Center for Metabolic and Cardiovascular Research"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Metabolic Syndrome",
+                        "PreDiabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00791479",
+                    "briefTitle": "Effects of LY2189265 on Glycemic Control in Participants With Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Eli Lilly and Company"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04025762",
+                    "briefTitle": "24/7 Closed-loop in Older Subjects With Type 1 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Cambridge"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes Mellitus",
+                        "Hypoglycemia",
+                        "Arrythmia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00843388",
+                    "briefTitle": "A Crossover Study With Hexalacton in Patients With Type 1 Diabetes and Microalbuminuria"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Steno Diabetes Center Copenhagen"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Nephropathy",
+                        "Blood Pressure"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02200627",
+                    "briefTitle": "Forxiga Tablets Specific Clinical Experience Investigation for Elderly"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "AstraZeneca"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00842361",
+                    "briefTitle": "Comparison of NN5401 Versus Biphasic Insulin Aspart 30 on a Twice Daily Regimen in Subjects With Type 2 Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Novo Nordisk A/S"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03091686",
+                    "briefTitle": "The Health Action Process Approach and Movement Patterns in Adult Office Workers"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Western University, Canada"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Sedentary Lifestyle"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03763474",
+                    "briefTitle": "Euglyca Application in Children and Adolescents With Type 1 Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Aristotle University Of Thessaloniki"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 1"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05933174",
+                    "briefTitle": "Promoting Alternatives to Sulfonylureas to Improve Patient Safety in Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Ian J. Neeland, MD"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type2diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00565318",
+                    "briefTitle": "Benfotiamine in Diabetic Nephropathy"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University Medical Center Groningen"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetic Nephropathy"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00681460",
+                    "briefTitle": "Metformin in Gestational Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "K. Marcinkowski University of Medical Sciences"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes, Gestational",
+                        "Insulin Resistance"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03938324",
+                    "briefTitle": "Peer i-Coaching for Activated Self-Management Optimization in Adolescents and Young Adults With Chronic Conditions"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Duke University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Sickle Cell Disease",
+                        "Chronic Kidney Diseases",
+                        "Systemic Lupus Erythematosus",
+                        "Childhood Cancer",
+                        "Inflammatory Bowel Diseases",
+                        "Stem Cell Transplant",
+                        "Organ Transplant",
+                        "Diabetes Mellitus, Type 1",
+                        "Cystic Fibrosis"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00099723",
+                    "briefTitle": "The Effect of a Probiotic on Hepatic Steatosis"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "VSL Pharmaceuticals"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Fatty Liver"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01387659",
+                    "briefTitle": "Evaluate Tolerability of Myfortic\u00ae/Simulect\u00ae and Tacrolimus Without Steroids in Three Patient Populations"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "The University of Texas Medical Branch, Galveston"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Immunosuppression"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05887180",
+                    "briefTitle": "Pr\u00e4VaNet - Structured, Intersectoral, Multiprofessional, Digitized Program to Optimize Cardiovascular Prevention"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Charite University, Berlin, Germany"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes",
+                        "Arteriosclerosis",
+                        "Arterial Hypertension",
+                        "Lipid Metabolism Disorders"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01455896",
+                    "briefTitle": "A Study to Evaluate Cardiovascular Outcomes in Patients With Type 2 Diabetes Treated With ITCA 650"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Intarcia Therapeutics"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06688903",
+                    "briefTitle": "App-based Diabetes Management and Community-based Interventions"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Singapore General Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06388603",
+                    "briefTitle": "RCT on Bioactive Glass S53P4 in Diabetic Foot Osteomyelitis in the Forefoot (DFORCT)"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "ASST Ovest Milanese"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Osteomyelitis - Foot"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00591903",
+                    "briefTitle": "Pilot Study to Assess the Proteome in Human Atrial Tissue"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "National Heart, Lung, and Blood Institute (NHLBI)"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Cardiomyopathy"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00902161",
+                    "briefTitle": "A Single-Dose Crossover Study of MK0893 in Patients With Type 2 Diabetes (0893-019 AM4)(COMPLETED)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Merck Sharp & Dohme LLC"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04943861",
+                    "briefTitle": "Human Immunodeficiency Virus (HIV) Food Insecurities"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Wake Forest University Health Sciences"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Food Insecurities",
+                        "Cardiometabolic Comorbidities",
+                        "HIV",
+                        "PreDiabetes",
+                        "Type 2 Diabetes Mellitus (T2DM)"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06358261",
+                    "briefTitle": "Study of a Diabetes Prevention Patient Activation Clinical Decision Support Tool"
+                },
+                "statusModule": {
+                    "overallStatus": "ENROLLING_BY_INVITATION"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Johns Hopkins University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "PreDiabetes",
+                        "Lifestyle, Healthy",
+                        "Activation, Patient"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06829589",
+                    "briefTitle": "Retrieval of Economic Incentives and Information on Quality-of-care Indicators in Primary Care"
+                },
+                "statusModule": {
+                    "overallStatus": "ACTIVE_NOT_RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Fundacio d'Investigacio en Atencio Primaria Jordi Gol i Gurina"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Hypertension",
+                        "Diabetes",
+                        "Atrium; Fibrillation",
+                        "Asthma"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06888050",
+                    "briefTitle": "Efficacy and Safety of Henagliflozin Proline and Metformin Hydrochloride Extended-release Tablets (\u2160) Versus Metformin Tablets in Patients With New-onset Type 2 Diabetes: a Multicenter, Randomized Controlled Study"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Zhejiang Provincial People's Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "New-onset Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01147250",
+                    "briefTitle": "Evaluation of Cardiovascular Outcomes in Patients With Type 2 Diabetes After Acute Coronary Syndrome During Treatment With AVE0010 (Lixisenatide)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Sanofi"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Acute Coronary Syndrome"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT07298174",
+                    "briefTitle": "Wide Field OCTA in Ocular Diseases"
+                },
+                "statusModule": {
+                    "overallStatus": "NOT_YET_RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "IRCCS San Raffaele"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Age - Related Macular Degeneration (AMD)",
+                        "Diabetic Macular Edema",
+                        "Diabetic Retinopathy",
+                        "Myopia",
+                        "Inherited Retinal Disease",
+                        "Stargardt Disease",
+                        "Retinitis Pigmentosa (RP)",
+                        "Best Disease",
+                        "Geographic Atrophy",
+                        "Macular Neovascularisation",
+                        "Ocular Surface Disease",
+                        "Central Serous Choroidopathy",
+                        "Pachychoroid Disease",
+                        "Uveitis",
+                        "Vitreoretinal Disease",
+                        "Retinal Vein Occlusion"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04786418",
+                    "briefTitle": "Low-Calorie Diet in People With Prediabetes/Metabolic Syndrome"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Liverpool"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Obesity",
+                        "NAFLD",
+                        "Fatty Liver",
+                        "Pre Diabetes",
+                        "Metabolic Syndrome"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04470310",
+                    "briefTitle": "Glimepiride, Alogliptin and Alogliptin+Pioglitazone Combination"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Seoul National University Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04554810",
+                    "briefTitle": "Pharmacists Improving Refugees' Adherence and Knowledge of Their Chronic Medications"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Prof. Iman Basheti"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Hypertension",
+                        "Dyslipidemias",
+                        "Cardiac Disease",
+                        "Asthma"
+                    ]
+                }
+            }
+        }
+    ],
+    "nextPageToken": "ZVJj7o2Elu8o3lpqTcCy4KrumpOQJJxmYfSg0A"
+}
