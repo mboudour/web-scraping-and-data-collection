@@ -1,0 +1,1612 @@
+[
+    {
+        "page": 1,
+        "pages": 3,
+        "per_page": 100,
+        "total": 266,
+        "sourceid": "2",
+        "lastupdated": "2026-04-08"
+    },
+    [
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZH",
+                "value": "Africa Eastern and Southern"
+            },
+            "countryiso3code": "AFE",
+            "date": "2020",
+            "value": 694446100,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZI",
+                "value": "Africa Western and Central"
+            },
+            "countryiso3code": "AFW",
+            "date": "2020",
+            "value": 474569351,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "1A",
+                "value": "Arab World"
+            },
+            "countryiso3code": "ARB",
+            "date": "2020",
+            "value": 453723239,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "S3",
+                "value": "Caribbean small states"
+            },
+            "countryiso3code": "CSS",
+            "date": "2020",
+            "value": 4459302,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "B8",
+                "value": "Central Europe and the Baltics"
+            },
+            "countryiso3code": "CEB",
+            "date": "2020",
+            "value": 101215763,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "V2",
+                "value": "Early-demographic dividend"
+            },
+            "countryiso3code": "EAR",
+            "date": "2020",
+            "value": 3396051187,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "Z4",
+                "value": "East Asia & Pacific"
+            },
+            "countryiso3code": "EAS",
+            "date": "2020",
+            "value": 2369420882,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "4E",
+                "value": "East Asia & Pacific (excluding high income)"
+            },
+            "countryiso3code": "EAP",
+            "date": "2020",
+            "value": 2121866294,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T4",
+                "value": "East Asia & Pacific (IDA & IBRD countries)"
+            },
+            "countryiso3code": "TEA",
+            "date": "2020",
+            "value": 2095759417,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XC",
+                "value": "Euro area"
+            },
+            "countryiso3code": "EMU",
+            "date": "2020",
+            "value": 346986142,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "Z7",
+                "value": "Europe & Central Asia"
+            },
+            "countryiso3code": "ECS",
+            "date": "2020",
+            "value": 923664467,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "7E",
+                "value": "Europe & Central Asia (excluding high income)"
+            },
+            "countryiso3code": "ECA",
+            "date": "2020",
+            "value": 250351240,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T7",
+                "value": "Europe & Central Asia (IDA & IBRD countries)"
+            },
+            "countryiso3code": "TEC",
+            "date": "2020",
+            "value": 462842288,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "EU",
+                "value": "European Union"
+            },
+            "countryiso3code": "EUU",
+            "date": "2020",
+            "value": 446870959,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "F1",
+                "value": "Fragile and conflict affected situations"
+            },
+            "countryiso3code": "FCS",
+            "date": "2020",
+            "value": 994901090,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XE",
+                "value": "Heavily indebted poor countries (HIPC)"
+            },
+            "countryiso3code": "HPC",
+            "date": "2020",
+            "value": 847743308,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XD",
+                "value": "High income"
+            },
+            "countryiso3code": "",
+            "date": "2020",
+            "value": 1393472875,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XF",
+                "value": "IBRD only"
+            },
+            "countryiso3code": "IBD",
+            "date": "2020",
+            "value": 4878296727,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZT",
+                "value": "IDA & IBRD total"
+            },
+            "countryiso3code": "IBT",
+            "date": "2020",
+            "value": 6666470352,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XH",
+                "value": "IDA blend"
+            },
+            "countryiso3code": "IDB",
+            "date": "2020",
+            "value": 626440308,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XI",
+                "value": "IDA only"
+            },
+            "countryiso3code": "IDX",
+            "date": "2020",
+            "value": 1161733317,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XG",
+                "value": "IDA total"
+            },
+            "countryiso3code": "IDA",
+            "date": "2020",
+            "value": 1788173625,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "V3",
+                "value": "Late-demographic dividend"
+            },
+            "countryiso3code": "LTE",
+            "date": "2020",
+            "value": 2316152451,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZJ",
+                "value": "Latin America & Caribbean"
+            },
+            "countryiso3code": "LCN",
+            "date": "2020",
+            "value": 645498186,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XJ",
+                "value": "Latin America & Caribbean (excluding high income)"
+            },
+            "countryiso3code": "LAC",
+            "date": "2020",
+            "value": 578091505,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T2",
+                "value": "Latin America & the Caribbean (IDA & IBRD countries)"
+            },
+            "countryiso3code": "TLA",
+            "date": "2020",
+            "value": 630051021,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XL",
+                "value": "Least developed countries: UN classification"
+            },
+            "countryiso3code": "LDC",
+            "date": "2020",
+            "value": 1083636132,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XO",
+                "value": "Low & middle income"
+            },
+            "countryiso3code": "LMY",
+            "date": "2020",
+            "value": 6313913801,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XM",
+                "value": "Low income"
+            },
+            "countryiso3code": "",
+            "date": "2020",
+            "value": 560643073,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XN",
+                "value": "Lower middle income"
+            },
+            "countryiso3code": "",
+            "date": "2020",
+            "value": 2968398856,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZQ",
+                "value": "Middle East, North Africa, Afghanistan & Pakistan"
+            },
+            "countryiso3code": "MEA",
+            "date": "2020",
+            "value": 756405281,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XQ",
+                "value": "Middle East, North Africa, Afghanistan & Pakistan (excluding high income)"
+            },
+            "countryiso3code": "MNA",
+            "date": "2020",
+            "value": 692532027,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T3",
+                "value": "Middle East, North Africa, Afghanistan & Pakistan (IDA & IBRD)"
+            },
+            "countryiso3code": "TMN",
+            "date": "2020",
+            "value": 687728758,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XP",
+                "value": "Middle income"
+            },
+            "countryiso3code": "MIC",
+            "date": "2020",
+            "value": 5753270728,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XU",
+                "value": "North America"
+            },
+            "countryiso3code": "NAC",
+            "date": "2020",
+            "value": 369670740,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XY",
+                "value": "Not classified"
+            },
+            "countryiso3code": "",
+            "date": "2020",
+            "value": null,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "OE",
+                "value": "OECD members"
+            },
+            "countryiso3code": "OED",
+            "date": "2020",
+            "value": 1369310195,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "S4",
+                "value": "Other small states"
+            },
+            "countryiso3code": "OSS",
+            "date": "2020",
+            "value": 12417333,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "S2",
+                "value": "Pacific island small states"
+            },
+            "countryiso3code": "PSS",
+            "date": "2020",
+            "value": 2595522,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "V4",
+                "value": "Post-demographic dividend"
+            },
+            "countryiso3code": "PST",
+            "date": "2020",
+            "value": 1117007476,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "V1",
+                "value": "Pre-demographic dividend"
+            },
+            "countryiso3code": "PRE",
+            "date": "2020",
+            "value": 998624261,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "S1",
+                "value": "Small states"
+            },
+            "countryiso3code": "SST",
+            "date": "2020",
+            "value": 19472157,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "8S",
+                "value": "South Asia"
+            },
+            "countryiso3code": "SAS",
+            "date": "2020",
+            "value": 1621073417,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T5",
+                "value": "South Asia (IDA & IBRD)"
+            },
+            "countryiso3code": "TSA",
+            "date": "2020",
+            "value": 1621073417,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZG",
+                "value": "Sub-Saharan Africa"
+            },
+            "countryiso3code": "SSF",
+            "date": "2020",
+            "value": 1169015451,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "ZF",
+                "value": "Sub-Saharan Africa (excluding high income)"
+            },
+            "countryiso3code": "SSA",
+            "date": "2020",
+            "value": 1049999318,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "T6",
+                "value": "Sub-Saharan Africa (IDA & IBRD countries)"
+            },
+            "countryiso3code": "TSS",
+            "date": "2020",
+            "value": 1169015451,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "XT",
+                "value": "Upper middle income"
+            },
+            "countryiso3code": "",
+            "date": "2020",
+            "value": 2784871872,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "1W",
+                "value": "World"
+            },
+            "countryiso3code": "WLD",
+            "date": "2020",
+            "value": 7854748424,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AF",
+                "value": "Afghanistan"
+            },
+            "countryiso3code": "AFG",
+            "date": "2020",
+            "value": 39068979,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AL",
+                "value": "Albania"
+            },
+            "countryiso3code": "ALB",
+            "date": "2020",
+            "value": 2528480,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "DZ",
+                "value": "Algeria"
+            },
+            "countryiso3code": "DZA",
+            "date": "2020",
+            "value": 44042091,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AS",
+                "value": "American Samoa"
+            },
+            "countryiso3code": "ASM",
+            "date": "2020",
+            "value": 49761,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AD",
+                "value": "Andorra"
+            },
+            "countryiso3code": "AND",
+            "date": "2020",
+            "value": 77380,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AO",
+                "value": "Angola"
+            },
+            "countryiso3code": "AGO",
+            "date": "2020",
+            "value": 33451132,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AG",
+                "value": "Antigua and Barbuda"
+            },
+            "countryiso3code": "ATG",
+            "date": "2020",
+            "value": 91846,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AR",
+                "value": "Argentina"
+            },
+            "countryiso3code": "ARG",
+            "date": "2020",
+            "value": 45191965,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AM",
+                "value": "Armenia"
+            },
+            "countryiso3code": "ARM",
+            "date": "2020",
+            "value": 2961500,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AW",
+                "value": "Aruba"
+            },
+            "countryiso3code": "ABW",
+            "date": "2020",
+            "value": 108587,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AU",
+                "value": "Australia"
+            },
+            "countryiso3code": "AUS",
+            "date": "2020",
+            "value": 25649248,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AT",
+                "value": "Austria"
+            },
+            "countryiso3code": "AUT",
+            "date": "2020",
+            "value": 8916864,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "AZ",
+                "value": "Azerbaijan"
+            },
+            "countryiso3code": "AZE",
+            "date": "2020",
+            "value": 10093121,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BS",
+                "value": "Bahamas, The"
+            },
+            "countryiso3code": "BHS",
+            "date": "2020",
+            "value": 395863,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BH",
+                "value": "Bahrain"
+            },
+            "countryiso3code": "BHR",
+            "date": "2020",
+            "value": 1472204,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BD",
+                "value": "Bangladesh"
+            },
+            "countryiso3code": "BGD",
+            "date": "2020",
+            "value": 166298024,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BB",
+                "value": "Barbados"
+            },
+            "countryiso3code": "BRB",
+            "date": "2020",
+            "value": 281698,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BY",
+                "value": "Belarus"
+            },
+            "countryiso3code": "BLR",
+            "date": "2020",
+            "value": 9379952,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BE",
+                "value": "Belgium"
+            },
+            "countryiso3code": "BEL",
+            "date": "2020",
+            "value": 11538604,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BZ",
+                "value": "Belize"
+            },
+            "countryiso3code": "BLZ",
+            "date": "2020",
+            "value": 390812,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BJ",
+                "value": "Benin"
+            },
+            "countryiso3code": "BEN",
+            "date": "2020",
+            "value": 13070169,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BM",
+                "value": "Bermuda"
+            },
+            "countryiso3code": "BMU",
+            "date": "2020",
+            "value": 64382,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BT",
+                "value": "Bhutan"
+            },
+            "countryiso3code": "BTN",
+            "date": "2020",
+            "value": 770006,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BO",
+                "value": "Bolivia"
+            },
+            "countryiso3code": "BOL",
+            "date": "2020",
+            "value": 11816299,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BA",
+                "value": "Bosnia and Herzegovina"
+            },
+            "countryiso3code": "BIH",
+            "date": "2020",
+            "value": 3299349,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BW",
+                "value": "Botswana"
+            },
+            "countryiso3code": "BWA",
+            "date": "2020",
+            "value": 2365894,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BR",
+                "value": "Brazil"
+            },
+            "countryiso3code": "BRA",
+            "date": "2020",
+            "value": 208660842,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "VG",
+                "value": "British Virgin Islands"
+            },
+            "countryiso3code": "VGB",
+            "date": "2020",
+            "value": 37135,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BN",
+                "value": "Brunei Darussalam"
+            },
+            "countryiso3code": "BRN",
+            "date": "2020",
+            "value": 447404,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BG",
+                "value": "Bulgaria"
+            },
+            "countryiso3code": "BGR",
+            "date": "2020",
+            "value": 6550696,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BF",
+                "value": "Burkina Faso"
+            },
+            "countryiso3code": "BFA",
+            "date": "2020",
+            "value": 21478690,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "BI",
+                "value": "Burundi"
+            },
+            "countryiso3code": "BDI",
+            "date": "2020",
+            "value": 12617036,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CV",
+                "value": "Cabo Verde"
+            },
+            "countryiso3code": "CPV",
+            "date": "2020",
+            "value": 514679,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "KH",
+                "value": "Cambodia"
+            },
+            "countryiso3code": "KHM",
+            "date": "2020",
+            "value": 16725474,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CM",
+                "value": "Cameroon"
+            },
+            "countryiso3code": "CMR",
+            "date": "2020",
+            "value": 26210558,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CA",
+                "value": "Canada"
+            },
+            "countryiso3code": "CAN",
+            "date": "2020",
+            "value": 38028638,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "KY",
+                "value": "Cayman Islands"
+            },
+            "countryiso3code": "CYM",
+            "date": "2020",
+            "value": 68684,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CF",
+                "value": "Central African Republic"
+            },
+            "countryiso3code": "CAF",
+            "date": "2020",
+            "value": 5026628,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "TD",
+                "value": "Chad"
+            },
+            "countryiso3code": "TCD",
+            "date": "2020",
+            "value": 17224679,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "JG",
+                "value": "Channel Islands"
+            },
+            "countryiso3code": "CHI",
+            "date": "2020",
+            "value": 166235,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CL",
+                "value": "Chile"
+            },
+            "countryiso3code": "CHL",
+            "date": "2020",
+            "value": 19370624,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CN",
+                "value": "China"
+            },
+            "countryiso3code": "CHN",
+            "date": "2020",
+            "value": 1411100000,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CO",
+                "value": "Colombia"
+            },
+            "countryiso3code": "COL",
+            "date": "2020",
+            "value": 50629997,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "KM",
+                "value": "Comoros"
+            },
+            "countryiso3code": "COM",
+            "date": "2020",
+            "value": 802163,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CD",
+                "value": "Congo, Dem. Rep."
+            },
+            "countryiso3code": "COD",
+            "date": "2020",
+            "value": 95989998,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CG",
+                "value": "Congo, Rep."
+            },
+            "countryiso3code": "COG",
+            "date": "2020",
+            "value": 5752791,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CR",
+                "value": "Costa Rica"
+            },
+            "countryiso3code": "CRI",
+            "date": "2020",
+            "value": 5034320,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CI",
+                "value": "Cote d'Ivoire"
+            },
+            "countryiso3code": "CIV",
+            "date": "2020",
+            "value": 28915449,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "HR",
+                "value": "Croatia"
+            },
+            "countryiso3code": "HRV",
+            "date": "2020",
+            "value": 3914206,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CU",
+                "value": "Cuba"
+            },
+            "countryiso3code": "CUB",
+            "date": "2020",
+            "value": 11176354,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        },
+        {
+            "indicator": {
+                "id": "SP.POP.TOTL",
+                "value": "Population, total"
+            },
+            "country": {
+                "id": "CW",
+                "value": "Curacao"
+            },
+            "countryiso3code": "CUW",
+            "date": "2020",
+            "value": 155482,
+            "unit": "",
+            "obs_status": "",
+            "decimal": 0
+        }
+    ]
+]

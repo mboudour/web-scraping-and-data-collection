@@ -1,0 +1,763 @@
+{
+  "bills": [
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)"
+      },
+      "number": "1",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution establishing a Committee to Inform the President of the United States that a quorum of each House is assembled.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/1?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)"
+      },
+      "number": "3",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution to elect Patty Murray, a Senator from the State of Washington, to be President pro tempore of the Senate of the United States.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/3?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S6; text: CR S6)"
+      },
+      "number": "4",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution notifying the President of the United States of the election of a President pro tempore.",
+      "type": "SRES",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/sres/4?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)"
+      },
+      "number": "6",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution fixing the hour of daily meeting of the Senate.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/6?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Message on Senate action sent to the House."
+      },
+      "number": "2",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution informing the House of Representatives that a quorum of the Senate is assembled.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/2?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)"
+      },
+      "number": "8",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution to make effective appointment of Senate Legal Counsel.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/8?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate, considered, and agreed to without amendment by Unanimous Consent. (consideration: CR S7; text: CR S7)"
+      },
+      "number": "9",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution to make effective appointment of Deputy Senate Legal Counsel.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/9?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Message on Senate action sent to the House."
+      },
+      "number": "5",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution notifying the House of Representatives of the election of a President pro tempore.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/5?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-03",
+        "text": "Submitted in the Senate. Placed on Senate Legislative Calendar under Over, Under the Rule. (text: CR S20)"
+      },
+      "number": "7",
+      "originChamber": "Senate",
+      "originChamberCode": "S",
+      "title": "A resolution fixing the hour of daily meeting of the Senate.",
+      "type": "SRES",
+      "updateDate": "2024-04-17",
+      "updateDateIncludingText": "2024-04-17",
+      "url": "https://api.congress.gov/v3/bill/118/sres/7?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "8",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Proposing an amendment to the Constitution of the United States to require that the Supreme Court of the United States be composed of nine justices.",
+      "type": "HJRES",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hjres/8?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "27",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Prosecutors Need to Prosecute Act",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/27?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "49",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "REVIEW Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/49?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Oversight and Accountability."
+      },
+      "number": "53",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "FIND Act",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/53?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Agriculture."
+      },
+      "number": "208",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Pet Safety and Protection Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/208?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Energy and Commerce."
+      },
+      "number": "31",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "COVER Now Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/31?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Ways and Means."
+      },
+      "number": "32",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Keeping Texas School Construction Costs Down Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/32?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "36",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Patrick Underwood Federal Law Enforcement Protection Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-06-11",
+      "updateDateIncludingText": "2024-06-11",
+      "url": "https://api.congress.gov/v3/bill/118/hr/36?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "37",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "David Dorn Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/37?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Armed Services."
+      },
+      "number": "129",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "To require the Secretary of Defense to ensure drop boxes are maintained on military installations for the deposit of unused prescription drugs, and for other purposes.",
+      "type": "HR",
+      "updateDate": "2025-06-06",
+      "updateDateIncludingText": "2025-06-06",
+      "url": "https://api.congress.gov/v3/bill/118/hr/129?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "130",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Thin Blue Line Act",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/130?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "138",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Private Student Loan Bankruptcy Fairness Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/138?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Armed Services."
+      },
+      "number": "143",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "To prohibit the transfer or release of individuals detained at United States Naval Station, Guantanamo Bay, Cuba, to the United States.",
+      "type": "HR",
+      "updateDate": "2025-06-06",
+      "updateDateIncludingText": "2025-06-06",
+      "url": "https://api.congress.gov/v3/bill/118/hr/143?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Education and the Workforce."
+      },
+      "number": "144",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Adjusting Davis-Bacon for Inflation Act",
+      "type": "HR",
+      "updateDate": "2025-07-21",
+      "updateDateIncludingText": "2025-07-21",
+      "url": "https://api.congress.gov/v3/bill/118/hr/144?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Foreign Affairs."
+      },
+      "number": "146",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Old Glory Only Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/146?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "147",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Teddy Roosevelt Fair Competition and Public Trust Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/147?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "148",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "JUSTICE Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/148?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on Oversight and Accountability."
+      },
+      "number": "149",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Protecting Our Democracy by Preventing Foreign Citizens from Voting Act",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/149?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the Committee on Appropriations, and in addition to the Committee on Foreign Affairs, for a period to be subsequently determined by the Speaker, in each case for consideration of such provisions as fall within the jurisdiction of the committee concerned."
+      },
+      "number": "164",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Close Biden\u2019s Open Border Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/164?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the House Committee on the Judiciary."
+      },
+      "number": "38",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Concealed Carry Reciprocity Act",
+      "type": "HR",
+      "updateDate": "2024-12-11",
+      "updateDateIncludingText": "2024-12-11",
+      "url": "https://api.congress.gov/v3/bill/118/hr/38?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-09",
+        "text": "Referred to the Committee on Ways and Means, and in addition to the Committee on the Judiciary, for a period to be subsequently determined by the Speaker, in each case for consideration of such provisions as fall within the jurisdiction of the committee concerned."
+      },
+      "number": "151",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "NFA SBS Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/151?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-20",
+        "text": "Referred to the Subcommittee on Communications and Technology."
+      },
+      "number": "145",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "RUSH WAS RIGHT Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/145?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-23",
+        "text": "Received in the Senate and referred to the Committee on the Judiciary."
+      },
+      "number": "3",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Expressing the sense of Congress condemning the recent attacks on pro-life facilities, groups, and churches.",
+      "type": "HCONRES",
+      "updateDate": "2025-07-21",
+      "updateDateIncludingText": "2025-07-21",
+      "url": "https://api.congress.gov/v3/bill/118/hconres/3?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-24",
+        "text": "Sponsor introductory remarks on measure. (CR H271-272)"
+      },
+      "number": "175",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Heartbeat Protection Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-12-31",
+      "updateDateIncludingText": "2024-12-31",
+      "url": "https://api.congress.gov/v3/bill/118/hr/175?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-01-25",
+        "text": "Received in the Senate and Read twice and referred to the Committee on Homeland Security and Governmental Affairs."
+      },
+      "number": "159",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Chance to Compete Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/159?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-01",
+        "text": "Referred to the Subcommittee on Economic Development, Public Buildings, and Emergency Management."
+      },
+      "number": "132",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Protecting Local Communities from Harmful Algal Blooms Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/132?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-02",
+        "text": "Received in the Senate and Read twice and referred to the Committee on Homeland Security and Governmental Affairs."
+      },
+      "number": "139",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "SHOW UP Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/139?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-08",
+        "text": "Referred to the Subcommittee on Border Security and Enforcement."
+      },
+      "number": "29",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Border Safety and Security Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/29?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-21",
+        "text": "Referred to the Subcommittee on Energy and Mineral Resources."
+      },
+      "number": "150",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Protecting American Energy Production Act",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/150?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-21",
+        "text": "Referred to the Subcommittee on Water, Wildlife, and Fisheries."
+      },
+      "number": "186",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Water Supply Permitting Coordination Act",
+      "type": "HR",
+      "updateDate": "2024-07-24",
+      "updateDateIncludingText": "2024-07-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/186?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-21",
+        "text": "Referred to the Subcommittee on Federal Lands."
+      },
+      "number": "189",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Action Versus No Action Act",
+      "type": "HR",
+      "updateDate": "2025-01-24",
+      "updateDateIncludingText": "2025-01-24",
+      "url": "https://api.congress.gov/v3/bill/118/hr/189?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-02-28",
+        "text": "Subcommittee Hearings Held."
+      },
+      "number": "209",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Permitting for Mining Needs Act of 2023",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/209?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2023-09-28",
+        "text": "Motion to Report Measure Defeated by the Yeas and Nays:: 17 - 19."
+      },
+      "number": "11",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Proposing an amendment to the Constitution of the United States to limit the number of terms that a Member of Congress may serve.",
+      "type": "HJRES",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hjres/11?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-10",
+        "text": "Placed on the Union Calendar, Calendar No. 696."
+      },
+      "number": "190",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Saving Gig Economy Taxpayers Act",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/190?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-17",
+        "text": "Referred to the Subcommittee on Health."
+      },
+      "number": "33",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Medicare Dental, Vision, and Hearing Benefit Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-12-21",
+      "updateDateIncludingText": "2024-12-21",
+      "url": "https://api.congress.gov/v3/bill/118/hr/33?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-17",
+        "text": "Referred to the Subcommittee on Health."
+      },
+      "number": "34",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Assuring Medicare\u2019s Promise Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-12-21",
+      "updateDateIncludingText": "2024-12-21",
+      "url": "https://api.congress.gov/v3/bill/118/hr/34?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-17",
+        "text": "Referred to the Subcommittee on Health."
+      },
+      "number": "35",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Close the Medigap Act of 2023",
+      "type": "HR",
+      "updateDate": "2024-12-21",
+      "updateDateIncludingText": "2024-12-21",
+      "url": "https://api.congress.gov/v3/bill/118/hr/35?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-17",
+        "text": "Referred to the Subcommittee on Health."
+      },
+      "number": "134",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "To amend title XVIII of the Social Security Act to remove geographic requirements and expand originating sites for telehealth services.",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/134?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-17",
+        "text": "Referred to the Subcommittee on Health."
+      },
+      "number": "152",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Hearing Protection Act",
+      "type": "HR",
+      "updateDate": "2025-12-05",
+      "updateDateIncludingText": "2025-12-05",
+      "url": "https://api.congress.gov/v3/bill/118/hr/152?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-18",
+        "text": "Reported (Amended) by the Committee on Natural Resources. H. Rept. 118-926, Part I."
+      },
+      "number": "188",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "Proven Forest Management Act of 2022",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/188?format=json"
+    },
+    {
+      "congress": 118,
+      "latestAction": {
+        "actionDate": "2024-12-19",
+        "text": "Placed on the Union Calendar, Calendar No. 779."
+      },
+      "number": "133",
+      "originChamber": "House",
+      "originChamberCode": "H",
+      "title": "MERIT Act",
+      "type": "HR",
+      "updateDate": "2025-05-27",
+      "updateDateIncludingText": "2025-05-27",
+      "url": "https://api.congress.gov/v3/bill/118/hr/133?format=json"
+    }
+  ],
+  "pagination": {
+    "count": 19315,
+    "next": "https://api.congress.gov/v3/bill/118?offset=50&limit=50&format=json"
+  },
+  "request": {
+    "congress": "118",
+    "contentType": "application/json",
+    "format": "json"
+  }
+}
