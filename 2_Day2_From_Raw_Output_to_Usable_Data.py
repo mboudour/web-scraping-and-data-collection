@@ -1,6 +1,6 @@
 """
 Day 1 — From Web Source to Raw Dataset
-Applications: ClinicalTrials.gov, WHO GHO, NIH RePORTER, GovInfo (Congress)
+Applications: ClinicalTrials.gov, WHO GHO, NIH RePORTER, Congress.gov
 """
 
 import os, json, requests
@@ -9,17 +9,22 @@ import streamlit as st
 
 st.set_page_config(page_title="Day 1 — From Web Source to Raw Dataset", page_icon="📥", layout="wide")
 
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "cache")
+# ── Robust cache directory: works locally and on Streamlit Cloud ──────────────
+CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "cache")
+# Fallback: if the above does not exist, use repo root / data / cache
+if not os.path.isdir(CACHE_DIR):
+    CACHE_DIR = os.path.join(os.getcwd(), "data", "cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-# ── helpers ──────────────────────────────────────────────────────────────────
+# ── helpers ───────────────────────────────────────────────────────────────────
 
 def load_or_fetch_json(cache_path, fetch_fn):
+    """Load from cache if available, otherwise fetch and save."""
     if os.path.exists(cache_path):
-        with open(cache_path) as f:
+        with open(cache_path, encoding="utf-8") as f:
             return json.load(f)
     data = fetch_fn()
-    with open(cache_path, "w") as f:
+    with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     return data
 
@@ -33,7 +38,7 @@ app_choice = st.sidebar.radio(
         "App 1 — ClinicalTrials.gov",
         "App 2 — WHO Global Health Observatory",
         "App 3 — NIH RePORTER",
-        "App 4 — GovInfo (U.S. Congress)",
+        "App 4 — Congress.gov (U.S. Bills)",
     ],
 )
 
@@ -57,7 +62,7 @@ research data and how the extraction process works in a no-code setting.
 | 1 | ClinicalTrials.gov | Health | Structured JSON (API) |
 | 2 | WHO Global Health Observatory | Health | Structured JSON (OData API) |
 | 3 | NIH RePORTER | Life Sciences | Structured JSON (API) |
-| 4 | GovInfo (U.S. Congress) | Social Sciences | Structured JSON (API) |
+| 4 | Congress.gov | Social Sciences | Structured JSON (API) |
 
 Use the sidebar to explore each application.
     """)
@@ -105,7 +110,7 @@ recently registered trials related to *diabetes*?
                 cond_mod = proto.get("conditionsModule", {})
                 rows.append({
                     "NCT ID": id_mod.get("nctId", ""),
-                    "Title": id_mod.get("briefTitle", "")[:60],
+                    "Title": str(id_mod.get("briefTitle", ""))[:60],
                     "Status": status_mod.get("overallStatus", ""),
                     "Phase": ", ".join(design_mod.get("phases", [])),
                     "Conditions": ", ".join(cond_mod.get("conditions", [])[:2]),
@@ -223,15 +228,10 @@ keyword-based searches and returns structured JSON records.
                 "FY": r.get("fiscal_year", ""),
                 "Award ($)": r.get("award_amount", None),
                 "Agency": r.get("agency_code", ""),
-                "Org": r.get("org_name", "")[:30],
+                "Org": str(r.get("org_name", ""))[:30],
                 "State": r.get("org_state", ""),
             } for r in results])
             st.dataframe(df, use_container_width=True)
-
-            st.subheader("Award Amount Distribution")
-            awards = df["Award ($)"].dropna()
-            if not awards.empty:
-                st.bar_chart(awards.value_counts(bins=10))
 
             with st.expander("📌 Day 1 Teaching Note"):
                 st.markdown("""
@@ -242,17 +242,18 @@ keyword-based searches and returns structured JSON records.
         except Exception as e:
             st.error(f"Could not load data: {e}")
 
-# ── App 4: GovInfo (Congress) ─────────────────────────────────────────────────
+# ── App 4: Congress.gov ───────────────────────────────────────────────────────
 
-elif app_choice == "App 4 — GovInfo (U.S. Congress)":
-    st.title("🏛️ App 4 — GovInfo (U.S. Congress)")
+elif app_choice == "App 4 — Congress.gov (U.S. Bills)":
+    st.title("🏛️ App 4 — Congress.gov (U.S. Legislative Bills)")
     st.markdown("""
-**Source:** [GovInfo API](https://api.govinfo.gov/collections/BILLS)
+**Source:** [Congress.gov API v3](https://api.congress.gov/v3/bill)
 
-GovInfo provides structured access to U.S. federal government publications,
-including legislative bills from Congress.
+The Congress.gov API provides structured access to U.S. legislative bills.
+The v3 endpoint returns JSON records for bills introduced in any Congress session.
 
-**Research question:** What legislative bills related to *health* were introduced recently?
+**Research question:** What bills were introduced in the 118th Congress (2023-2024),
+and what are their types, chambers of origin, and latest actions?
     """)
 
     cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json")
@@ -264,7 +265,7 @@ including legislative bills from Congress.
         r.raise_for_status()
         return r.json()
 
-    with st.spinner("Loading GovInfo data…"):
+    with st.spinner("Loading Congress.gov data…"):
         try:
             data = load_or_fetch_json(cache_path, fetch_congress)
             bills = data.get("bills", [])
@@ -294,9 +295,10 @@ including legislative bills from Congress.
 
             with st.expander("📌 Day 1 Teaching Note"):
                 st.markdown("""
-- The `dateIssued` field is a string — it will need to be parsed as a date on Day 2.
-- The `title` field contains the full bill title, which may be long and require truncation.
-- The `docClass` field encodes the bill type (e.g., HR = House Resolution, S = Senate bill).
+- The `latestAction` field is a **nested object** containing both a date and a text description.
+  On Day 2 we will extract these into separate flat columns.
+- The `type` field encodes the bill category (e.g., `HR` = House Resolution, `S` = Senate bill).
+- The `updateDate` field is a string that will be parsed as a proper date on Day 2.
                 """)
         except Exception as e:
             st.error(f"Could not load data: {e}")
