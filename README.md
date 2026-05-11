@@ -20,6 +20,6 @@ A manuscript describing the workshope is available here:
 
 ## Workshop Slides
 
-- [Day 1: From Web Source to Raw Dataset](./day1_slides.pdf)
-- [Day 2: From Raw Output to Usable Data](./day2_slides.pdf)
-- [Day 3: From Shared Workflow to Participants’ Own Data](./day3_slides.pdf)
+- [Day 1: From Web Source to Raw Dataset](./slides/day1_slides.pdf)
+- [Day 2: From Raw Output to Usable Data](./slides/day2_slides.pdf)
+- [Day 3: From Shared Workflow to Participants’ Own Data](./slides/day3_slides.pdf)
