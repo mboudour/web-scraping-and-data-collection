@@ -16,7 +16,7 @@ st.title("🌐 Web Scraping and Data Collection")
 st.subheader("instats Seminar — May 13–15, 2026")
 
 st.markdown("""
-**Northwestern University — School of Professional Studies**
+**Moses Boudourides, Moses.Boudourides@gmail.com**
 
 Welcome to the interactive companion for the three-day instats seminar on
 **Web Scraping and Data Collection for Health, Life, and Social Sciences**.
