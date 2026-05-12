@@ -173,16 +173,25 @@ extract → clean → explore, using *Panthera leo* (lion) occurrence records.
 elif app_choice == "🔍 Explore Your Own Data":
     st.title("🔍 Explore Your Own Data")
     st.markdown("""
-Upload a CSV or XLSX file — from your own collection, a cleaned Day 2 output, or any other source —
+Upload a CSV or JSON file — from your own collection, a cleaned Day 2 output, or any other source —
 and use the tools below to generate a preliminary exploratory analysis.
     """)
 
-    uploaded = st.file_uploader("Upload file", type=["csv", "xlsx"])
+    uploaded = st.file_uploader("Upload file", type=["csv", "json"])
 
     if uploaded:
         try:
-            if uploaded.name.endswith(".xlsx"):
-                df = pd.read_excel(uploaded)
+            if uploaded.name.endswith(".json"):
+                raw = json.load(uploaded)
+                if isinstance(raw, list):
+                    df = pd.json_normalize(raw)
+                elif isinstance(raw, dict):
+                    list_keys = [k for k, v in raw.items() if isinstance(v, list)]
+                    if list_keys:
+                        chosen_key = st.selectbox("Select the records array:", list_keys)
+                        df = pd.json_normalize(raw[chosen_key])
+                    else:
+                        df = pd.DataFrame([raw])
             else:
                 df = pd.read_csv(uploaded)
             st.success(f"Loaded: {len(df)} rows × {len(df.columns)} columns")
@@ -247,54 +256,78 @@ The same four criteria used to assess the case study datasets apply here:
 **Coverage, Completeness, Consistency, and Plausibility.**
     """)
 
+    # ── Four-Criteria Plain-English Guide ─────────────────────────────────────
+    with st.expander("📖 What do the four criteria mean? (click to expand)"):
+        st.markdown("""
+Before analysing any dataset, researchers ask four questions. These are not technical checks —
+they are **research quality checks** that apply to any data, from any source.
+
+| Criterion | Plain-English Question | Why It Matters |
+|---|---|---|
+| **Coverage** | Does my data include all the cases I want to study? | A dataset that only covers some countries, years, or groups will produce conclusions that do not generalise. |
+| **Completeness** | Are the important fields filled in for most records? | A column with many blank values cannot be used reliably for analysis. |
+| **Consistency** | Are the same things described the same way throughout? | If `"United States"`, `"USA"`, and `"US"` all appear in a country column, counting by country will give wrong totals. |
+| **Plausibility** | Do the numbers and values make sense? | A population of −500 or a date of 2099 signals an error in the source or the extraction. |
+
+You will find a self-assessment section at the bottom of this page where you can record your
+own notes on each criterion for your dataset.
+        """)
+
     st.markdown("---")
     st.subheader("⚙️ Load Your Cleaned Data")
+
+    st.info("""
+**How to bring your data here:**
+- If you cleaned data in **Day 2 → 🔍 Bring Your Own Data — Clean** and downloaded it,
+  select **"Upload a file"** and upload that CSV or JSON file.
+- If you are still in the same browser session as Day 2, select **"Carried forward from Day 2"**.
+    """)
 
     data_source = st.radio(
         "Where is your data coming from?",
         [
-            "Carried forward from Day 2 BYOD cleaning",
-            "Upload a file (CSV, XLSX, or JSON)",
+            "Upload a file (CSV or JSON)",
+            "Carried forward from Day 2 BYOD cleaning (same browser session only)",
         ],
     )
 
     df = None
 
-    if data_source == "Carried forward from Day 2 BYOD cleaning":
+    if data_source == "Carried forward from Day 2 BYOD cleaning (same browser session only)":
         if "byod_clean_df" in st.session_state:
             df = st.session_state["byod_clean_df"]
             st.success(f"Loaded from Day 2 session: {len(df)} rows × {len(df.columns)} columns.")
         elif "byod_flat_df" in st.session_state:
             df = st.session_state["byod_flat_df"]
-            st.info(f"No cleaned data found — using flat data from Day 1 collection: {len(df)} rows × {len(df.columns)} columns.")
+            st.info(f"No cleaned data found — using raw collected data from Day 1 session: {len(df)} rows × {len(df.columns)} columns.")
         else:
             st.warning("""
-No data found from Days 1 or 2. Either:
-- Go to **Day 1 → 🔍 Bring Your Own Data — Collect** to collect data, or
-- Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to clean it, or
-- Upload a file below instead.
+**No session data found.** Session data is only available if you worked through Days 1 and 2
+in the same browser session without refreshing the page.
+
+👉 If you downloaded a CSV or JSON file from Day 2, select **"Upload a file"** above and upload it instead.
             """)
 
     else:
         uploaded = st.file_uploader(
             "Upload your cleaned data file",
-            type=["csv", "xlsx", "json"],
-            help="CSV and XLSX files are loaded directly. JSON must contain a list of records.",
+            type=["csv", "json"],
+            help="Upload the CSV or JSON file downloaded from Day 2, or any other clean data file.",
         )
         if uploaded:
             try:
-                if uploaded.name.endswith(".xlsx"):
-                    df = pd.read_excel(uploaded)
-                    st.success(f"Loaded XLSX: {len(df)} rows × {len(df.columns)} columns.")
-                elif uploaded.name.endswith(".json"):
+                if uploaded.name.endswith(".json"):
                     raw = json.load(uploaded)
                     if isinstance(raw, list):
                         df = pd.json_normalize(raw)
                     elif isinstance(raw, dict):
                         list_keys = [k for k, v in raw.items() if isinstance(v, list)]
                         if list_keys:
-                            chosen_key = st.selectbox("Select the records array:", list_keys)
-                            df = pd.json_normalize(raw[chosen_key])
+                            if len(list_keys) == 1:
+                                df = pd.json_normalize(raw[list_keys[0]])
+                            else:
+                                chosen_key = st.selectbox("Select the records array:", list_keys)
+                                df = pd.json_normalize(raw[chosen_key])
                         else:
                             df = pd.DataFrame([raw])
                     st.success(f"Loaded JSON: {len(df)} rows × {len(df.columns)} columns.")
@@ -328,6 +361,23 @@ No data found from Days 1 or 2. Either:
 
         # ── 3. Summary Statistics ─────────────────────────────────────────────
         st.subheader("3. Summary Statistics")
+        with st.expander("📖 How to read Summary Statistics"):
+            st.markdown("""
+Summary statistics describe the distribution of each column:
+
+| Statistic | What it means |
+|---|---|
+| **count** | How many non-blank values are in this column |
+| **mean** | The average value (numeric columns only) |
+| **std** | Standard deviation — how spread out the values are |
+| **min / max** | The smallest and largest values |
+| **25% / 50% / 75%** | Quartiles — 50% is the median (middle value) |
+| **unique** | How many different values appear (text columns) |
+| **top** | The most common value (text columns) |
+| **freq** | How many times the most common value appears |
+
+**What to look for:** Very large `std` relative to `mean` suggests outliers. A `min` of 0 or negative for a count column suggests errors.
+            """)
         st.dataframe(df.describe(include="all"), use_container_width=True)
 
         # ── 4. Missingness Report ─────────────────────────────────────────────
@@ -356,7 +406,22 @@ No data found from Days 1 or 2. Either:
         num_cols = df.select_dtypes(include="number").columns.tolist()
         if len(num_cols) >= 2:
             st.subheader("6. Numeric Column Correlations")
-            st.markdown("Pearson correlation matrix for all numeric columns.")
+            with st.expander("📖 What is a correlation matrix?"):
+                st.markdown("""
+A correlation matrix shows how strongly pairs of numeric columns move together.
+
+- Values range from **−1 to +1**
+- **+1** means the two columns increase together perfectly (e.g., height and weight)
+- **−1** means one increases as the other decreases perfectly
+- **0** means no linear relationship
+
+**What to look for:**
+- Values above **0.7** or below **−0.7** suggest a strong relationship worth investigating
+- A column perfectly correlated with itself always shows **1.0** on the diagonal — this is normal
+- Correlation does **not** mean causation
+
+This is a **Pearson correlation**, which only detects straight-line (linear) relationships.
+                """)
             corr = df[num_cols].corr().round(2)
             st.dataframe(corr, use_container_width=True)
 
@@ -365,6 +430,7 @@ No data found from Days 1 or 2. Either:
         st.markdown("""
 Use the checks below to assess your dataset before using it in your research.
 These are the same criteria applied to the case study datasets in Apps 5 and 6.
+See the **"What do the four criteria mean?"** guide at the top of this page for plain-English explanations.
         """)
 
         with st.expander("Coverage — Does the dataset represent your target population?"):
@@ -372,6 +438,9 @@ These are the same criteria applied to the case study datasets in Apps 5 and 6.
 - Check whether all expected countries, time periods, or groups are present.
 - Look for systematic absences (e.g., all records from one country, or only recent years).
 - Ask: would a missing subgroup bias your conclusions?
+
+**Example:** If you collected clinical trials data for "cancer" but only trials from the US appear,
+your conclusions about global trial activity would be misleading.
             """)
             st.text_area("Your coverage notes:", key="byod_coverage_notes", height=80)
 
@@ -380,6 +449,9 @@ These are the same criteria applied to the case study datasets in Apps 5 and 6.
 - Review the Missingness Report above.
 - A column with >20% missing values may be unreliable for analysis.
 - Ask: is the missingness random, or does it follow a pattern (e.g., missing for certain countries)?
+
+**Example:** If the `award_amount` column is blank for 40% of NIH grants, you cannot reliably
+calculate average funding without understanding why those values are missing.
             """)
             st.text_area("Your completeness notes:", key="byod_completeness_notes", height=80)
 
@@ -388,42 +460,59 @@ These are the same criteria applied to the case study datasets in Apps 5 and 6.
 - Look for label variants (e.g., `"USA"` vs `"United States"` vs `"US"`).
 - Check for mixed date formats or numeric formats.
 - Use the Value Distributions section above to spot inconsistencies.
+
+**Example:** If a country column contains `"United Kingdom"`, `"UK"`, and `"Great Britain"`,
+a count of records by country will split them into three separate groups instead of one.
             """)
             st.text_area("Your consistency notes:", key="byod_consistency_notes", height=80)
 
         with st.expander("Plausibility — Do values fall within expected ranges?"):
             st.markdown("""
-- Check minimum and maximum values for numeric columns.
-- Look for impossible values (negative counts, future dates, values outside known bounds).
+- Check minimum and maximum values for numeric columns (see Summary Statistics above).
+- Look for impossible values: negative counts, future dates, values outside known bounds.
 - Compare against external benchmarks if available.
+
+**Example:** A population value of −500 or a year of 2099 in a historical dataset
+signals an extraction error or a data entry mistake in the source.
             """)
             st.text_area("Your plausibility notes:", key="byod_plausibility_notes", height=80)
 
         # ── 8. Downloads ──────────────────────────────────────────────────────
         st.markdown("---")
         st.subheader("⬇️ Download Exploratory Output")
+        st.markdown("All downloads are in CSV format, which can be opened in Excel, R, or any spreadsheet application.")
 
         summary_csv = df.describe(include="all").to_csv().encode("utf-8")
-        st.download_button("Download Summary Statistics (CSV)", summary_csv,
-                           "byod_summary_statistics.csv", "text/csv")
+        st.download_button(
+            "⬇️ Download Summary Statistics (CSV)",
+            summary_csv,
+            "byod_summary_statistics.csv",
+            "text/csv",
+        )
 
         col_csv = col_info.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Column Profile (CSV)", col_csv,
-                           "byod_column_profile.csv", "text/csv")
+        st.download_button(
+            "⬇️ Download Column Profile (CSV)",
+            col_csv,
+            "byod_column_profile.csv",
+            "text/csv",
+        )
 
         full_csv = df.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Full Dataset (CSV)", full_csv,
-                           "byod_full_dataset.csv", "text/csv")
+        st.download_button(
+            "⬇️ Download Full Dataset (CSV)",
+            full_csv,
+            "byod_full_dataset.csv",
+            "text/csv",
+        )
 
-        try:
-            buffer = io.BytesIO()
-            df.to_excel(buffer, index=False, engine="openpyxl")
-            buffer.seek(0)
-            st.download_button("Download Full Dataset (XLSX)", buffer,
-                               "byod_full_dataset.xlsx",
-                               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        except Exception:
-            pass
+        full_json = df.to_json(orient="records", indent=2).encode("utf-8")
+        st.download_button(
+            "⬇️ Download Full Dataset (JSON)",
+            full_json,
+            "byod_full_dataset.json",
+            "application/json",
+        )
 
 # ── Ethics ────────────────────────────────────────────────────────────────────
 
