@@ -51,40 +51,12 @@ def flatten_multiindex(tables):
     return cleaned
 
 
-def auto_bar_chart(df, label="Distribution"):
-    """Show a bar chart for the most informative categorical column in df."""
-    def _is_scalar_col(series):
-        """Return True only if the column contains no lists or dicts (hashable scalars)."""
-        sample = series.dropna().head(20)
-        return not any(isinstance(v, (list, dict)) for v in sample)
-
-    cat_cols = [
-        c for c in df.columns
-        if df[c].dtype == object and _is_scalar_col(df[c]) and df[c].nunique() <= 30
-    ]
-    if not cat_cols:
-        # Fall back to any scalar column with few unique values
-        cat_cols = [
-            c for c in df.columns
-            if _is_scalar_col(df[c]) and df[c].nunique() <= 30
-        ]
-    if cat_cols:
-        col = cat_cols[0]
-        st.markdown(f"**{label} — `{col}`**")
-        st.bar_chart(df[col].value_counts())
-    else:
-        st.info("No categorical column with ≤ 30 unique values found for automatic chart.")
-
-
 def save_and_display_result(df, raw, source_label):
     """Show preview, chart, download button, and Day 2 handoff for any fetched dataset."""
     st.success(f"✅ Loaded {len(df)} records from {source_label}.")
 
     st.markdown("#### Preview (first 20 rows)")
     st.dataframe(df.head(20), use_container_width=True)
-
-    st.markdown("#### Distribution")
-    auto_bar_chart(df)
 
     st.markdown("#### Raw JSON (first record)")
     preview = raw[0] if isinstance(raw, list) else raw
@@ -677,9 +649,6 @@ it finds and let you choose which one to use.
 
             st.markdown("#### Preview (first 20 rows)")
             st.dataframe(selected_table.head(20), use_container_width=True)
-
-            st.markdown("#### Distribution")
-            auto_bar_chart(selected_table)
 
             _json_bytes = selected_table.to_json(orient="records", indent=2).encode("utf-8")
             st.download_button(
