@@ -349,58 +349,92 @@ across disciplines. Copy a Base URL, choose the matching method in the wizard, a
 > This is normal. The wizard adds the parameters for you automatically.
     """)
 
+    # Each entry: (Discipline, Name, URL, params, Method, records_info, docs_url)
     _apis = [
         ("Health", "ClinicalTrials.gov v2",
          "https://clinicaltrials.gov/api/v2/studies",
-         [("query.cond", "diabetes"), ("pageSize", "50"), ("format", "json")], "GET"),
+         [("query.cond", "diabetes"), ("pageSize", "50"), ("format", "json")], "GET",
+         "50 per request; max 1,000 per request",
+         "https://clinicaltrials.gov/data-api/api"),
         ("Health", "WHO Global Health Observatory",
          "https://ghoapi.azureedge.net/api/WHOSIS_000001",
-         [("$top", "300")], "GET"),
+         [("$top", "300")], "GET",
+         "No hard cap per request (use $top to set)",
+         "https://www.who.int/data/gho/info/gho-odata-api"),
         ("Health", "PubMed E-utilities",
          "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-         [("db", "pubmed"), ("term", "cancer"), ("retmax", "50"), ("retmode", "json")], "GET"),
+         [("db", "pubmed"), ("term", "cancer"), ("retmax", "50"), ("retmode", "json")], "GET",
+         "20 per request (default); max 100,000 per request",
+         "https://www.ncbi.nlm.nih.gov/books/NBK25499/"),
         ("Health", "OpenFDA Drug Adverse Events",
          "https://api.fda.gov/drug/event.json",
-         [("limit", "50")], "GET"),
+         [("limit", "50")], "GET",
+         "1 per request (default); max 1,000 per request",
+         "https://open.fda.gov/apis/"),
         ("Health", "OpenFDA Drug Labels",
          "https://api.fda.gov/drug/label.json",
-         [("limit", "50")], "GET"),
+         [("limit", "50")], "GET",
+         "1 per request (default); max 1,000 per request",
+         "https://open.fda.gov/apis/"),
         ("Life Sciences", "NIH RePORTER v2",
          "https://api.reporter.nih.gov/v2/projects/search",
-         [], "POST"),
+         [], "POST",
+         "50 per request (default); max 500 per request; up to 10,000 total",
+         "https://api.reporter.nih.gov/"),
         ("Life Sciences", "GBIF Occurrence Search",
          "https://api.gbif.org/v1/occurrence/search",
-         [("scientificName", "Panthera leo"), ("limit", "50")], "GET"),
+         [("scientificName", "Panthera leo"), ("limit", "50")], "GET",
+         "20 per request (default); max 300 per request; up to 100,000 total",
+         "https://techdocs.gbif.org/en/openapi/v1/occurrence"),
         ("Life Sciences", "Europe PMC",
          "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
-         [("query", "malaria"), ("format", "json"), ("pageSize", "50")], "GET"),
+         [("query", "malaria"), ("format", "json"), ("pageSize", "50")], "GET",
+         "25 per request (default); max 1,000 per request",
+         "https://europepmc.org/RestfulWebService"),
         ("Life Sciences", "UniProt REST API",
          "https://rest.uniprot.org/uniprotkb/search",
-         [("query", "insulin"), ("format", "json"), ("size", "50")], "GET"),
+         [("query", "insulin"), ("format", "json"), ("size", "50")], "GET",
+         "25 per request (default); max 500 per request",
+         "https://www.uniprot.org/help/api_queries"),
         ("Social Sciences", "World Bank Indicators",
          "https://api.worldbank.org/v2/country/US/indicator/SP.POP.TOTL",
-         [("format", "json"), ("per_page", "50")], "GET"),
+         [("format", "json"), ("per_page", "50")], "GET",
+         "50 per request (default); max 32,767 per request",
+         "https://datahelpdesk.worldbank.org/knowledgebase/articles/898581"),
         ("Social Sciences", "Crossref Works",
          "https://api.crossref.org/works",
-         [("query", "systematic review"), ("rows", "50")], "GET"),
+         [("query", "systematic review"), ("rows", "50")], "GET",
+         "20 per request (default); max 1,000 per request",
+         "https://www.crossref.org/documentation/retrieve-metadata/rest-api/"),
         ("Social Sciences", "OpenAlex Works",
          "https://api.openalex.org/works",
-         [("search", "climate change"), ("per-page", "50"), ("mailto", "your@email.com")], "GET"),
+         [("search", "climate change"), ("per-page", "50"), ("mailto", "your@email.com")], "GET",
+         "25 per request (default); max 100 per request; up to 10,000 via pagination",
+         "https://docs.openalex.org/"),
         ("Social Sciences", "Congress.gov Bills",
          "https://api.congress.gov/v3/bill/118",
-         [("format", "json"), ("limit", "50"), ("api_key", "DEMO_KEY")], "GET"),
+         [("format", "json"), ("limit", "50"), ("api_key", "DEMO_KEY")], "GET",
+         "20 per request (default); max 250 per request",
+         "https://github.com/LibraryOfCongress/api.congress.gov"),
         ("Social Sciences", "OECD Stats (SDMX-JSON)",
          "https://stats.oecd.org/SDMX-JSON/data/QNA/AUS.B1_GE.VOBARSA.Q/all",
-         [("startTime", "2020-Q1"), ("endTime", "2022-Q4")], "GET"),
+         [("startTime", "2020-Q1"), ("endTime", "2022-Q4")], "GET",
+         "All matching records returned (no pagination; use time filters to limit)",
+         "https://data.oecd.org/api/sdmx-json-documentation/"),
     ]
 
-    _md_rows = ["| Discipline | API Name | Base URL | Method |", "|---|---|---|---|"]
-    for _disc, _name, _url, _pairs, _method in _apis:
-        _md_rows.append(f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} |")
+    _md_rows = [
+        "| Discipline | API Name | Base URL | Method | Records per Request | Docs |",
+        "|---|---|---|---|---|---|"
+    ]
+    for _disc, _name, _url, _pairs, _method, _records, _docs in _apis:
+        _md_rows.append(
+            f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} | {_records} | [docs]({_docs}) |"
+        )
     st.markdown("\n".join(_md_rows))
 
     st.markdown("**▶ Click an API below to see the exact parameters to enter in the wizard:**")
-    for _disc, _name, _url, _pairs, _method in _apis:
+    for _disc, _name, _url, _pairs, _method, _records, _docs in _apis:
         with st.expander(f"{_name} ({_disc}) — {_method}"):
             st.markdown(f"**Base URL:** `{_url}`")
             if _method == "POST":
