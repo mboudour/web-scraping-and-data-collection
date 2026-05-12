@@ -385,7 +385,7 @@ across disciplines. Copy a Base URL, choose the matching method in the wizard, a
          [("query", "systematic review"), ("rows", "50")], "GET"),
         ("Social Sciences", "OpenAlex Works",
          "https://api.openalex.org/works",
-         [("search", "climate change"), ("per-page", "50")], "GET"),
+         [("search", "climate change"), ("per-page", "50"), ("mailto", "your@email.com")], "GET"),
         ("Social Sciences", "Congress.gov Bills",
          "https://api.congress.gov/v3/bill/118",
          [("format", "json"), ("limit", "50"), ("api_key", "DEMO_KEY")], "GET"),
