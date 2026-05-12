@@ -2,7 +2,7 @@
 
 [instats workshop](https://instats.org/seminar/web-scraping-and-data-collection)
 
-[Streamlit app](https://web-scraping-and-data-collection-cqjcfzzyn9x24dy4z5vhje.streamlit.app/)
+[Streamlit app](https://web-scraping-and-data-collection.streamlit.app/)
 
 This repository accompanies a **three-day academic workshop** on web scraping and data collection designed for **early-career academic professionals** and **advanced doctoral students** in **Health Sciences, Life Sciences, and the Social Sciences**.
 
