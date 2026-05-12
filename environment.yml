@@ -5,18 +5,7 @@ channels:
 dependencies:
   - python=3.11
   - pip
-
-  # Core app
-  - streamlit>=1.32.0
-  - pandas>=2.0.0
-  - requests>=2.31.0
-
-  # HTML table scraping (pd.read_html)
-  - lxml>=4.9.0
-  - html5lib>=1.1
-
-  # XLSX read/write support
-  - openpyxl>=3.1.0
-
-  # XLS read support (older Excel format)
-  - xlrd>=2.0.1
+  - pip:
+    - streamlit>=1.32.0
+    - pandas>=2.0.0
+    - requests>=2.31.0
