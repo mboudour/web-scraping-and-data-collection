@@ -341,72 +341,82 @@ Your collected data will be available for cleaning in **Day 2 → Bring Your Own
 The following APIs have been confirmed working as of May 2026. They require no registration
 or API key (or use a free demo key).
 
-**How to read this table:**
-- **Base URL** — copy this into the wizard's *API Base URL* field. Do not open it directly in your browser.
-- **Example Parameters** — split these at the `&` sign into individual key–value pairs for the wizard.
-  For example, `query=insulin&format=json&size=50` becomes three rows: `query` / `insulin`, `format` / `json`, `size` / `50`.
-- **Method** — tells you which wizard tab to use: *GET request* or *POST request*.
+**How to use this table:**
+1. Find the API you want to use.
+2. **Highlight and copy the Base URL** (click the link, then copy from your browser address bar — or highlight the URL text directly).
+3. Note the **Method** column (`GET` or `POST`) — this tells you which wizard tab to use below.
+4. Click **▶ Show parameters** next to the API name to see the exact key–value pairs to enter in the wizard.
     """)
 
-    # ── API reference: rendered as markdown so URLs are clickable ────────────
+    # ── API reference with per-row parameter expanders ──────────────────────
+    # Each entry: (Discipline, Name, URL, [(key, value), ...], Method)
     _apis = [
-        # (Discipline, Name, URL, Example Parameters, Method)
         ("Health", "ClinicalTrials.gov v2",
          "https://clinicaltrials.gov/api/v2/studies",
-         "`query.cond=diabetes&pageSize=50&format=json`", "GET"),
+         [("query.cond", "diabetes"), ("pageSize", "50"), ("format", "json")], "GET"),
         ("Health", "WHO Global Health Observatory",
          "https://ghoapi.azureedge.net/api/WHOSIS_000001",
-         "`$top=300`", "GET"),
+         [("$top", "300")], "GET"),
         ("Health", "PubMed E-utilities",
          "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-         "`db=pubmed&term=cancer&retmax=50&retmode=json`", "GET"),
+         [("db", "pubmed"), ("term", "cancer"), ("retmax", "50"), ("retmode", "json")], "GET"),
         ("Health", "OpenFDA Drug Adverse Events",
          "https://api.fda.gov/drug/event.json",
-         "`limit=50`", "GET"),
+         [("limit", "50")], "GET"),
         ("Health", "OpenFDA Drug Labels",
          "https://api.fda.gov/drug/label.json",
-         "`limit=50`", "GET"),
+         [("limit", "50")], "GET"),
         ("Life Sciences", "NIH RePORTER v2",
          "https://api.reporter.nih.gov/v2/projects/search",
-         "`POST body — see wizard below`", "POST"),
+         [], "POST"),
         ("Life Sciences", "GBIF Occurrence Search",
          "https://api.gbif.org/v1/occurrence/search",
-         "`scientificName=Panthera+leo&limit=50`", "GET"),
+         [("scientificName", "Panthera leo"), ("limit", "50")], "GET"),
         ("Life Sciences", "Europe PMC",
          "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
-         "`query=malaria&format=json&pageSize=50`", "GET"),
+         [("query", "malaria"), ("format", "json"), ("pageSize", "50")], "GET"),
         ("Life Sciences", "UniProt REST API",
          "https://rest.uniprot.org/uniprotkb/search",
-         "`query=insulin&format=json&size=50`", "GET"),
+         [("query", "insulin"), ("format", "json"), ("size", "50")], "GET"),
         ("Social Sciences", "World Bank Indicators",
          "https://api.worldbank.org/v2/country/US/indicator/SP.POP.TOTL",
-         "`format=json&per_page=50`", "GET"),
+         [("format", "json"), ("per_page", "50")], "GET"),
         ("Social Sciences", "Crossref Works",
          "https://api.crossref.org/works",
-         "`query=systematic+review&rows=50`", "GET"),
+         [("query", "systematic review"), ("rows", "50")], "GET"),
         ("Social Sciences", "OpenAlex Works",
          "https://api.openalex.org/works",
-         "`search=climate+change&per-page=50`", "GET"),
+         [("search", "climate change"), ("per-page", "50")], "GET"),
         ("Social Sciences", "Congress.gov Bills",
          "https://api.congress.gov/v3/bill/118",
-         "`format=json&limit=50&api_key=DEMO_KEY`", "GET"),
+         [("format", "json"), ("limit", "50"), ("api_key", "DEMO_KEY")], "GET"),
         ("Social Sciences", "OECD Stats (SDMX-JSON)",
          "https://stats.oecd.org/SDMX-JSON/data/QNA/AUS.B1_GE.VOBARSA.Q/all",
-         "`startTime=2020-Q1&endTime=2022-Q4`", "GET"),
+         [("startTime", "2020-Q1"), ("endTime", "2022-Q4")], "GET"),
     ]
 
-    # Render as a Markdown table so URLs are clickable hyperlinks
-    _md_rows = ["| Discipline | API Name | Base URL | Example Parameters | Method |",
-                "|---|---|---|---|---|"]
-    for _disc, _name, _url, _params, _method in _apis:
-        _md_rows.append(f"| {_disc} | {_name} | [{_url}]({_url}) | {_params} | {_method} |")
+    # Summary table (Discipline | Name | URL | Method)
+    _md_rows = ["| Discipline | API Name | Base URL | Method |",
+                "|---|---|---|---|"]
+    for _disc, _name, _url, _pairs, _method in _apis:
+        _md_rows.append(f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} |")
     st.markdown("\n".join(_md_rows))
 
-    # Copy-friendly text inputs — one per API
-    with st.expander("📋 Copy a Base URL (click to expand)"):
-        st.markdown("Select any field below and press **Ctrl+A → Ctrl+C** (or ⌘A → ⌘C) to copy.")
-        for _disc, _name, _url, _params, _method in _apis:
-            st.text_input(f"{_name} ({_method})", value=_url, key=f"copy_api_{_name}", label_visibility="visible")
+    # Per-API parameter expanders
+    st.markdown("**▶ Click an API below to see the exact parameters to enter in the wizard:**")
+    for _disc, _name, _url, _pairs, _method in _apis:
+        with st.expander(f"{_name} ({_disc}) — {_method}"):
+            st.markdown(f"**Base URL:** `{_url}`")
+            if _method == "POST":
+                st.markdown("This API uses a **POST request**. Select *Query an API (POST request)* in the wizard. The default JSON body is pre-filled for you.")
+            elif _pairs:
+                st.markdown(f"Set **Number of parameters** to **{len(_pairs)}** in the wizard, then enter:")
+                _pair_rows = ["| Key | Value |", "|---|---|"]
+                for _k, _v in _pairs:
+                    _pair_rows.append(f"| `{_k}` | `{_v}` |")
+                st.markdown("\n".join(_pair_rows))
+            else:
+                st.markdown("No parameters required — just paste the Base URL and click Fetch Data.")
 
     # ── Reference: Webpage Table Scraping ────────────────────────────────────
     st.markdown("---")
@@ -445,12 +455,6 @@ scraper below.
     for _disc, _desc, _url in _scrape:
         _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
     st.markdown("\n".join(_s_rows))
-
-    # Copy-friendly text inputs
-    with st.expander("📋 Copy a URL (click to expand)"):
-        st.markdown("Select any field below and press **Ctrl+A → Ctrl+C** (or ⌘A → ⌘C) to copy.")
-        for _disc, _desc, _url in _scrape:
-            st.text_input(_desc, value=_url, key=f"copy_scrape_{_desc}", label_visibility="visible")
 
     # ── Interactive Collection Wizard ─────────────────────────────────────────
     st.markdown("---")
@@ -545,6 +549,8 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_get"
                         st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
+                        st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_get")
                         st.markdown("**Raw JSON preview** (first record):")
                         preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
                         st.json(preview, expanded=True)
@@ -591,6 +597,8 @@ Paste the base URL and the JSON body below.
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_post"
                         st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
+                        st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_post")
                         st.markdown("**Raw JSON preview** (first record):")
                         preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
                         st.json(preview, expanded=True)
@@ -646,7 +654,9 @@ it finds and let you choose which one to use.
         st.markdown("---")
         st.subheader("🗂️ Step 1b — Identify the Records Array")
 
-        with st.expander("📖 What is JSON? A plain-English guide for non-coders (click to expand)"):
+        # JSON explainer appears BEFORE the raw data preview so students can
+        # read it before being confronted with the JSON output.
+        with st.expander("📖 What is JSON? A plain-English guide for non-coders (click to expand)", expanded=True):
             st.markdown("""
 ### JSON is just a structured text file — like a spreadsheet, but written differently
 
