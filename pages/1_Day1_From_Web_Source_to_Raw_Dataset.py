@@ -548,7 +548,7 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                         byod_raw = r.json()
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_get"
-                        st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        st.success("✅ Data fetched successfully! Download the JSON below or go to Day 2 to continue.")
                         _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
                         st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_get")
                         st.markdown("**Raw JSON preview** (first record):")
@@ -596,7 +596,7 @@ Paste the base URL and the JSON body below.
                         byod_raw = r.json()
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_post"
-                        st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        st.success("✅ Data fetched successfully! Download the JSON below or go to Day 2 to continue.")
                         _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
                         st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_post")
                         st.markdown("**Raw JSON preview** (first record):")
@@ -648,190 +648,7 @@ it finds and let you choose which one to use.
                 st.session_state["byod_source"] = "scrape"
                 st.success("Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
 
-    # ── Flatten JSON (for API results) ────────────────────────────────────────
+    # ── Day 2 prompt (shown once data has been fetched via API) ──────────────
     if "byod_raw" in st.session_state and st.session_state.get("byod_source") in ("api_get", "api_post"):
-        raw = st.session_state["byod_raw"]
         st.markdown("---")
-        st.subheader("🗂️ Step 1b — Identify the Records Array")
-
-        # JSON explainer appears BEFORE the raw data preview so students can
-        # read it before being confronted with the JSON output.
-        with st.expander("📖 What is JSON? A plain-English guide for non-coders (click to expand)", expanded=True):
-            st.markdown("""
-### JSON is just a structured text file — like a spreadsheet, but written differently
-
-When an API sends you data, it arrives as **JSON** (JavaScript Object Notation).
-You do not need to know how to code to understand it. Here is all you need to know:
-
----
-
-#### The spreadsheet analogy
-
-Imagine a spreadsheet with three columns and two rows:
-
-| Name | Country | Year |
-|---|---|---|
-| Insulin | Human | 2020 |
-| Albumin | Mouse | 2021 |
-
-In JSON, the same data looks like this:
-
-```
-[
-  { "Name": "Insulin",  "Country": "Human", "Year": 2020 },
-  { "Name": "Albumin",  "Country": "Mouse", "Year": 2021 }
-]
-```
-
-**Reading the symbols:**
-
-| Symbol | What it means | Spreadsheet equivalent |
-|---|---|---|
-| `[ ]` square brackets | A **list** of items | The whole spreadsheet (all rows) |
-| `{ }` curly braces | **One record** | One row |
-| `"Name": "Insulin"` | A **field and its value** | One cell: column = `Name`, value = `Insulin` |
-| `,` comma | Separates items | Nothing visible — just moves to the next item |
-
----
-
-#### Nesting — when a field contains another record
-
-APIs often store related information *inside* a field, rather than as a flat value:
-
-```
-{
-  "Name": "Insulin",
-  "organism": {
-    "scientificName": "Homo sapiens",
-    "commonName":     "Human"
-  }
-}
-```
-
-Here, `organism` is not a simple value — it is a **sub-record** with its own fields inside.
-To refer to the scientific name, you write `organism.scientificName` (using a dot to go one level deeper).
-This is called **dot notation**, and it is exactly what the field dropdowns in Step 1c use.
-
----
-
-#### `null` means missing — not zero
-
-You will sometimes see `"Year": null`. This means the source did not provide a value for that field.
-It is **not** the same as zero. In a spreadsheet it would appear as an empty cell.
-
----
-
-#### Why does every API look different?
-
-There is no universal standard for JSON structure. Each API designer chose their own layout.
-ClinicalTrials wraps records in `"studies"`, WHO uses `"value"`, Crossref uses `"items"`.
-This is why Step 1b asks you to identify which key holds the list — because it varies by source.
-            """)
-
-        st.markdown("""
-The raw JSON you just fetched is a nested structure. Most APIs wrap the actual list of records
-inside a key such as `results`, `items`, `studies`, or `value`.
-
-The dropdown below shows all keys in the response whose value is a list.
-**Select the one that contains the records** (usually the one with the most items).
-
-For example:
-- UniProt → select `results`
-- ClinicalTrials → select `studies`
-- Crossref → select `items`
-- WHO GHO → select `value`
-        """)
-
-        if isinstance(raw, dict):
-            array_keys = [k for k, v in raw.items() if isinstance(v, list)]
-            if array_keys:
-                chosen_key = st.selectbox(
-                    "Select the key that contains the list of records:",
-                    array_keys,
-                    help="Choose the key whose value is a list of records.",
-                )
-                records = raw[chosen_key]
-            else:
-                st.warning("No list-type keys found at the top level. The response may be nested deeper.")
-                chosen_key = st.text_input("Enter the key path manually (e.g. message.items):")
-                records = []
-                if chosen_key:
-                    try:
-                        obj = raw
-                        for k in chosen_key.split("."):
-                            obj = obj[k]
-                        records = obj if isinstance(obj, list) else []
-                    except Exception:
-                        st.error("Key path not found.")
-        elif isinstance(raw, list):
-            records = raw
-        else:
-            records = []
-
-        if records:
-            st.success(f"Found {len(records)} records.")
-
-            # ── Column Mapper ─────────────────────────────────────────────────────
-            st.subheader("🗂️ Step 1c — Choose Which Fields to Keep")
-            st.markdown("""
-Each record in the API response contains many fields. Here you choose which ones to keep
-as columns in your dataset.
-
-For each column:
-- **Left box (Column name):** type a short, readable name for the column — this will become the column header in your spreadsheet (e.g. `Protein Name`, `Country`, `Year`)
-- **Right dropdown (JSON field):** select the field from the API response to put in that column
-
-> **About the dot notation in the dropdown** (e.g. `organism.scientificName`):
-> A dot means the field is *nested inside* another field. `organism.scientificName` means:
-> go into the `organism` sub-record and take the `scientificName` value from it.
-> You do not need to understand why — just pick the field whose name matches what you want.
-
-Then click **📊 Build Flat Table** to create your dataset.
-            """)
-
-            first = records[0] if records else {}
-            flat_keys = []
-
-            def _flatten_keys(obj, prefix=""):
-                if isinstance(obj, dict):
-                    for k, v in obj.items():
-                        _flatten_keys(v, f"{prefix}{k}.")
-                else:
-                    flat_keys.append(prefix.rstrip("."))
-
-            _flatten_keys(first)
-            flat_keys = sorted(set(flat_keys))
-
-            n_cols = st.number_input("Number of columns to extract", min_value=1, max_value=15, value=min(5, len(flat_keys)), step=1)
-            col_map = {}
-            for i in range(int(n_cols)):
-                c1, c2 = st.columns(2)
-                col_name = c1.text_input(f"Column name {i+1}", key=f"col_name_{i}")
-                field_path = c2.selectbox(f"JSON field {i+1}", ["(skip)"] + flat_keys, key=f"col_field_{i}")
-                if col_name and field_path != "(skip)":
-                    col_map[col_name] = field_path
-
-            if st.button("📊 Build Flat Table", key="build_flat") and col_map:
-                def _get_nested(obj, path):
-                    parts = path.split(".")
-                    for p in parts:
-                        if isinstance(obj, dict):
-                            obj = obj.get(p)
-                        else:
-                            return None
-                    return obj
-
-                rows = []
-                for rec in records:
-                    row = {col: _get_nested(rec, path) for col, path in col_map.items()}
-                    rows.append(row)
-                flat_df = pd.DataFrame(rows)
-                st.session_state["byod_flat_df"] = flat_df
-                st.success(f"Flat table built: {len(flat_df)} rows × {len(flat_df.columns)} columns.")
-                st.dataframe(flat_df.head(20), use_container_width=True)
-
-                # Download raw JSON
-                raw_bytes = json.dumps(raw, indent=2).encode("utf-8")
-                st.download_button("⬇️ Download Raw JSON", raw_bytes, "byod_raw.json", "application/json")
-
-                st.info("Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue with cleaning.")
+        st.info("✅ Your raw data has been collected and saved. When you are ready, go to **Day 2 → 🔍 Bring Your Own Data — Clean** to structure and clean it.")
