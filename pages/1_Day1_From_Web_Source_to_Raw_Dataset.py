@@ -331,69 +331,65 @@ The following APIs have been confirmed working as of May 2026. They require no r
 or API key (or use a free demo key). Copy any Base URL directly into the wizard below.
     """)
 
-    api_table = pd.DataFrame([
-        # Health
+    # ── API reference: rendered as markdown so URLs are clickable ────────────
+    _apis = [
+        # (Discipline, Name, URL, Example Parameters, Method)
         ("Health", "ClinicalTrials.gov v2",
          "https://clinicaltrials.gov/api/v2/studies",
-         "query.cond=diabetes&pageSize=50&format=json",
-         "GET"),
+         "`query.cond=diabetes&pageSize=50&format=json`", "GET"),
         ("Health", "WHO Global Health Observatory",
          "https://ghoapi.azureedge.net/api/WHOSIS_000001",
-         "$top=300",
-         "GET"),
+         "`$top=300`", "GET"),
         ("Health", "PubMed E-utilities",
          "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-         "db=pubmed&term=cancer&retmax=50&retmode=json",
-         "GET"),
+         "`db=pubmed&term=cancer&retmax=50&retmode=json`", "GET"),
         ("Health", "OpenFDA Drug Adverse Events",
          "https://api.fda.gov/drug/event.json",
-         "limit=50",
-         "GET"),
+         "`limit=50`", "GET"),
         ("Health", "OpenFDA Drug Labels",
          "https://api.fda.gov/drug/label.json",
-         "limit=50",
-         "GET"),
-        # Life Sciences
+         "`limit=50`", "GET"),
         ("Life Sciences", "NIH RePORTER v2",
          "https://api.reporter.nih.gov/v2/projects/search",
-         'POST body: {"criteria":{"advanced_text_search":{"operator":"and","search_field":"all","search_text":"genomics"}},"offset":0,"limit":50}',
-         "POST"),
+         "`POST body — see wizard below`", "POST"),
         ("Life Sciences", "GBIF Occurrence Search",
          "https://api.gbif.org/v1/occurrence/search",
-         "scientificName=Panthera+leo&limit=50",
-         "GET"),
+         "`scientificName=Panthera+leo&limit=50`", "GET"),
         ("Life Sciences", "Europe PMC",
          "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
-         "query=malaria&format=json&pageSize=50",
-         "GET"),
+         "`query=malaria&format=json&pageSize=50`", "GET"),
         ("Life Sciences", "UniProt REST API",
          "https://rest.uniprot.org/uniprotkb/search",
-         "query=insulin&format=json&size=50",
-         "GET"),
-        # Social Sciences
+         "`query=insulin&format=json&size=50`", "GET"),
         ("Social Sciences", "World Bank Indicators",
          "https://api.worldbank.org/v2/country/US/indicator/SP.POP.TOTL",
-         "format=json&per_page=50",
-         "GET"),
+         "`format=json&per_page=50`", "GET"),
         ("Social Sciences", "Crossref Works",
          "https://api.crossref.org/works",
-         "query=systematic+review&rows=50",
-         "GET"),
+         "`query=systematic+review&rows=50`", "GET"),
         ("Social Sciences", "OpenAlex Works",
          "https://api.openalex.org/works",
-         "search=climate+change&per-page=50",
-         "GET"),
+         "`search=climate+change&per-page=50`", "GET"),
         ("Social Sciences", "Congress.gov Bills",
          "https://api.congress.gov/v3/bill/118",
-         "format=json&limit=50&api_key=DEMO_KEY",
-         "GET"),
+         "`format=json&limit=50&api_key=DEMO_KEY`", "GET"),
         ("Social Sciences", "OECD Stats (SDMX-JSON)",
          "https://stats.oecd.org/SDMX-JSON/data/QNA/AUS.B1_GE.VOBARSA.Q/all",
-         "startTime=2020-Q1&endTime=2022-Q4",
-         "GET"),
-    ], columns=["Discipline", "API Name", "Base URL", "Example Parameters", "Method"])
+         "`startTime=2020-Q1&endTime=2022-Q4`", "GET"),
+    ]
 
-    st.dataframe(api_table, use_container_width=True, hide_index=True)
+    # Render as a Markdown table so URLs are clickable hyperlinks
+    _md_rows = ["| Discipline | API Name | Base URL | Example Parameters | Method |",
+                "|---|---|---|---|---|"]
+    for _disc, _name, _url, _params, _method in _apis:
+        _md_rows.append(f"| {_disc} | {_name} | [{_url}]({_url}) | {_params} | {_method} |")
+    st.markdown("\n".join(_md_rows))
+
+    # Copy-friendly text inputs — one per API
+    with st.expander("📋 Copy a Base URL (click to expand)"):
+        st.markdown("Select any field below and press **Ctrl+A → Ctrl+C** (or ⌘A → ⌘C) to copy.")
+        for _disc, _name, _url, _params, _method in _apis:
+            st.text_input(f"{_name} ({_method})", value=_url, key=f"copy_api_{_name}", label_visibility="visible")
 
     # ── Reference: Webpage Table Scraping ────────────────────────────────────
     st.markdown("---")
@@ -408,7 +404,7 @@ scraper below.
 > this is itself an important methodological distinction to understand.
     """)
 
-    scrape_examples = pd.DataFrame([
+    _scrape = [
         ("Health", "WHO — Life Expectancy by Country",
          "https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy"),
         ("Health", "Wikipedia — COVID-19 pandemic by country",
@@ -425,9 +421,19 @@ scraper below.
          "https://en.wikipedia.org/wiki/Global_Peace_Index"),
         ("Social Sciences", "Wikipedia — List of countries by GDP (nominal)",
          "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"),
-    ], columns=["Discipline", "Description", "URL"])
+    ]
 
-    st.dataframe(scrape_examples, use_container_width=True, hide_index=True)
+    # Render as Markdown table so URLs are clickable
+    _s_rows = ["| Discipline | Description | URL |", "|---|---|---|"]
+    for _disc, _desc, _url in _scrape:
+        _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
+    st.markdown("\n".join(_s_rows))
+
+    # Copy-friendly text inputs
+    with st.expander("📋 Copy a URL (click to expand)"):
+        st.markdown("Select any field below and press **Ctrl+A → Ctrl+C** (or ⌘A → ⌘C) to copy.")
+        for _disc, _desc, _url in _scrape:
+            st.text_input(_desc, value=_url, key=f"copy_scrape_{_desc}", label_visibility="visible")
 
     # ── Interactive Collection Wizard ─────────────────────────────────────────
     st.markdown("---")
