@@ -1,9 +1,10 @@
 """
 Day 3 — From Shared Workflow to Participants' Own Data
 Applications: World Bank (explore), GBIF, and participant-uploaded data
++ Bring Your Own Data — Explore
 """
 
-import os, json
+import os, json, io
 import pandas as pd
 import streamlit as st
 
@@ -33,6 +34,7 @@ app_choice = st.sidebar.radio(
         "App 5 — World Bank Population (Explore)",
         "App 6 — GBIF Biodiversity (Explore)",
         "🔍 Explore Your Own Data",
+        "🔍 Bring Your Own Data — Explore",
         "⚖️ Ethics and Open Science",
     ],
 )
@@ -48,18 +50,18 @@ and interpret preliminary output.
 ### Day 3 Structure
 | Section | Activity |
 |---------|----------|
-| Exploratory analysis | Summary tables, distributions, missingness checks |
 | App 5 — World Bank | Explore cleaned population data |
 | App 6 — GBIF | Full extract-clean-explore pipeline on biodiversity data |
-| Your own data | Upload a CSV or enter a URL to explore |
+| Explore Your Own Data | Upload a CSV to explore |
+| **Bring Your Own Data — Explore** | Full end-to-end exploration for data collected in Days 1–2 |
 | Ethics | Legal, privacy, and server-load considerations |
 
 ### Entry Points into the Pipeline
 Participants may enter at different stages depending on their situation:
 
-- **I have a URL** → Use the Day 1 extraction templates
-- **I have raw data** → Use the Day 2 cleaning module
-- **I have clean data** → Use the Day 3 explore module below
+- **I have a URL or API** → Use **Day 1 → 🔍 Bring Your Own Data — Collect**
+- **I have raw data** → Use **Day 2 → 🔍 Bring Your Own Data — Clean**
+- **I have clean data** → Use **Day 3 → 🔍 Bring Your Own Data — Explore** or **🔍 Explore Your Own Data**
 
 Use the sidebar to navigate.
     """)
@@ -171,16 +173,26 @@ extract → clean → explore, using *Panthera leo* (lion) occurrence records.
 elif app_choice == "🔍 Explore Your Own Data":
     st.title("🔍 Explore Your Own Data")
     st.markdown("""
-Upload a CSV file — from your own collection, a cleaned Day 2 output, or any other source —
+Upload a CSV or XLSX file — from your own collection, a cleaned Day 2 output, or any other source —
 and use the tools below to generate a preliminary exploratory analysis.
     """)
 
-    uploaded = st.file_uploader("Upload CSV", type=["csv"])
+    uploaded = st.file_uploader("Upload file", type=["csv", "xlsx"])
 
     if uploaded:
-        df = pd.read_csv(uploaded)
-        st.success(f"Loaded: {len(df)} rows × {len(df.columns)} columns")
+        try:
+            if uploaded.name.endswith(".xlsx"):
+                df = pd.read_excel(uploaded)
+            else:
+                df = pd.read_csv(uploaded)
+            st.success(f"Loaded: {len(df)} rows × {len(df.columns)} columns")
+        except Exception as e:
+            st.error(f"Could not load file: {e}")
+            df = None
+    else:
+        df = None
 
+    if df is not None:
         st.subheader("Column Types")
         col_info = pd.DataFrame({
             "Column": df.columns,
@@ -221,7 +233,197 @@ Before using this dataset in your research, check:
         summary = df.describe(include="all").to_csv().encode("utf-8")
         st.download_button("⬇️ Download Summary Statistics CSV", summary, "exploratory_summary.csv", "text/csv")
     else:
-        st.info("Upload a CSV file above to begin.")
+        st.info("Upload a file above to begin.")
+
+# ── BYOD: Explore ─────────────────────────────────────────────────────────────
+
+elif app_choice == "🔍 Bring Your Own Data — Explore":
+    st.title("🔍 Bring Your Own Data — Step 3: Explore")
+    st.markdown("""
+This section provides a full exploratory analysis dashboard for the data you collected and
+cleaned in Days 1 and 2. You can also upload a new file directly.
+
+The same four criteria used to assess the case study datasets apply here:
+**Coverage, Completeness, Consistency, and Plausibility.**
+    """)
+
+    st.markdown("---")
+    st.subheader("⚙️ Load Your Cleaned Data")
+
+    data_source = st.radio(
+        "Where is your data coming from?",
+        [
+            "Carried forward from Day 2 BYOD cleaning",
+            "Upload a file (CSV, XLSX, or JSON)",
+        ],
+    )
+
+    df = None
+
+    if data_source == "Carried forward from Day 2 BYOD cleaning":
+        if "byod_clean_df" in st.session_state:
+            df = st.session_state["byod_clean_df"]
+            st.success(f"Loaded from Day 2 session: {len(df)} rows × {len(df.columns)} columns.")
+        elif "byod_flat_df" in st.session_state:
+            df = st.session_state["byod_flat_df"]
+            st.info(f"No cleaned data found — using flat data from Day 1 collection: {len(df)} rows × {len(df.columns)} columns.")
+        else:
+            st.warning("""
+No data found from Days 1 or 2. Either:
+- Go to **Day 1 → 🔍 Bring Your Own Data — Collect** to collect data, or
+- Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to clean it, or
+- Upload a file below instead.
+            """)
+
+    else:
+        uploaded = st.file_uploader(
+            "Upload your cleaned data file",
+            type=["csv", "xlsx", "json"],
+            help="CSV and XLSX files are loaded directly. JSON must contain a list of records.",
+        )
+        if uploaded:
+            try:
+                if uploaded.name.endswith(".xlsx"):
+                    df = pd.read_excel(uploaded)
+                    st.success(f"Loaded XLSX: {len(df)} rows × {len(df.columns)} columns.")
+                elif uploaded.name.endswith(".json"):
+                    raw = json.load(uploaded)
+                    if isinstance(raw, list):
+                        df = pd.json_normalize(raw)
+                    elif isinstance(raw, dict):
+                        list_keys = [k for k, v in raw.items() if isinstance(v, list)]
+                        if list_keys:
+                            chosen_key = st.selectbox("Select the records array:", list_keys)
+                            df = pd.json_normalize(raw[chosen_key])
+                        else:
+                            df = pd.DataFrame([raw])
+                    st.success(f"Loaded JSON: {len(df)} rows × {len(df.columns)} columns.")
+                else:
+                    df = pd.read_csv(uploaded)
+                    st.success(f"Loaded CSV: {len(df)} rows × {len(df.columns)} columns.")
+            except Exception as e:
+                st.error(f"Could not load file: {e}")
+
+    # ── Exploration Dashboard ─────────────────────────────────────────────────
+    if df is not None:
+        st.markdown("---")
+
+        # ── 1. Dataset Overview ───────────────────────────────────────────────
+        st.subheader("1. Dataset Overview")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Rows", len(df))
+        col2.metric("Columns", len(df.columns))
+        col3.metric("Missing Cells", int(df.isnull().sum().sum()))
+
+        # ── 2. Column Profile ─────────────────────────────────────────────────
+        st.subheader("2. Column Profile")
+        col_info = pd.DataFrame({
+            "Column": df.columns,
+            "Type": df.dtypes.astype(str).values,
+            "Non-Null Count": df.notnull().sum().values,
+            "Null Count": df.isnull().sum().values,
+            "Unique Values": df.nunique().values,
+        })
+        st.dataframe(col_info, use_container_width=True)
+
+        # ── 3. Summary Statistics ─────────────────────────────────────────────
+        st.subheader("3. Summary Statistics")
+        st.dataframe(df.describe(include="all"), use_container_width=True)
+
+        # ── 4. Missingness Report ─────────────────────────────────────────────
+        st.subheader("4. Missingness Report")
+        miss = df.isnull().sum()
+        miss = miss[miss > 0]
+        if miss.empty:
+            st.success("No missing values in this dataset.")
+        else:
+            st.dataframe(miss.rename("Missing Count").to_frame(), use_container_width=True)
+            miss_pct = (miss / len(df) * 100).round(1)
+            st.bar_chart(miss_pct.rename("% Missing"))
+
+        # ── 5. Value Distributions ────────────────────────────────────────────
+        st.subheader("5. Value Distributions")
+        st.markdown("Select a column to view its value distribution.")
+        dist_col = st.selectbox("Select column for distribution chart:", df.columns.tolist(), key="byod_dist")
+        if dist_col:
+            if pd.api.types.is_numeric_dtype(df[dist_col]):
+                st.bar_chart(df[dist_col].dropna().value_counts(bins=20).sort_index())
+            else:
+                vc = df[dist_col].value_counts().head(25)
+                st.bar_chart(vc)
+
+        # ── 6. Numeric Correlations ───────────────────────────────────────────
+        num_cols = df.select_dtypes(include="number").columns.tolist()
+        if len(num_cols) >= 2:
+            st.subheader("6. Numeric Column Correlations")
+            st.markdown("Pearson correlation matrix for all numeric columns.")
+            corr = df[num_cols].corr().round(2)
+            st.dataframe(corr, use_container_width=True)
+
+        # ── 7. Four-Criteria Self-Assessment ─────────────────────────────────
+        st.subheader("7. Four-Criteria Self-Assessment")
+        st.markdown("""
+Use the checks below to assess your dataset before using it in your research.
+These are the same criteria applied to the case study datasets in Apps 5 and 6.
+        """)
+
+        with st.expander("Coverage — Does the dataset represent your target population?"):
+            st.markdown("""
+- Check whether all expected countries, time periods, or groups are present.
+- Look for systematic absences (e.g., all records from one country, or only recent years).
+- Ask: would a missing subgroup bias your conclusions?
+            """)
+            st.text_area("Your coverage notes:", key="byod_coverage_notes", height=80)
+
+        with st.expander("Completeness — Are key fields sufficiently populated?"):
+            st.markdown("""
+- Review the Missingness Report above.
+- A column with >20% missing values may be unreliable for analysis.
+- Ask: is the missingness random, or does it follow a pattern (e.g., missing for certain countries)?
+            """)
+            st.text_area("Your completeness notes:", key="byod_completeness_notes", height=80)
+
+        with st.expander("Consistency — Are values standardized across records?"):
+            st.markdown("""
+- Look for label variants (e.g., `"USA"` vs `"United States"` vs `"US"`).
+- Check for mixed date formats or numeric formats.
+- Use the Value Distributions section above to spot inconsistencies.
+            """)
+            st.text_area("Your consistency notes:", key="byod_consistency_notes", height=80)
+
+        with st.expander("Plausibility — Do values fall within expected ranges?"):
+            st.markdown("""
+- Check minimum and maximum values for numeric columns.
+- Look for impossible values (negative counts, future dates, values outside known bounds).
+- Compare against external benchmarks if available.
+            """)
+            st.text_area("Your plausibility notes:", key="byod_plausibility_notes", height=80)
+
+        # ── 8. Downloads ──────────────────────────────────────────────────────
+        st.markdown("---")
+        st.subheader("⬇️ Download Exploratory Output")
+
+        summary_csv = df.describe(include="all").to_csv().encode("utf-8")
+        st.download_button("Download Summary Statistics (CSV)", summary_csv,
+                           "byod_summary_statistics.csv", "text/csv")
+
+        col_csv = col_info.to_csv(index=False).encode("utf-8")
+        st.download_button("Download Column Profile (CSV)", col_csv,
+                           "byod_column_profile.csv", "text/csv")
+
+        full_csv = df.to_csv(index=False).encode("utf-8")
+        st.download_button("Download Full Dataset (CSV)", full_csv,
+                           "byod_full_dataset.csv", "text/csv")
+
+        try:
+            buffer = io.BytesIO()
+            df.to_excel(buffer, index=False, engine="openpyxl")
+            buffer.seek(0)
+            st.download_button("Download Full Dataset (XLSX)", buffer,
+                               "byod_full_dataset.xlsx",
+                               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        except Exception:
+            pass
 
 # ── Ethics ────────────────────────────────────────────────────────────────────
 
