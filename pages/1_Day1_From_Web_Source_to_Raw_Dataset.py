@@ -645,6 +645,79 @@ it finds and let you choose which one to use.
         raw = st.session_state["byod_raw"]
         st.markdown("---")
         st.subheader("🗂️ Step 1b — Identify the Records Array")
+
+        with st.expander("📖 What is JSON? A plain-English guide for non-coders (click to expand)"):
+            st.markdown("""
+### JSON is just a structured text file — like a spreadsheet, but written differently
+
+When an API sends you data, it arrives as **JSON** (JavaScript Object Notation).
+You do not need to know how to code to understand it. Here is all you need to know:
+
+---
+
+#### The spreadsheet analogy
+
+Imagine a spreadsheet with three columns and two rows:
+
+| Name | Country | Year |
+|---|---|---|
+| Insulin | Human | 2020 |
+| Albumin | Mouse | 2021 |
+
+In JSON, the same data looks like this:
+
+```
+[
+  { "Name": "Insulin",  "Country": "Human", "Year": 2020 },
+  { "Name": "Albumin",  "Country": "Mouse", "Year": 2021 }
+]
+```
+
+**Reading the symbols:**
+
+| Symbol | What it means | Spreadsheet equivalent |
+|---|---|---|
+| `[ ]` square brackets | A **list** of items | The whole spreadsheet (all rows) |
+| `{ }` curly braces | **One record** | One row |
+| `"Name": "Insulin"` | A **field and its value** | One cell: column = `Name`, value = `Insulin` |
+| `,` comma | Separates items | Nothing visible — just moves to the next item |
+
+---
+
+#### Nesting — when a field contains another record
+
+APIs often store related information *inside* a field, rather than as a flat value:
+
+```
+{
+  "Name": "Insulin",
+  "organism": {
+    "scientificName": "Homo sapiens",
+    "commonName":     "Human"
+  }
+}
+```
+
+Here, `organism` is not a simple value — it is a **sub-record** with its own fields inside.
+To refer to the scientific name, you write `organism.scientificName` (using a dot to go one level deeper).
+This is called **dot notation**, and it is exactly what the field dropdowns in Step 1c use.
+
+---
+
+#### `null` means missing — not zero
+
+You will sometimes see `"Year": null`. This means the source did not provide a value for that field.
+It is **not** the same as zero. In a spreadsheet it would appear as an empty cell.
+
+---
+
+#### Why does every API look different?
+
+There is no universal standard for JSON structure. Each API designer chose their own layout.
+ClinicalTrials wraps records in `"studies"`, WHO uses `"value"`, Crossref uses `"items"`.
+This is why Step 1b asks you to identify which key holds the list — because it varies by source.
+            """)
+
         st.markdown("""
 The raw JSON you just fetched is a nested structure. Most APIs wrap the actual list of records
 inside a key such as `results`, `items`, `studies`, or `value`.
@@ -695,8 +768,13 @@ Each record in the API response contains many fields. Here you choose which ones
 as columns in your dataset.
 
 For each column:
-- **Left box (Column name):** type a short, readable name for the column (e.g. `Protein Name`)
-- **Right dropdown (JSON field):** select the corresponding field from the API response
+- **Left box (Column name):** type a short, readable name for the column — this will become the column header in your spreadsheet (e.g. `Protein Name`, `Country`, `Year`)
+- **Right dropdown (JSON field):** select the field from the API response to put in that column
+
+> **About the dot notation in the dropdown** (e.g. `organism.scientificName`):
+> A dot means the field is *nested inside* another field. `organism.scientificName` means:
+> go into the `organism` sub-record and take the `scientificName` value from it.
+> You do not need to understand why — just pick the field whose name matches what you want.
 
 Then click **📊 Build Flat Table** to create your dataset.
             """)
