@@ -627,10 +627,28 @@ it finds and let you choose which one to use.
             else:
                 try:
                     with st.spinner("Fetching and parsing webpage…"):
-                        tables = pd.read_html(page_url, flavor="lxml")
-                    st.success(f"Found {len(tables)} table(s) on the page.")
-                    st.session_state["byod_scraped_tables"] = tables
-                    st.session_state["byod_source"] = "scrape"
+                        from bs4 import BeautifulSoup
+                        _resp = requests.get(
+                            page_url,
+                            headers={"User-Agent": "Mozilla/5.0 (workshop-byod)"},
+                            timeout=30,
+                        )
+                        _resp.raise_for_status()
+                        _soup = BeautifulSoup(_resp.text, "html.parser")
+                        _html_tables = _soup.find_all("table")
+                        tables = []
+                        for _tbl in _html_tables:
+                            try:
+                                _df = pd.read_html(str(_tbl))[0]
+                                tables.append(_df)
+                            except Exception:
+                                pass
+                    if tables:
+                        st.success(f"Found {len(tables)} table(s) on the page.")
+                        st.session_state["byod_scraped_tables"] = tables
+                        st.session_state["byod_source"] = "scrape"
+                    else:
+                        st.warning("No tables found on this page. The page may use JavaScript to render its tables — try a different URL.")
                 except Exception as e:
                     st.error(f"Could not extract tables: {e}")
                     st.info("This may happen if the page uses JavaScript to render its tables, or if the URL is not publicly accessible.")
