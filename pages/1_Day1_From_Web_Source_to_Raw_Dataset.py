@@ -32,19 +32,28 @@ def load_or_fetch_json(cache_path, fetch_fn):
 
 def flatten_multiindex(tables):
     """Flatten MultiIndex column headers produced by pd.read_html on complex tables."""
+    def _clean_level(s):
+        s = str(s).strip()
+        return s if s and s != "nan" and not s.startswith("Unnamed") else ""
+
     cleaned = []
     for t in tables:
         if isinstance(t.columns, pd.MultiIndex):
-            t.columns = [
-                " ".join(
-                    str(lvl) for lvl in col
-                    if str(lvl) != "nan" and not str(lvl).startswith("Unnamed")
-                ).strip() or f"Col_{i}"
-                for i, col in enumerate(t.columns)
-            ]
+            new_cols = []
+            for i, col in enumerate(t.columns):
+                parts = [_clean_level(lvl) for lvl in col]
+                parts = [p for p in parts if p]  # drop empty
+                # deduplicate consecutive identical parts (e.g. 'Locations Locations')
+                deduped = []
+                for p in parts:
+                    if not deduped or p != deduped[-1]:
+                        deduped.append(p)
+                new_cols.append(" ".join(deduped) if deduped else f"Col_{i}")
+            t.columns = new_cols
         else:
             t.columns = [
-                c if not str(c).startswith("Unnamed") else f"Col_{i}"
+                str(c) if (not str(c).startswith("Unnamed") and not isinstance(c, int))
+                else f"Col_{i}"
                 for i, c in enumerate(t.columns)
             ]
         cleaned.append(t)
