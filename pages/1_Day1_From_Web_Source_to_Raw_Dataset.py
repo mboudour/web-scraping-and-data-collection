@@ -53,10 +53,21 @@ def flatten_multiindex(tables):
 
 def auto_bar_chart(df, label="Distribution"):
     """Show a bar chart for the most informative categorical column in df."""
-    cat_cols = [c for c in df.columns if df[c].dtype == object and df[c].nunique() <= 30]
+    def _is_scalar_col(series):
+        """Return True only if the column contains no lists or dicts (hashable scalars)."""
+        sample = series.dropna().head(20)
+        return not any(isinstance(v, (list, dict)) for v in sample)
+
+    cat_cols = [
+        c for c in df.columns
+        if df[c].dtype == object and _is_scalar_col(df[c]) and df[c].nunique() <= 30
+    ]
     if not cat_cols:
-        # Fall back to any column with few unique values
-        cat_cols = [c for c in df.columns if df[c].nunique() <= 30]
+        # Fall back to any scalar column with few unique values
+        cat_cols = [
+            c for c in df.columns
+            if _is_scalar_col(df[c]) and df[c].nunique() <= 30
+        ]
     if cat_cols:
         col = cat_cols[0]
         st.markdown(f"**{label} — `{col}`**")
