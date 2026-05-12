@@ -544,8 +544,10 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                         byod_raw = r.json()
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_get"
-                        st.success("Data fetched successfully.")
-                        st.json(byod_raw if not isinstance(byod_raw, list) else byod_raw[:2], expanded=False)
+                        st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        st.markdown("**Raw JSON preview** (first record):")
+                        preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
+                        st.json(preview, expanded=True)
                     else:
                         st.error(f"Request failed: {r.text[:300]}")
                 except Exception as e:
@@ -588,8 +590,10 @@ Paste the base URL and the JSON body below.
                         byod_raw = r.json()
                         st.session_state["byod_raw"] = byod_raw
                         st.session_state["byod_source"] = "api_post"
-                        st.success("Data fetched successfully.")
-                        st.json(byod_raw if not isinstance(byod_raw, list) else byod_raw[:2], expanded=False)
+                        st.success("✅ Data fetched successfully! Scroll down to Step 1b to continue.")
+                        st.markdown("**Raw JSON preview** (first record):")
+                        preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
+                        st.json(preview, expanded=True)
                     else:
                         st.error(f"Request failed: {r.text[:300]}")
                 except json.JSONDecodeError:
@@ -642,8 +646,17 @@ it finds and let you choose which one to use.
         st.markdown("---")
         st.subheader("🗂️ Step 1b — Identify the Records Array")
         st.markdown("""
-API responses are usually nested. You need to tell the app **which key contains the list of records**
-(e.g., `studies` for ClinicalTrials, `results` for NIH RePORTER, `items` for Crossref).
+The raw JSON you just fetched is a nested structure. Most APIs wrap the actual list of records
+inside a key such as `results`, `items`, `studies`, or `value`.
+
+The dropdown below shows all keys in the response whose value is a list.
+**Select the one that contains the records** (usually the one with the most items).
+
+For example:
+- UniProt → select `results`
+- ClinicalTrials → select `studies`
+- Crossref → select `items`
+- WHO GHO → select `value`
         """)
 
         if isinstance(raw, dict):
@@ -675,11 +688,17 @@ API responses are usually nested. You need to tell the app **which key contains 
         if records:
             st.success(f"Found {len(records)} records.")
 
-            # ── Column Mapper ─────────────────────────────────────────────────
-            st.subheader("🗂️ Step 1c — Map JSON Fields to Columns")
+            # ── Column Mapper ─────────────────────────────────────────────────────
+            st.subheader("🗂️ Step 1c — Choose Which Fields to Keep")
             st.markdown("""
-For each column you want in your dataset, enter a column name and select the corresponding
-field from the first record. You can add up to 15 columns.
+Each record in the API response contains many fields. Here you choose which ones to keep
+as columns in your dataset.
+
+For each column:
+- **Left box (Column name):** type a short, readable name for the column (e.g. `Protein Name`)
+- **Right dropdown (JSON field):** select the corresponding field from the API response
+
+Then click **📊 Build Flat Table** to create your dataset.
             """)
 
             first = records[0] if records else {}
