@@ -429,7 +429,7 @@ across disciplines. Copy a Base URL, choose the matching method in the wizard, a
     ]
     for _disc, _name, _url, _pairs, _method, _records, _docs in _apis:
         _md_rows.append(
-            f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} | {_records} | [docs]({_docs}) |"
+            f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} | {_records} | {_docs} |"
         )
     st.markdown("\n".join(_md_rows))
 
