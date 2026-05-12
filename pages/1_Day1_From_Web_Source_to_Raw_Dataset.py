@@ -315,10 +315,21 @@ elif app_choice == "🔍 Bring Your Own Data — Collect":
 This section lets you apply the **same data collection workflow** used in the case studies
 to your own research source — without writing any code.
 
-Choose one of three methods below:
-- **Query an API (GET request)** — paste a URL from the reference list and set parameters
-- **Query an API (POST request)** — for APIs that require a JSON body (e.g., NIH RePORTER)
-- **Scrape a Webpage Table** — paste the URL of any page containing an HTML table
+### How to use this section
+1. **Find your source** in the reference tables below (API or webpage).
+2. **Copy the Base URL** from the table.
+3. **Scroll down to the wizard**, choose the right method, paste the URL, fill in the parameters, and click **Fetch Data**.
+
+> ⚠️ **Important:** The URLs in the reference tables are *base URLs* — they are **incomplete on their own**.
+> Clicking a base URL directly in your browser will return an error like *"query is a required parameter"*.
+> This is normal. The base URL only works when combined with parameters, which the wizard does for you automatically.
+
+### Three collection methods
+| Method | When to use it |
+|---|---|
+| **Query an API (GET request)** | The API table shows `GET` in the Method column |
+| **Query an API (POST request)** | The API table shows `POST` in the Method column (only NIH RePORTER in this list) |
+| **Scrape a Webpage Table** | You want data from a Wikipedia or similar page that contains an HTML table |
 
 Your collected data will be available for cleaning in **Day 2 → Bring Your Own Data — Clean**.
     """)
@@ -328,7 +339,13 @@ Your collected data will be available for cleaning in **Day 2 → Bring Your Own
     st.subheader("📋 Reference: Verified Open APIs (No Key Required)")
     st.markdown("""
 The following APIs have been confirmed working as of May 2026. They require no registration
-or API key (or use a free demo key). Copy any Base URL directly into the wizard below.
+or API key (or use a free demo key).
+
+**How to read this table:**
+- **Base URL** — copy this into the wizard's *API Base URL* field. Do not open it directly in your browser.
+- **Example Parameters** — split these at the `&` sign into individual key–value pairs for the wizard.
+  For example, `query=insulin&format=json&size=50` becomes three rows: `query` / `insulin`, `format` / `json`, `size` / `50`.
+- **Method** — tells you which wizard tab to use: *GET request* or *POST request*.
     """)
 
     # ── API reference: rendered as markdown so URLs are clickable ────────────
@@ -439,6 +456,40 @@ scraper below.
     st.markdown("---")
     st.subheader("⚙️ Interactive Collection Wizard")
 
+    with st.expander("📖 Worked Example — UniProt REST API (click to expand)"):
+        st.markdown("""
+**Goal:** Fetch 50 records about *insulin* from the UniProt protein database.
+
+**Step 1 — Find the row** in the API table above:
+- API Name: UniProt REST API
+- Base URL: `https://rest.uniprot.org/uniprotkb/search`
+- Example Parameters: `query=insulin&format=json&size=50`
+- Method: **GET**
+
+**Step 2 — Select method:** Choose **Query an API (GET request)** in the wizard below.
+
+**Step 3 — Paste the Base URL** into the *API Base URL* field:
+```
+https://rest.uniprot.org/uniprotkb/search
+```
+
+**Step 4 — Set the number of parameters to 3**, then fill in:
+| Key | Value |
+|---|---|
+| `query` | `insulin` |
+| `format` | `json` |
+| `size` | `50` |
+
+**Step 5 — Click 🚀 Fetch Data.**
+
+The wizard assembles the full URL `https://rest.uniprot.org/uniprotkb/search?query=insulin&format=json&size=50`
+and sends the request. You will see the raw JSON response appear below the button.
+
+> **Why does clicking the Base URL directly give an error?**
+> Because `query` is a required parameter — the API cannot return anything without knowing what to search for.
+> The wizard adds the parameters for you; the browser address bar does not.
+        """)
+
     method = st.radio(
         "Choose your data collection method:",
         ["Query an API (GET request)", "Query an API (POST request)", "Scrape a Webpage Table"],
@@ -447,7 +498,15 @@ scraper below.
 
     # ── Method 1: GET API ─────────────────────────────────────────────────────
     if method == "Query an API (GET request)":
-        st.markdown("Paste the base URL of the API and add your query parameters below.")
+        st.markdown("""
+Paste the **Base URL** from the reference table above into the field below, then split the
+**Example Parameters** into individual key–value pairs (one per row).
+
+For example, `query=insulin&format=json&size=50` → set *Number of parameters* to **3** and enter:
+- Key: `query` / Value: `insulin`
+- Key: `format` / Value: `json`
+- Key: `size` / Value: `50`
+        """)
 
         base_url = st.text_input(
             "API Base URL",
