@@ -627,25 +627,18 @@ it finds and let you choose which one to use.
             else:
                 try:
                     with st.spinner("Fetching and parsing webpage…"):
-                        from bs4 import BeautifulSoup
+                        from io import StringIO
                         _resp = requests.get(
                             page_url,
                             headers={"User-Agent": "Mozilla/5.0 (workshop-byod)"},
                             timeout=30,
                         )
                         _resp.raise_for_status()
-                        _soup = BeautifulSoup(_resp.text, "html.parser")
-                        _html_tables = _soup.find_all("table")
-                        tables = []
-                        for _tbl in _html_tables:
-                            try:
-                                _df = pd.read_html(str(_tbl))[0]
-                                tables.append(_df)
-                            except Exception:
-                                pass
+                        tables = pd.read_html(StringIO(_resp.text))
                     if tables:
                         st.success(f"Found {len(tables)} table(s) on the page.")
-                        st.session_state["byod_scraped_tables"] = tables
+                        st.session_state["byod_scraped_tables"] = [t.to_dict(orient='records') for t in tables]
+                        st.session_state["byod_scraped_dfs"] = tables
                         st.session_state["byod_source"] = "scrape"
                     else:
                         st.warning("No tables found on this page. The page may use JavaScript to render its tables — try a different URL.")
@@ -653,18 +646,28 @@ it finds and let you choose which one to use.
                     st.error(f"Could not extract tables: {e}")
                     st.info("This may happen if the page uses JavaScript to render its tables, or if the URL is not publicly accessible.")
 
-        if "byod_scraped_tables" in st.session_state:
-            tables = st.session_state["byod_scraped_tables"]
+        if "byod_scraped_dfs" in st.session_state:
+            tables = st.session_state["byod_scraped_dfs"]
             table_labels = [f"Table {i+1} — {t.shape[0]} rows × {t.shape[1]} cols" for i, t in enumerate(tables)]
             chosen = st.selectbox("Select the table you want to use:", table_labels)
             idx = table_labels.index(chosen)
             selected_table = tables[idx]
             st.dataframe(selected_table.head(20), use_container_width=True)
 
-            if st.button("✅ Use This Table", key="use_table"):
+            # Download as JSON (consistent with API output format)
+            _json_bytes = selected_table.to_json(orient="records", indent=2).encode("utf-8")
+            st.download_button(
+                "⬇️ Download Table as JSON to your computer",
+                _json_bytes,
+                "byod_scraped_table.json",
+                "application/json",
+                key="dl_scrape_json",
+            )
+
+            if st.button("✅ Use This Table → Day 2", key="use_table"):
                 st.session_state["byod_flat_df"] = selected_table
                 st.session_state["byod_source"] = "scrape"
-                st.success("Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
+                st.success("✅ Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
 
     # ── Day 2 prompt (shown once data has been fetched via API) ──────────────
     if "byod_raw" in st.session_state and st.session_state.get("byod_source") in ("api_get", "api_post"):
