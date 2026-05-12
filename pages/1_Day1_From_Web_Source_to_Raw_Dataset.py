@@ -1,7 +1,6 @@
 """
 Day 1 — From Web Source to Raw Dataset
-Applications: ClinicalTrials.gov, WHO GHO, NIH RePORTER, Congress.gov
-+ Bring Your Own Data — Collect
+Unified Collect Data interface: four presets + open API wizard + webpage scraping
 """
 
 import os, json, requests
@@ -10,7 +9,7 @@ import streamlit as st
 
 st.set_page_config(page_title="Day 1 — From Web Source to Raw Dataset", page_icon="📥", layout="wide")
 
-# ── Robust cache directory: works locally and on Streamlit Cloud ──────────────
+# ── Robust cache directory ────────────────────────────────────────────────────
 import pathlib
 _repo_root = pathlib.Path(__file__).resolve().parent
 if _repo_root.name == "pages":
@@ -30,22 +29,80 @@ def load_or_fetch_json(cache_path, fetch_fn):
         json.dump(data, f, indent=2)
     return data
 
+
+def flatten_multiindex(tables):
+    """Flatten MultiIndex column headers produced by pd.read_html on complex tables."""
+    cleaned = []
+    for t in tables:
+        if isinstance(t.columns, pd.MultiIndex):
+            t.columns = [
+                " ".join(
+                    str(lvl) for lvl in col
+                    if str(lvl) != "nan" and not str(lvl).startswith("Unnamed")
+                ).strip() or f"Col_{i}"
+                for i, col in enumerate(t.columns)
+            ]
+        else:
+            t.columns = [
+                c if not str(c).startswith("Unnamed") else f"Col_{i}"
+                for i, c in enumerate(t.columns)
+            ]
+        cleaned.append(t)
+    return cleaned
+
+
+def auto_bar_chart(df, label="Distribution"):
+    """Show a bar chart for the most informative categorical column in df."""
+    cat_cols = [c for c in df.columns if df[c].dtype == object and df[c].nunique() <= 30]
+    if not cat_cols:
+        # Fall back to any column with few unique values
+        cat_cols = [c for c in df.columns if df[c].nunique() <= 30]
+    if cat_cols:
+        col = cat_cols[0]
+        st.markdown(f"**{label} — `{col}`**")
+        st.bar_chart(df[col].value_counts())
+    else:
+        st.info("No categorical column with ≤ 30 unique values found for automatic chart.")
+
+
+def save_and_display_result(df, raw, source_label):
+    """Show preview, chart, download button, and Day 2 handoff for any fetched dataset."""
+    st.success(f"✅ Loaded {len(df)} records from {source_label}.")
+
+    st.markdown("#### Preview (first 20 rows)")
+    st.dataframe(df.head(20), use_container_width=True)
+
+    st.markdown("#### Distribution")
+    auto_bar_chart(df)
+
+    st.markdown("#### Raw JSON (first record)")
+    preview = raw[0] if isinstance(raw, list) else raw
+    st.json(preview, expanded=False)
+
+    _raw_bytes = json.dumps(raw, indent=2).encode("utf-8")
+    st.download_button(
+        "⬇️ Download Raw JSON to your computer",
+        _raw_bytes, "byod_raw.json", "application/json",
+        key=f"dl_raw_{source_label.replace(' ', '_')}",
+    )
+
+    st.session_state["byod_raw"] = raw
+    st.session_state["byod_flat_df"] = df
+    st.session_state["byod_source"] = "api_get"
+    st.info("✅ Data saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** when you are ready.")
+
+
 # ── sidebar ───────────────────────────────────────────────────────────────────
 
 st.sidebar.title("Day 1 Navigation")
 app_choice = st.sidebar.radio(
-    "Select Application",
-    [
-        "Overview",
-        "App 1 — ClinicalTrials.gov",
-        "App 2 — WHO Global Health Observatory",
-        "App 3 — NIH RePORTER",
-        "App 4 — Congress.gov (U.S. Bills)",
-        "🔍 Bring Your Own Data — Collect",
-    ],
+    "Select section",
+    ["Overview", "🔍 Collect Data"],
 )
 
-# ── overview ──────────────────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# OVERVIEW
+# ══════════════════════════════════════════════════════════════════════════════
 
 if app_choice == "Overview":
     st.title("📥 Day 1 — From Web Source to Raw Dataset")
@@ -54,302 +111,244 @@ if app_choice == "Overview":
 research data and how the extraction process works in a no-code setting.
 
 ### What You Will Do Today
-1. Identify suitable online sources for your research question.
-2. Understand the structure of API responses and HTML pages.
-3. Fetch raw data from four public sources.
+1. Identify a suitable online source for your research question.
+2. Understand the structure of API responses and HTML tables.
+3. Fetch raw data from a public source — using one of four guided examples or your own.
 4. Inspect the raw output and note its limitations.
+5. Save your dataset to carry forward into Day 2.
 
-### Applications
-| # | Source | Domain | Data Type |
-|---|--------|--------|-----------|
-| 1 | ClinicalTrials.gov | Health | Structured JSON (API) |
-| 2 | WHO Global Health Observatory | Health | Structured JSON (OData API) |
-| 3 | NIH RePORTER | Life Sciences | Structured JSON (API) |
-| 4 | Congress.gov | Social Sciences | Structured JSON (API) |
+### Two types of online source
+| Type | What it is | How we collect it |
+|---|---|---|
+| **API** | A structured data service that returns JSON | Send a request with parameters; receive records |
+| **Webpage table** | An HTML `<table>` embedded in a webpage | Scrape the page; extract the table automatically |
 
-Use the sidebar to explore each application, or go to **🔍 Bring Your Own Data — Collect** to apply
-the same workflow to your own research source.
+Use the sidebar to go to **🔍 Collect Data** and choose your source.
     """)
 
-# ── App 1: ClinicalTrials.gov ─────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# COLLECT DATA
+# ══════════════════════════════════════════════════════════════════════════════
 
-elif app_choice == "App 1 — ClinicalTrials.gov":
-    st.title("🏥 App 1 — ClinicalTrials.gov")
+elif app_choice == "🔍 Collect Data":
+    st.title("🔍 Day 1 — Collect Data")
     st.markdown("""
+This page lets you fetch data from a public online source — no code required.
+
+**Choose one of the four guided examples below**, or scroll down to the
+**Interactive Collection Wizard** to use any API or webpage of your choice.
+Your data will be saved automatically so you can continue in Day 2.
+    """)
+
+    # ── SECTION 1: Four guided presets ───────────────────────────────────────
+    st.markdown("---")
+    st.subheader("📌 Guided Examples — Four Case Studies")
+    st.markdown("""
+Each example below uses a real public API with a pre-configured research question.
+Click **▶ Run this example** to fetch the data, see a preview and a distribution chart,
+and save it for Day 2.
+    """)
+
+    # ── Preset 1: ClinicalTrials.gov ─────────────────────────────────────────
+    with st.expander("🏥 Example 1 — ClinicalTrials.gov (Health)"):
+        st.markdown("""
 **Source:** [ClinicalTrials.gov v2 API](https://clinicaltrials.gov/api/v2/studies)
 
-ClinicalTrials.gov is a registry of publicly and privately supported clinical studies.
-Its v2 API returns structured JSON records for each registered trial.
+**Research question:** What are the characteristics (phase, status, conditions) of recently
+registered clinical trials related to *diabetes*?
 
-**Research question:** What are the characteristics (phase, status, conditions) of
-recently registered trials related to *diabetes*?
-    """)
-
-    cache_path = os.path.join(CACHE_DIR, "day1_app1_clinicaltrials_raw.json")
-
-    def fetch_clinicaltrials():
-        url = "https://clinicaltrials.gov/api/v2/studies"
-        params = {"query.cond": "diabetes", "pageSize": 50, "format": "json"}
-        r = requests.get(url, params=params, timeout=30)
-        r.raise_for_status()
-        return r.json()
-
-    with st.spinner("Loading ClinicalTrials.gov data…"):
-        try:
-            data = load_or_fetch_json(cache_path, fetch_clinicaltrials)
-            studies = data.get("studies", [])
-            st.success(f"Loaded {len(studies)} trial records.")
-
-            st.subheader("Raw JSON Structure (first record, truncated)")
-            if studies:
-                st.json(studies[0], expanded=False)
-
-            st.subheader("Flat Preview Table")
-            rows = []
-            for s in studies:
-                proto = s.get("protocolSection", {})
-                id_mod = proto.get("identificationModule", {})
-                status_mod = proto.get("statusModule", {})
-                design_mod = proto.get("designModule", {})
-                cond_mod = proto.get("conditionsModule", {})
-                rows.append({
-                    "NCT ID": id_mod.get("nctId", ""),
-                    "Title": str(id_mod.get("briefTitle", ""))[:60],
-                    "Status": status_mod.get("overallStatus", ""),
-                    "Phase": ", ".join(design_mod.get("phases", [])),
-                    "Conditions": ", ".join(cond_mod.get("conditions", [])[:2]),
-                })
-            df = pd.DataFrame(rows)
-            st.dataframe(df, use_container_width=True)
-
-            st.subheader("Status Distribution")
-            st.bar_chart(df["Status"].value_counts())
-
-            with st.expander("📌 Day 1 Teaching Note"):
-                st.markdown("""
+**How it works:** The API is queried with `query.cond=diabetes&pageSize=50&format=json`.
+It returns a JSON list of trial records, each containing nested sub-objects for status,
+design, and conditions.
+        """)
+        if st.button("▶ Run Example 1 — ClinicalTrials.gov", key="run_preset1"):
+            cache_path = os.path.join(CACHE_DIR, "day1_app1_clinicaltrials_raw.json")
+            def fetch_ct():
+                r = requests.get(
+                    "https://clinicaltrials.gov/api/v2/studies",
+                    params={"query.cond": "diabetes", "pageSize": 50, "format": "json"},
+                    timeout=30,
+                )
+                r.raise_for_status()
+                return r.json()
+            try:
+                with st.spinner("Fetching ClinicalTrials.gov data…"):
+                    data = load_or_fetch_json(cache_path, fetch_ct)
+                studies = data.get("studies", [])
+                rows = []
+                for s in studies:
+                    proto = s.get("protocolSection", {})
+                    id_mod = proto.get("identificationModule", {})
+                    status_mod = proto.get("statusModule", {})
+                    design_mod = proto.get("designModule", {})
+                    cond_mod = proto.get("conditionsModule", {})
+                    rows.append({
+                        "NCT ID": id_mod.get("nctId", ""),
+                        "Title": str(id_mod.get("briefTitle", ""))[:60],
+                        "Status": status_mod.get("overallStatus", ""),
+                        "Phase": ", ".join(design_mod.get("phases", [])),
+                        "Conditions": ", ".join(cond_mod.get("conditions", [])[:2]),
+                    })
+                df = pd.DataFrame(rows)
+                save_and_display_result(df, studies, "ClinicalTrials.gov")
+                with st.expander("📌 Teaching note"):
+                    st.markdown("""
 - The raw JSON is **nested**: trial metadata, status, design, and conditions are in separate sub-objects.
 - The `phases` field is a **list** — a single trial may have multiple phases.
-- On **Day 2** we will flatten this structure into a clean tabular CSV.
-                """)
-        except Exception as e:
-            st.error(f"Could not load data: {e}")
+- On **Day 2** we will flatten this structure into a clean tabular dataset.
+                    """)
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
 
-# ── App 2: WHO GHO ────────────────────────────────────────────────────────────
-
-elif app_choice == "App 2 — WHO Global Health Observatory":
-    st.title("🌍 App 2 — WHO Global Health Observatory")
-    st.markdown("""
+    # ── Preset 2: WHO GHO ─────────────────────────────────────────────────────
+    with st.expander("🌍 Example 2 — WHO Global Health Observatory (Health)"):
+        st.markdown("""
 **Source:** [WHO GHO OData API](https://ghoapi.azureedge.net/api/)
 
-The WHO Global Health Observatory exposes country-level health indicators through the
-Athena OData API. Indicator `WHOSIS_000001` is life expectancy at birth.
-
 **Research question:** How does life expectancy at birth vary across countries and years?
-    """)
 
-    cache_path = os.path.join(CACHE_DIR, "day1_app2_who_raw.json")
-
-    def fetch_who():
-        url = "https://ghoapi.azureedge.net/api/WHOSIS_000001"
-        params = {"$top": 300}
-        r = requests.get(url, params=params, timeout=30)
-        r.raise_for_status()
-        return r.json()
-
-    with st.spinner("Loading WHO GHO data…"):
-        try:
-            data = load_or_fetch_json(cache_path, fetch_who)
-            records = data.get("value", [])
-            st.success(f"Loaded {len(records)} records.")
-
-            st.subheader("Raw JSON Structure (first record)")
-            if records:
-                st.json(records[0], expanded=True)
-
-            st.subheader("Flat Preview Table")
-            df = pd.DataFrame([{
-                "Country": r.get("SpatialDim", ""),
-                "Year": r.get("TimeDim", ""),
-                "Sex": r.get("Dim1", ""),
-                "Value": r.get("NumericValue", None),
-            } for r in records])
-            st.dataframe(df.head(50), use_container_width=True)
-
-            st.subheader("Records per Sex Category")
-            st.bar_chart(df["Sex"].value_counts())
-
-            with st.expander("📌 Day 1 Teaching Note"):
-                st.markdown("""
-- Each country-year combination appears **three times**: for Both sexes, Male, and Female.
-- This is a **structural feature** of the source — not an error — but it must be handled
-  during cleaning on Day 2 (e.g., filtering to `BTSX` = Both sexes).
+**How it works:** The API is queried for indicator `WHOSIS_000001` (life expectancy at birth)
+with `$top=300`. It returns country-year-sex records in a flat JSON list.
+        """)
+        if st.button("▶ Run Example 2 — WHO Global Health Observatory", key="run_preset2"):
+            cache_path = os.path.join(CACHE_DIR, "day1_app2_who_raw.json")
+            def fetch_who():
+                r = requests.get(
+                    "https://ghoapi.azureedge.net/api/WHOSIS_000001",
+                    params={"$top": 300}, timeout=30,
+                )
+                r.raise_for_status()
+                return r.json()
+            try:
+                with st.spinner("Fetching WHO GHO data…"):
+                    data = load_or_fetch_json(cache_path, fetch_who)
+                records = data.get("value", [])
+                df = pd.DataFrame([{
+                    "Country": r.get("SpatialDim", ""),
+                    "Year": r.get("TimeDim", ""),
+                    "Sex": r.get("Dim1", ""),
+                    "Value": r.get("NumericValue", None),
+                } for r in records])
+                save_and_display_result(df, records, "WHO GHO")
+                with st.expander("📌 Teaching note"):
+                    st.markdown("""
+- Each country-year combination appears **three times**: Both sexes, Male, and Female.
+- This is a structural feature of the source — not an error — but it must be handled during
+  cleaning on Day 2 (e.g., filtering to `BTSX` = Both sexes).
 - The `NumericValue` field may be `null` for some country-year combinations.
-                """)
-        except Exception as e:
-            st.error(f"Could not load data: {e}")
+                    """)
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
 
-# ── App 3: NIH RePORTER ───────────────────────────────────────────────────────
-
-elif app_choice == "App 3 — NIH RePORTER":
-    st.title("🔬 App 3 — NIH RePORTER")
-    st.markdown("""
-**Source:** [NIH RePORTER API](https://api.reporter.nih.gov/v2/projects/search)
-
-NIH RePORTER provides access to NIH-funded research projects. The API accepts
-keyword-based searches and returns structured JSON records.
+    # ── Preset 3: NIH RePORTER ────────────────────────────────────────────────
+    with st.expander("🔬 Example 3 — NIH RePORTER (Life Sciences)"):
+        st.markdown("""
+**Source:** [NIH RePORTER API v2](https://api.reporter.nih.gov/v2/projects/search)
 
 **Research question:** What are the characteristics of NIH-funded projects related to *genomics*?
-    """)
 
-    cache_path = os.path.join(CACHE_DIR, "day1_app3_nih_raw.json")
-
-    def fetch_nih():
-        url = "https://api.reporter.nih.gov/v2/projects/search"
-        payload = {
-            "criteria": {"advanced_text_search": {"operator": "and", "search_field": "all", "search_text": "genomics"}},
-            "offset": 0, "limit": 50,
-            "fields": ["ProjectNum", "ProjectTitle", "FiscalYear", "AwardAmount",
-                       "OrgName", "OrgCity", "OrgState", "AgencyCode", "ProjectStartDate", "ProjectEndDate"]
-        }
-        r = requests.post(url, json=payload, timeout=30)
-        r.raise_for_status()
-        return r.json()
-
-    with st.spinner("Loading NIH RePORTER data…"):
-        try:
-            data = load_or_fetch_json(cache_path, fetch_nih)
-            results = data.get("results", [])
-            st.success(f"Loaded {len(results)} project records.")
-
-            st.subheader("Raw JSON Structure (first record)")
-            if results:
-                st.json(results[0], expanded=False)
-
-            st.subheader("Flat Preview Table")
-            df = pd.DataFrame([{
-                "Project #": r.get("project_num", ""),
-                "Title": str(r.get("project_title", ""))[:60],
-                "FY": r.get("fiscal_year", ""),
-                "Award ($)": r.get("award_amount", None),
-                "Agency": r.get("agency_code", ""),
-                "Org": str(r.get("org_name", ""))[:30],
-                "State": r.get("org_state", ""),
-            } for r in results])
-            st.dataframe(df, use_container_width=True)
-
-            with st.expander("📌 Day 1 Teaching Note"):
-                st.markdown("""
+**How it works:** This API uses a **POST request** — instead of URL parameters, the query is
+sent as a JSON body. The API returns structured records for funded research projects.
+        """)
+        if st.button("▶ Run Example 3 — NIH RePORTER", key="run_preset3"):
+            cache_path = os.path.join(CACHE_DIR, "day1_app3_nih_raw.json")
+            def fetch_nih():
+                payload = {
+                    "criteria": {"advanced_text_search": {
+                        "operator": "and", "search_field": "all", "search_text": "genomics"
+                    }},
+                    "offset": 0, "limit": 50,
+                    "fields": ["ProjectNum", "ProjectTitle", "FiscalYear", "AwardAmount",
+                               "OrgName", "OrgCity", "OrgState", "AgencyCode",
+                               "ProjectStartDate", "ProjectEndDate"],
+                }
+                r = requests.post(
+                    "https://api.reporter.nih.gov/v2/projects/search",
+                    json=payload, timeout=30,
+                )
+                r.raise_for_status()
+                return r.json()
+            try:
+                with st.spinner("Fetching NIH RePORTER data…"):
+                    data = load_or_fetch_json(cache_path, fetch_nih)
+                results = data.get("results", [])
+                df = pd.DataFrame([{
+                    "Project #": r.get("project_num", ""),
+                    "Title": str(r.get("project_title", ""))[:60],
+                    "FY": r.get("fiscal_year", ""),
+                    "Award ($)": r.get("award_amount", None),
+                    "Agency": r.get("agency_code", ""),
+                    "Org": str(r.get("org_name", ""))[:30],
+                    "State": r.get("org_state", ""),
+                } for r in results])
+                save_and_display_result(df, results, "NIH RePORTER")
+                with st.expander("📌 Teaching note"):
+                    st.markdown("""
 - The `award_amount` field may be `null` for some records — a common issue in grant databases.
-- Organization and agency information is **nested** in sub-objects in the raw JSON.
-- On **Day 2** we will extract `org_name`, `org_city`, and `agency_code` into flat columns.
-                """)
-        except Exception as e:
-            st.error(f"Could not load data: {e}")
+- This API uses a **POST request**: the query is sent as a JSON body, not URL parameters.
+  This is more powerful (supports complex filters) but less common than GET.
+- On **Day 2** we will extract organisation and agency information into flat columns.
+                    """)
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
 
-# ── App 4: Congress.gov ───────────────────────────────────────────────────────
+    # ── Preset 4: Congress.gov ────────────────────────────────────────────────
+    with st.expander("🏛️ Example 4 — Congress.gov (Social Sciences)"):
+        st.markdown("""
+**Source:** [Congress.gov API v3](https://api.congress.gov/v3/bill/118)
 
-elif app_choice == "App 4 — Congress.gov (U.S. Bills)":
-    st.title("🏛️ App 4 — Congress.gov (U.S. Legislative Bills)")
-    st.markdown("""
-**Source:** [Congress.gov API v3](https://api.congress.gov/v3/bill)
-
-The Congress.gov API provides structured access to U.S. legislative bills.
-The v3 endpoint returns JSON records for bills introduced in any Congress session.
-
-**Research question:** What bills were introduced in the 118th Congress (2023-2024),
+**Research question:** What bills were introduced in the 118th Congress (2023–2024),
 and what are their types, chambers of origin, and latest actions?
-    """)
 
-    cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json")
-
-    def fetch_congress():
-        url = "https://api.congress.gov/v3/bill/118"
-        params = {"format": "json", "limit": 50, "api_key": "DEMO_KEY"}
-        r = requests.get(url, params=params, timeout=30)
-        r.raise_for_status()
-        return r.json()
-
-    with st.spinner("Loading Congress.gov data…"):
-        try:
-            data = load_or_fetch_json(cache_path, fetch_congress)
-            bills = data.get("bills", [])
-            st.success(f"Loaded {len(bills)} bill records from the 118th Congress.")
-
-            st.subheader("Raw JSON Structure (first record)")
-            if bills:
-                st.json(bills[0], expanded=True)
-
-            st.subheader("Flat Preview Table")
-            df = pd.DataFrame([{
-                "Number": b.get("number", ""),
-                "Type": b.get("type", ""),
-                "Title": str(b.get("title", ""))[:70],
-                "Chamber": b.get("originChamber", ""),
-                "Congress": b.get("congress", ""),
-                "Latest Action Date": b.get("latestAction", {}).get("actionDate", ""),
-                "Latest Action": str(b.get("latestAction", {}).get("text", ""))[:60],
-            } for b in bills])
-            st.dataframe(df, use_container_width=True)
-
-            st.subheader("Bills by Type")
-            st.bar_chart(df["Type"].value_counts())
-
-            st.subheader("Bills by Chamber of Origin")
-            st.bar_chart(df["Chamber"].value_counts())
-
-            with st.expander("📌 Day 1 Teaching Note"):
-                st.markdown("""
+**How it works:** The API is queried with `format=json&limit=50&api_key=DEMO_KEY`.
+It returns structured JSON records for bills, each with nested `latestAction` objects.
+        """)
+        if st.button("▶ Run Example 4 — Congress.gov", key="run_preset4"):
+            cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json")
+            def fetch_congress():
+                r = requests.get(
+                    "https://api.congress.gov/v3/bill/118",
+                    params={"format": "json", "limit": 50, "api_key": "DEMO_KEY"},
+                    timeout=30,
+                )
+                r.raise_for_status()
+                return r.json()
+            try:
+                with st.spinner("Fetching Congress.gov data…"):
+                    data = load_or_fetch_json(cache_path, fetch_congress)
+                bills = data.get("bills", [])
+                df = pd.DataFrame([{
+                    "Number": b.get("number", ""),
+                    "Type": b.get("type", ""),
+                    "Title": str(b.get("title", ""))[:70],
+                    "Chamber": b.get("originChamber", ""),
+                    "Congress": b.get("congress", ""),
+                    "Latest Action Date": b.get("latestAction", {}).get("actionDate", ""),
+                    "Latest Action": str(b.get("latestAction", {}).get("text", ""))[:60],
+                } for b in bills])
+                save_and_display_result(df, bills, "Congress.gov")
+                with st.expander("📌 Teaching note"):
+                    st.markdown("""
 - The `latestAction` field is a **nested object** containing both a date and a text description.
   On Day 2 we will extract these into separate flat columns.
 - The `type` field encodes the bill category (e.g., `HR` = House Resolution, `S` = Senate bill).
 - The `updateDate` field is a string that will be parsed as a proper date on Day 2.
-                """)
-        except Exception as e:
-            st.error(f"Could not load data: {e}")
+                    """)
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
 
-# ── BYOD: Collect ─────────────────────────────────────────────────────────────
-
-elif app_choice == "🔍 Bring Your Own Data — Collect":
-    st.title("🔍 Bring Your Own Data — Step 1: Collect")
-    st.markdown("""
-This section lets you apply the **same data collection workflow** used in the case studies
-to your own research source — without writing any code.
-
-### How to use this section
-1. **Find your source** in the reference tables below (API or webpage).
-2. **Copy the Base URL** from the table.
-3. **Scroll down to the wizard**, choose the right method, paste the URL, fill in the parameters, and click **Fetch Data**.
-
-> ⚠️ **Important:** The URLs in the reference tables are *base URLs* — they are **incomplete on their own**.
-> Clicking a base URL directly in your browser will return an error like *"query is a required parameter"*.
-> This is normal. The base URL only works when combined with parameters, which the wizard does for you automatically.
-
-### Three collection methods
-| Method | When to use it |
-|---|---|
-| **Query an API (GET request)** | The API table shows `GET` in the Method column |
-| **Query an API (POST request)** | The API table shows `POST` in the Method column (only NIH RePORTER in this list) |
-| **Scrape a Webpage Table** | You want data from a Wikipedia or similar page that contains an HTML table |
-
-Your collected data will be available for cleaning in **Day 2 → Bring Your Own Data — Clean**.
-    """)
-
-    # ── Reference: Verified APIs ──────────────────────────────────────────────
+    # ── SECTION 2: Open API reference + wizard ────────────────────────────────
     st.markdown("---")
-    st.subheader("📋 Reference: Verified Open APIs (No Key Required)")
+    st.subheader("📋 Use Any Public API")
     st.markdown("""
-The following APIs have been confirmed working as of May 2026. They require no registration
-or API key (or use a free demo key).
+Not finding what you need in the examples above? The table below lists verified open APIs
+across disciplines. Copy a Base URL, choose the matching method in the wizard, and fetch your data.
 
-**How to use this table:**
-1. Find the API you want to use.
-2. **Highlight and copy the Base URL** (click the link, then copy from your browser address bar — or highlight the URL text directly).
-3. Note the **Method** column (`GET` or `POST`) — this tells you which wizard tab to use below.
-4. Click **▶ Show parameters** next to the API name to see the exact key–value pairs to enter in the wizard.
+> ⚠️ **Important:** The URLs below are *base URLs* — they are **incomplete on their own**.
+> Clicking one directly in your browser will return an error like *"query is a required parameter"*.
+> This is normal. The wizard adds the parameters for you automatically.
     """)
 
-    # ── API reference with per-row parameter expanders ──────────────────────
-    # Each entry: (Discipline, Name, URL, [(key, value), ...], Method)
     _apis = [
         ("Health", "ClinicalTrials.gov v2",
          "https://clinicaltrials.gov/api/v2/studies",
@@ -395,14 +394,11 @@ or API key (or use a free demo key).
          [("startTime", "2020-Q1"), ("endTime", "2022-Q4")], "GET"),
     ]
 
-    # Summary table (Discipline | Name | URL | Method)
-    _md_rows = ["| Discipline | API Name | Base URL | Method |",
-                "|---|---|---|---|"]
+    _md_rows = ["| Discipline | API Name | Base URL | Method |", "|---|---|---|---|"]
     for _disc, _name, _url, _pairs, _method in _apis:
         _md_rows.append(f"| {_disc} | {_name} | [{_url}]({_url}) | {_method} |")
     st.markdown("\n".join(_md_rows))
 
-    # Per-API parameter expanders
     st.markdown("**▶ Click an API below to see the exact parameters to enter in the wizard:**")
     for _disc, _name, _url, _pairs, _method in _apis:
         with st.expander(f"{_name} ({_disc}) — {_method}"):
@@ -418,44 +414,6 @@ or API key (or use a free demo key).
             else:
                 st.markdown("No parameters required — just paste the Base URL and click Fetch Data.")
 
-    # ── Reference: Webpage Table Scraping ────────────────────────────────────
-    st.markdown("---")
-    st.subheader("🌐 Reference: Webpage Table Scraping — Example URLs")
-    st.markdown("""
-The **Scrape a Webpage Table** method works on any page that contains a static HTML `<table>`.
-Below are confirmed examples across disciplines. Paste any of these (or your own URL) into the
-scraper below.
-
-> **Note:** This method works on *static* HTML tables only. Pages that load their tables
-> dynamically via JavaScript (e.g., interactive dashboards) will not work with this approach —
-> this is itself an important methodological distinction to understand.
-    """)
-
-    _scrape = [
-        ("Health", "WHO — Life Expectancy by Country",
-         "https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy"),
-        ("Health", "Wikipedia — COVID-19 pandemic by country",
-         "https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory"),
-        ("Life Sciences", "Wikipedia — List of most endangered species",
-         "https://en.wikipedia.org/wiki/Lists_of_endangered_species"),
-        ("Life Sciences", "Wikipedia — Largest organisms",
-         "https://en.wikipedia.org/wiki/Largest_organisms"),
-        ("Social Sciences", "Wikipedia — World population by country",
-         "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"),
-        ("Social Sciences", "Wikipedia — Human Development Index",
-         "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index"),
-        ("Social Sciences", "Wikipedia — Global Peace Index",
-         "https://en.wikipedia.org/wiki/Global_Peace_Index"),
-        ("Social Sciences", "Wikipedia — List of countries by GDP (nominal)",
-         "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"),
-    ]
-
-    # Render as Markdown table so URLs are clickable
-    _s_rows = ["| Discipline | Description | URL |", "|---|---|---|"]
-    for _disc, _desc, _url in _scrape:
-        _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
-    st.markdown("\n".join(_s_rows))
-
     # ── Interactive Collection Wizard ─────────────────────────────────────────
     st.markdown("---")
     st.subheader("⚙️ Interactive Collection Wizard")
@@ -467,7 +425,6 @@ scraper below.
 **Step 1 — Find the row** in the API table above:
 - API Name: UniProt REST API
 - Base URL: `https://rest.uniprot.org/uniprotkb/search`
-- Example Parameters: `query=insulin&format=json&size=50`
 - Method: **GET**
 
 **Step 2 — Select method:** Choose **Query an API (GET request)** in the wizard below.
@@ -486,12 +443,12 @@ https://rest.uniprot.org/uniprotkb/search
 
 **Step 5 — Click 🚀 Fetch Data.**
 
-The wizard assembles the full URL `https://rest.uniprot.org/uniprotkb/search?query=insulin&format=json&size=50`
-and sends the request. You will see the raw JSON response appear below the button.
+The wizard assembles the full URL and sends the request. You will see the raw JSON response,
+a preview table, a distribution chart, and a download button appear below.
 
 > **Why does clicking the Base URL directly give an error?**
-> Because `query` is a required parameter — the API cannot return anything without knowing what to search for.
-> The wizard adds the parameters for you; the browser address bar does not.
+> Because `query` is a required parameter — the API cannot return anything without knowing
+> what to search for. The wizard adds the parameters for you; the browser address bar does not.
         """)
 
     method = st.radio(
@@ -500,24 +457,17 @@ and sends the request. You will see the raw JSON response appear below the butto
         horizontal=True,
     )
 
-    # ── Method 1: GET API ─────────────────────────────────────────────────────
+    # ── Method 1: GET ─────────────────────────────────────────────────────────
     if method == "Query an API (GET request)":
         st.markdown("""
-Paste the **Base URL** from the reference table above into the field below, then split the
-**Example Parameters** into individual key–value pairs (one per row).
+Paste the **Base URL** from the reference table above, then fill in the key–value parameters.
 
 For example, `query=insulin&format=json&size=50` → set *Number of parameters* to **3** and enter:
 - Key: `query` / Value: `insulin`
 - Key: `format` / Value: `json`
 - Key: `size` / Value: `50`
         """)
-
-        base_url = st.text_input(
-            "API Base URL",
-            placeholder="e.g. https://api.crossref.org/works",
-        )
-
-        st.markdown("**Query Parameters** (key–value pairs)")
+        base_url = st.text_input("API Base URL", placeholder="e.g. https://api.crossref.org/works")
         n_params = st.number_input("Number of parameters", min_value=1, max_value=10, value=2, step=1)
         params = {}
         for i in range(int(n_params)):
@@ -526,13 +476,11 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
             v = c2.text_input(f"Value {i+1}", key=f"get_val_{i}")
             if k:
                 params[k] = v
-
         api_key_header = st.text_input(
             "API Key (optional — leave blank if not required)",
             type="password",
             help="If the API requires a key in the Authorization header, enter it here.",
         )
-
         if st.button("🚀 Fetch Data", key="fetch_get"):
             if not base_url:
                 st.warning("Please enter a base URL.")
@@ -546,39 +494,37 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                     st.info(f"HTTP Status: {r.status_code}")
                     if r.status_code == 200:
                         byod_raw = r.json()
-                        st.session_state["byod_raw"] = byod_raw
-                        st.session_state["byod_source"] = "api_get"
-                        st.success("✅ Data fetched successfully! Download the JSON below or go to Day 2 to continue.")
-                        _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
-                        st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_get")
-                        st.markdown("**Raw JSON preview** (first record):")
-                        preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
-                        st.json(preview, expanded=True)
+                        raw_list = byod_raw if isinstance(byod_raw, list) else \
+                                   byod_raw.get("results", byod_raw.get("value",
+                                   byod_raw.get("studies", byod_raw.get("bills",
+                                   byod_raw.get("works", [byod_raw])))))
+                        if not isinstance(raw_list, list):
+                            raw_list = [raw_list]
+                        try:
+                            df = pd.json_normalize(raw_list)
+                        except Exception:
+                            df = pd.DataFrame(raw_list)
+                        save_and_display_result(df, byod_raw, "API (GET)")
                     else:
                         st.error(f"Request failed: {r.text[:300]}")
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-    # ── Method 2: POST API ────────────────────────────────────────────────────
+    # ── Method 2: POST ────────────────────────────────────────────────────────
     elif method == "Query an API (POST request)":
         st.markdown("""
 Some APIs (like NIH RePORTER) require a **POST request** with a JSON body instead of URL parameters.
 Paste the base URL and the JSON body below.
         """)
-
         base_url = st.text_input(
             "API Base URL",
             placeholder="e.g. https://api.reporter.nih.gov/v2/projects/search",
         )
-
         default_body = '{"criteria":{"advanced_text_search":{"operator":"and","search_field":"all","search_text":"genomics"}},"offset":0,"limit":50}'
         body_str = st.text_area(
-            "Request Body (JSON)",
-            value=default_body,
-            height=150,
+            "Request Body (JSON)", value=default_body, height=150,
             help="Enter valid JSON. Use the example from the API reference table above.",
         )
-
         if st.button("🚀 Fetch Data", key="fetch_post"):
             if not base_url:
                 st.warning("Please enter a base URL.")
@@ -594,14 +540,14 @@ Paste the base URL and the JSON body below.
                     st.info(f"HTTP Status: {r.status_code}")
                     if r.status_code == 200:
                         byod_raw = r.json()
-                        st.session_state["byod_raw"] = byod_raw
-                        st.session_state["byod_source"] = "api_post"
-                        st.success("✅ Data fetched successfully! Download the JSON below or go to Day 2 to continue.")
-                        _raw_bytes = json.dumps(byod_raw, indent=2).encode("utf-8")
-                        st.download_button("⬇️ Download Raw JSON to your computer", _raw_bytes, "byod_raw.json", "application/json", key="dl_raw_post")
-                        st.markdown("**Raw JSON preview** (first record):")
-                        preview = byod_raw[0] if isinstance(byod_raw, list) else byod_raw
-                        st.json(preview, expanded=True)
+                        raw_list = byod_raw.get("results", [byod_raw]) if isinstance(byod_raw, dict) else byod_raw
+                        if not isinstance(raw_list, list):
+                            raw_list = [raw_list]
+                        try:
+                            df = pd.json_normalize(raw_list)
+                        except Exception:
+                            df = pd.DataFrame(raw_list)
+                        save_and_display_result(df, byod_raw, "API (POST)")
                     else:
                         st.error(f"Request failed: {r.text[:300]}")
                 except json.JSONDecodeError:
@@ -609,11 +555,42 @@ Paste the base URL and the JSON body below.
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-    # ── Method 3: Webpage Table Scraping ─────────────────────────────────────
+    # ── Method 3: Webpage scraping ────────────────────────────────────────────
     elif method == "Scrape a Webpage Table":
         st.markdown("""
 Paste the URL of any webpage that contains an HTML `<table>`. The app will extract all tables
 it finds and let you choose which one to use.
+        """)
+
+        # Example URLs reference table
+        _scrape = [
+            ("Health", "Wikipedia — Life Expectancy by Country",
+             "https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy"),
+            ("Health", "Wikipedia — COVID-19 pandemic by country",
+             "https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory"),
+            ("Life Sciences", "Wikipedia — Lists of endangered species",
+             "https://en.wikipedia.org/wiki/Lists_of_endangered_species"),
+            ("Life Sciences", "Wikipedia — Largest organisms",
+             "https://en.wikipedia.org/wiki/Largest_organisms"),
+            ("Social Sciences", "Wikipedia — World population by country",
+             "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"),
+            ("Social Sciences", "Wikipedia — Human Development Index",
+             "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index"),
+            ("Social Sciences", "Wikipedia — Global Peace Index",
+             "https://en.wikipedia.org/wiki/Global_Peace_Index"),
+            ("Social Sciences", "Wikipedia — List of countries by GDP (nominal)",
+             "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"),
+        ]
+        _s_rows = ["| Discipline | Description | URL |", "|---|---|---|"]
+        for _disc, _desc, _url in _scrape:
+            _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
+        st.markdown("**Example URLs you can paste below:**")
+        st.markdown("\n".join(_s_rows))
+
+        st.markdown("""
+> **Note:** This method works on *static* HTML tables only. Pages that load their tables
+> dynamically via JavaScript (e.g., interactive dashboards) will not work with this approach —
+> this is itself an important methodological distinction to understand.
         """)
 
         page_url = st.text_input(
@@ -635,28 +612,9 @@ it finds and let you choose which one to use.
                         )
                         _resp.raise_for_status()
                         tables = pd.read_html(StringIO(_resp.text))
-                        # Flatten MultiIndex column headers (common in Wikipedia tables)
-                        # e.g. ("Both sexes", "Life expectancy") → "Both sexes Life expectancy"
-                        cleaned = []
-                        for t in tables:
-                            if isinstance(t.columns, pd.MultiIndex):
-                                t.columns = [
-                                    " ".join(
-                                        str(lvl) for lvl in col
-                                        if str(lvl) != "nan" and not str(lvl).startswith("Unnamed")
-                                    ).strip() or f"Col_{i}"
-                                    for i, col in enumerate(t.columns)
-                                ]
-                            else:
-                                t.columns = [
-                                    c if not str(c).startswith("Unnamed") else f"Col_{i}"
-                                    for i, c in enumerate(t.columns)
-                                ]
-                            cleaned.append(t)
-                        tables = cleaned
+                        tables = flatten_multiindex(tables)
                     if tables:
                         st.success(f"Found {len(tables)} table(s) on the page.")
-                        st.session_state["byod_scraped_tables"] = [t.to_dict(orient='records') for t in tables]
                         st.session_state["byod_scraped_dfs"] = tables
                         st.session_state["byod_source"] = "scrape"
                     else:
@@ -671,15 +629,17 @@ it finds and let you choose which one to use.
             chosen = st.selectbox("Select the table you want to use:", table_labels)
             idx = table_labels.index(chosen)
             selected_table = tables[idx]
+
+            st.markdown("#### Preview (first 20 rows)")
             st.dataframe(selected_table.head(20), use_container_width=True)
 
-            # Download as JSON (consistent with API output format)
+            st.markdown("#### Distribution")
+            auto_bar_chart(selected_table)
+
             _json_bytes = selected_table.to_json(orient="records", indent=2).encode("utf-8")
             st.download_button(
                 "⬇️ Download Table as JSON to your computer",
-                _json_bytes,
-                "byod_scraped_table.json",
-                "application/json",
+                _json_bytes, "byod_scraped_table.json", "application/json",
                 key="dl_scrape_json",
             )
 
@@ -687,8 +647,3 @@ it finds and let you choose which one to use.
                 st.session_state["byod_flat_df"] = selected_table
                 st.session_state["byod_source"] = "scrape"
                 st.success("✅ Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
-
-    # ── Day 2 prompt (shown once data has been fetched via API) ──────────────
-    if "byod_raw" in st.session_state and st.session_state.get("byod_source") in ("api_get", "api_post"):
-        st.markdown("---")
-        st.info("✅ Your raw data has been collected and saved. When you are ready, go to **Day 2 → 🔍 Bring Your Own Data — Clean** to structure and clean it.")
