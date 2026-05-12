@@ -1,7 +1,6 @@
 """
 Day 2 — From Raw Output to Usable Data
 Applications: ClinicalTrials, WHO, NIH, Congress, World Bank (cleaning & validation)
-+ Bring Your Own Data — Clean
 """
 
 import os, json
@@ -55,7 +54,6 @@ app_choice = st.sidebar.radio(
         "App 4 — GovInfo Congress (Clean)",
         "App 5 — World Bank Population (Clean)",
         "🔧 Interactive Cleaning Module",
-        "🔍 Bring Your Own Data — Clean",
     ],
 )
 
@@ -84,8 +82,7 @@ if app_choice == "Overview":
 | 4 | GovInfo (Congress) | Parse dates, clean title strings |
 | 5 | World Bank Population | Reshape, filter, validate numeric ranges |
 
-Use the sidebar to explore each application, the **🔧 Interactive Cleaning Module**, or
-**🔍 Bring Your Own Data — Clean** to clean your own collected data.
+Use the sidebar to explore each application or the **Interactive Cleaning Module**.
     """)
 
 # ── App 1: ClinicalTrials clean ───────────────────────────────────────────────
@@ -310,11 +307,11 @@ elif app_choice == "App 5 — World Bank Population (Clean)":
 elif app_choice == "🔧 Interactive Cleaning Module":
     st.title("🔧 Interactive Cleaning Module")
     st.markdown("""
-Upload any CSV or XLSX file or select one of the cached datasets below, then apply
+Upload any CSV file or select one of the cached datasets below, then apply
 cleaning operations interactively. Preview the result before downloading.
     """)
 
-    source = st.radio("Data source", ["Use cached dataset", "Upload your own file (CSV or XLSX)"])
+    source = st.radio("Data source", ["Use cached dataset", "Upload your own CSV"])
 
     if source == "Use cached dataset":
         dataset_name = st.selectbox("Select dataset", [
@@ -326,14 +323,8 @@ cleaning operations interactively. Preview the result before downloading.
         ])
         df = load_clean_csv(dataset_name)
     else:
-        uploaded = st.file_uploader("Upload CSV or XLSX", type=["csv", "xlsx"])
-        if uploaded:
-            if uploaded.name.endswith(".xlsx"):
-                df = pd.read_excel(uploaded)
-            else:
-                df = pd.read_csv(uploaded)
-        else:
-            df = None
+        uploaded = st.file_uploader("Upload CSV", type=["csv"])
+        df = pd.read_csv(uploaded) if uploaded else None
 
     if df is not None:
         st.subheader(f"Dataset: {len(df)} rows × {len(df.columns)} columns")
@@ -403,230 +394,3 @@ cleaning operations interactively. Preview the result before downloading.
 
             csv_out = result.to_csv(index=False).encode("utf-8")
             st.download_button("⬇️ Download Cleaned CSV", csv_out, "cleaned_output.csv", "text/csv")
-
-# ── BYOD: Clean ───────────────────────────────────────────────────────────────
-
-elif app_choice == "🔍 Bring Your Own Data — Clean":
-    st.title("🔍 Bring Your Own Data — Step 2: Clean")
-    st.markdown("""
-This section lets you clean the data you collected in **Day 1 → 🔍 Bring Your Own Data — Collect**,
-or upload your own raw file (CSV, XLSX, or JSON).
-
-The same five cleaning problems encountered in the case studies apply to any dataset:
-**label inconsistency, duplicates, irregular dates, missing values, and nested fields.**
-Use the operations below to address them interactively.
-
-Your cleaned data will be available for exploration in **Day 3 → 🔍 Bring Your Own Data — Explore**.
-    """)
-
-    st.markdown("---")
-    st.subheader("📋 Five Common Cleaning Problems — Quick Reference")
-    st.markdown("""
-| Problem | What It Looks Like | How to Fix It |
-|---|---|---|
-| **Label inconsistency** | `"Male"`, `"male"`, `"M"` in the same column | Standardize to uppercase or a fixed vocabulary |
-| **Duplicate records** | Same row appearing twice | Remove duplicate rows |
-| **Irregular date formats** | `"2023-01-15"` and `"15/01/2023"` mixed | Parse to datetime and reformat |
-| **Missing values** | `NaN`, `null`, empty cells | Drop rows, fill with a default, or flag |
-| **Nested fields** | A column containing `{"city": "Boston", "state": "MA"}` | Flatten into separate columns (done in Day 1 wizard) |
-    """)
-
-    st.markdown("---")
-    st.subheader("⚙️ Load Your Data")
-
-    # ── Data source selection ─────────────────────────────────────────────────
-    data_source = st.radio(
-        "Where is your data coming from?",
-        [
-            "Carried forward from Day 1 BYOD collection",
-            "Upload a file (CSV, XLSX, or JSON)",
-        ],
-    )
-
-    df = None
-
-    if data_source == "Carried forward from Day 1 BYOD collection":
-        if "byod_flat_df" in st.session_state:
-            df = st.session_state["byod_flat_df"]
-            st.success(f"Loaded from Day 1 session: {len(df)} rows × {len(df.columns)} columns.")
-        else:
-            st.warning("""
-No data found from Day 1. Either:
-- Go to **Day 1 → 🔍 Bring Your Own Data — Collect** and complete the collection wizard, or
-- Upload a file below instead.
-            """)
-
-    else:
-        uploaded = st.file_uploader(
-            "Upload your raw data file",
-            type=["csv", "xlsx", "json"],
-            help="CSV and XLSX files are loaded directly. JSON files must contain a list of records or a dict with a list value.",
-        )
-        if uploaded:
-            try:
-                if uploaded.name.endswith(".xlsx"):
-                    df = pd.read_excel(uploaded)
-                    st.success(f"Loaded XLSX: {len(df)} rows × {len(df.columns)} columns.")
-                elif uploaded.name.endswith(".json"):
-                    raw = json.load(uploaded)
-                    if isinstance(raw, list):
-                        df = pd.json_normalize(raw)
-                    elif isinstance(raw, dict):
-                        # Try to find the first list value
-                        list_keys = [k for k, v in raw.items() if isinstance(v, list)]
-                        if list_keys:
-                            chosen_key = st.selectbox("Select the records array from the JSON:", list_keys)
-                            df = pd.json_normalize(raw[chosen_key])
-                        else:
-                            df = pd.DataFrame([raw])
-                    st.success(f"Loaded JSON: {len(df)} rows × {len(df.columns)} columns.")
-                else:
-                    df = pd.read_csv(uploaded)
-                    st.success(f"Loaded CSV: {len(df)} rows × {len(df.columns)} columns.")
-            except Exception as e:
-                st.error(f"Could not load file: {e}")
-
-    # ── Cleaning Operations ───────────────────────────────────────────────────
-    if df is not None:
-        st.markdown("---")
-        st.subheader("🔍 Raw Data Preview")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Rows", len(df))
-        col2.metric("Columns", len(df.columns))
-        col3.metric("Missing Cells", int(df.isnull().sum().sum()))
-        st.dataframe(df.head(20), use_container_width=True)
-
-        st.markdown("---")
-        st.subheader("🧹 Cleaning Operations")
-
-        c1, c2 = st.columns(2)
-
-        with c1:
-            st.markdown("**Row-level operations**")
-            drop_dupes = st.checkbox("Remove duplicate rows")
-            drop_na_cols = st.multiselect(
-                "Drop rows where these columns are missing",
-                df.columns.tolist(),
-                help="Rows with a missing value in any selected column will be removed.",
-            )
-            strip_ws = st.checkbox("Strip leading/trailing whitespace from all text columns")
-
-        with c2:
-            st.markdown("**Column-level operations**")
-            rename_col = st.selectbox("Rename a column", ["— none —"] + df.columns.tolist())
-            if rename_col != "— none —":
-                new_name = st.text_input(f"New name for '{rename_col}'", value=rename_col, key="byod_rename")
-            else:
-                new_name = None
-
-            coerce_col = st.selectbox(
-                "Convert a column to numeric",
-                ["— none —"] + df.columns.tolist(),
-                help="Non-numeric values will become NaN.",
-            )
-            date_col = st.selectbox(
-                "Parse a column as dates",
-                ["— none —"] + df.columns.tolist(),
-                help="Converts text dates to a standard YYYY-MM-DD format.",
-            )
-            upper_col = st.selectbox(
-                "Standardize a column to UPPERCASE",
-                ["— none —"] + df.columns.tolist(),
-                help="Useful for fixing label inconsistency.",
-            )
-
-        st.markdown("**Row filtering**")
-        filter_col = st.selectbox("Filter rows by column value", ["— none —"] + df.columns.tolist(), key="byod_filter")
-        keep_vals = []
-        if filter_col != "— none —":
-            unique_vals = df[filter_col].dropna().unique().tolist()
-            keep_vals = st.multiselect(
-                f"Keep rows where '{filter_col}' equals:",
-                unique_vals,
-                default=unique_vals[:min(5, len(unique_vals))],
-            )
-
-        if st.button("✅ Apply All Cleaning Operations", key="byod_clean_btn"):
-            result = df.copy()
-            log = []
-
-            if drop_dupes:
-                before = len(result)
-                result = result.drop_duplicates()
-                log.append(f"Removed {before - len(result)} duplicate rows.")
-
-            if drop_na_cols:
-                before = len(result)
-                result = result.dropna(subset=drop_na_cols)
-                log.append(f"Dropped {before - len(result)} rows with missing values in: {drop_na_cols}.")
-
-            if strip_ws:
-                str_cols = result.select_dtypes(include="object").columns
-                result[str_cols] = result[str_cols].apply(lambda c: c.str.strip())
-                log.append(f"Stripped whitespace from {len(str_cols)} text columns.")
-
-            if rename_col != "— none —" and new_name and new_name != rename_col:
-                result = result.rename(columns={rename_col: new_name})
-                log.append(f"Renamed column '{rename_col}' → '{new_name}'.")
-
-            if coerce_col != "— none —":
-                result[coerce_col] = pd.to_numeric(result[coerce_col], errors="coerce")
-                log.append(f"Converted '{coerce_col}' to numeric (non-numeric values → NaN).")
-
-            if date_col != "— none —":
-                try:
-                    result[date_col] = pd.to_datetime(result[date_col], errors="coerce").dt.strftime("%Y-%m-%d")
-                    log.append(f"Parsed '{date_col}' as dates (format: YYYY-MM-DD).")
-                except Exception as e:
-                    log.append(f"Could not parse '{date_col}' as dates: {e}")
-
-            if upper_col != "— none —":
-                result[upper_col] = result[upper_col].astype(str).str.upper()
-                log.append(f"Standardized '{upper_col}' to UPPERCASE.")
-
-            if filter_col != "— none —" and keep_vals:
-                before = len(result)
-                result = result[result[filter_col].isin(keep_vals)]
-                log.append(f"Filtered '{filter_col}': kept {len(keep_vals)} value(s), removed {before - len(result)} rows.")
-
-            # ── Processing Log ────────────────────────────────────────────────
-            st.subheader("📋 Processing Log")
-            if log:
-                for entry in log:
-                    st.write(f"✅ {entry}")
-            else:
-                st.info("No operations were applied.")
-
-            st.write(f"**Final dataset:** {len(result)} rows × {len(result.columns)} columns")
-
-            # ── Cleaned Preview ───────────────────────────────────────────────
-            st.subheader("✅ Cleaned Dataset Preview")
-            st.dataframe(result.head(20), use_container_width=True)
-
-            # ── Missingness Report ────────────────────────────────────────────
-            st.subheader("🔍 Missingness Report")
-            miss = result.isnull().sum()
-            miss = miss[miss > 0]
-            if miss.empty:
-                st.success("No missing values in cleaned dataset.")
-            else:
-                st.dataframe(miss.rename("Missing Count").to_frame(), use_container_width=True)
-
-            # ── Save to session for Day 3 ─────────────────────────────────────
-            st.session_state["byod_clean_df"] = result
-            st.info("Cleaned data saved. Go to **Day 3 → 🔍 Bring Your Own Data — Explore** to continue.")
-
-            # ── Downloads ─────────────────────────────────────────────────────
-            st.subheader("⬇️ Download Cleaned Data")
-            csv_out = result.to_csv(index=False).encode("utf-8")
-            st.download_button("Download as CSV", csv_out, "byod_cleaned.csv", "text/csv")
-
-            try:
-                import io
-                buffer = io.BytesIO()
-                result.to_excel(buffer, index=False, engine="openpyxl")
-                buffer.seek(0)
-                st.download_button("Download as XLSX", buffer, "byod_cleaned.xlsx",
-                                   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            except Exception:
-                pass  # openpyxl not available — CSV only

@@ -1,7 +1,6 @@
 """
 Day 3 — From Shared Workflow to Participants' Own Data
 Applications: World Bank (explore), GBIF, and participant-uploaded data
-+ Bring Your Own Data — Explore
 """
 
 import os, json
@@ -34,7 +33,6 @@ app_choice = st.sidebar.radio(
         "App 5 — World Bank Population (Explore)",
         "App 6 — GBIF Biodiversity (Explore)",
         "🔍 Explore Your Own Data",
-        "🔍 Bring Your Own Data — Explore",
         "⚖️ Ethics and Open Science",
     ],
 )
@@ -53,16 +51,15 @@ and interpret preliminary output.
 | Exploratory analysis | Summary tables, distributions, missingness checks |
 | App 5 — World Bank | Explore cleaned population data |
 | App 6 — GBIF | Full extract-clean-explore pipeline on biodiversity data |
-| Explore Your Own Data | Upload a CSV or XLSX to explore |
-| **Bring Your Own Data — Explore** | Full end-to-end exploration for data collected in Days 1–2 |
+| Your own data | Upload a CSV or enter a URL to explore |
 | Ethics | Legal, privacy, and server-load considerations |
 
 ### Entry Points into the Pipeline
 Participants may enter at different stages depending on their situation:
 
-- **I have a URL or API** → Use **Day 1 → 🔍 Bring Your Own Data — Collect**
-- **I have raw data** → Use **Day 2 → 🔍 Bring Your Own Data — Clean**
-- **I have clean data** → Use **Day 3 → 🔍 Bring Your Own Data — Explore** (this section)
+- **I have a URL** → Use the Day 1 extraction templates
+- **I have raw data** → Use the Day 2 cleaning module
+- **I have clean data** → Use the Day 3 explore module below
 
 Use the sidebar to navigate.
     """)
@@ -169,22 +166,19 @@ extract → clean → explore, using *Panthera leo* (lion) occurrence records.
   may be more defensible.
             """)
 
-# ── Explore Your Own Data (original section) ──────────────────────────────────
+# ── Explore Your Own Data ─────────────────────────────────────────────────────
 
 elif app_choice == "🔍 Explore Your Own Data":
     st.title("🔍 Explore Your Own Data")
     st.markdown("""
-Upload a CSV or XLSX file — from your own collection, a cleaned Day 2 output, or any other source —
+Upload a CSV file — from your own collection, a cleaned Day 2 output, or any other source —
 and use the tools below to generate a preliminary exploratory analysis.
     """)
 
-    uploaded = st.file_uploader("Upload CSV or XLSX", type=["csv", "xlsx"])
+    uploaded = st.file_uploader("Upload CSV", type=["csv"])
 
     if uploaded:
-        if uploaded.name.endswith(".xlsx"):
-            df = pd.read_excel(uploaded)
-        else:
-            df = pd.read_csv(uploaded)
+        df = pd.read_csv(uploaded)
         st.success(f"Loaded: {len(df)} rows × {len(df.columns)} columns")
 
         st.subheader("Column Types")
@@ -227,223 +221,7 @@ Before using this dataset in your research, check:
         summary = df.describe(include="all").to_csv().encode("utf-8")
         st.download_button("⬇️ Download Summary Statistics CSV", summary, "exploratory_summary.csv", "text/csv")
     else:
-        st.info("Upload a CSV or XLSX file above to begin.")
-
-# ── BYOD: Explore ─────────────────────────────────────────────────────────────
-
-elif app_choice == "🔍 Bring Your Own Data — Explore":
-    st.title("🔍 Bring Your Own Data — Step 3: Explore")
-    st.markdown("""
-This section completes the end-to-end **Bring Your Own Data** pipeline.
-
-You can load your cleaned data from the Day 2 session, or upload a file directly.
-The exploration module applies the same four-criteria framework used in the case studies:
-**Coverage, Completeness, Consistency, and Plausibility**.
-    """)
-
-    st.markdown("---")
-    st.subheader("📋 Four Criteria for Evaluating Your Dataset")
-    st.markdown("""
-| Criterion | Question to Ask | What to Look For |
-|---|---|---|
-| **Coverage** | Does the dataset represent the population I intend to study? | Geographic gaps, time gaps, missing subgroups |
-| **Completeness** | Are there systematic missing values in key fields? | Columns with high % missing; patterns in missingness |
-| **Consistency** | Are field values consistent across records? | Mixed formats, label variants, impossible combinations |
-| **Plausibility** | Do numeric values fall within expected ranges? | Negative counts, future dates, outliers |
-    """)
-
-    st.markdown("---")
-    st.subheader("⚙️ Load Your Cleaned Data")
-
-    data_source = st.radio(
-        "Where is your cleaned data coming from?",
-        [
-            "Carried forward from Day 2 BYOD cleaning",
-            "Upload a file (CSV or XLSX)",
-        ],
-    )
-
-    df = None
-
-    if data_source == "Carried forward from Day 2 BYOD cleaning":
-        if "byod_clean_df" in st.session_state:
-            df = st.session_state["byod_clean_df"]
-            st.success(f"Loaded from Day 2 session: {len(df)} rows × {len(df.columns)} columns.")
-        else:
-            st.warning("""
-No cleaned data found from Day 2. Either:
-- Go to **Day 2 → 🔍 Bring Your Own Data — Clean** and complete the cleaning wizard, or
-- Upload a file below instead.
-            """)
-
-    else:
-        uploaded = st.file_uploader(
-            "Upload your cleaned data file",
-            type=["csv", "xlsx"],
-            help="Upload a CSV or XLSX file to explore.",
-        )
-        if uploaded:
-            try:
-                if uploaded.name.endswith(".xlsx"):
-                    df = pd.read_excel(uploaded)
-                    st.success(f"Loaded XLSX: {len(df)} rows × {len(df.columns)} columns.")
-                else:
-                    df = pd.read_csv(uploaded)
-                    st.success(f"Loaded CSV: {len(df)} rows × {len(df.columns)} columns.")
-            except Exception as e:
-                st.error(f"Could not load file: {e}")
-
-    # ── Exploration Dashboard ─────────────────────────────────────────────────
-    if df is not None:
-        st.markdown("---")
-
-        # ── 1. Dataset Overview ───────────────────────────────────────────────
-        st.subheader("1. Dataset Overview")
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Rows", len(df))
-        m2.metric("Columns", len(df.columns))
-        m3.metric("Missing Cells", int(df.isnull().sum().sum()))
-        m4.metric("Duplicate Rows", int(df.duplicated().sum()))
-
-        st.dataframe(df.head(20), use_container_width=True)
-
-        # ── 2. Column Profile ─────────────────────────────────────────────────
-        st.subheader("2. Column Profile")
-        col_info = pd.DataFrame({
-            "Column": df.columns,
-            "Data Type": df.dtypes.astype(str).values,
-            "Non-Null Count": df.notnull().sum().values,
-            "Missing (%)": (df.isnull().mean() * 100).round(1).values,
-            "Unique Values": df.nunique().values,
-        })
-        st.dataframe(col_info, use_container_width=True)
-
-        # ── 3. Summary Statistics ─────────────────────────────────────────────
-        st.subheader("3. Summary Statistics")
-        numeric_cols = df.select_dtypes(include="number").columns.tolist()
-        if numeric_cols:
-            st.dataframe(df[numeric_cols].describe().round(2), use_container_width=True)
-        else:
-            st.info("No numeric columns found.")
-
-        # ── 4. Missingness Report ─────────────────────────────────────────────
-        st.subheader("4. Missingness Report (Completeness)")
-        miss = df.isnull().sum()
-        miss = miss[miss > 0]
-        if miss.empty:
-            st.success("✅ No missing values — dataset is complete.")
-        else:
-            miss_df = pd.DataFrame({
-                "Column": miss.index,
-                "Missing Count": miss.values,
-                "Missing (%)": (miss.values / len(df) * 100).round(1),
-            })
-            st.dataframe(miss_df, use_container_width=True)
-            st.bar_chart(miss_df.set_index("Column")["Missing (%)"])
-
-        # ── 5. Value Distributions ────────────────────────────────────────────
-        st.subheader("5. Value Distributions (Consistency & Coverage)")
-
-        cat_cols = df.select_dtypes(include="object").columns.tolist()
-        if cat_cols:
-            cat_choice = st.selectbox("Select a categorical column to inspect:", cat_cols, key="byod_cat")
-            vc = df[cat_choice].value_counts().head(25)
-            st.markdown(f"**Top values in '{cat_choice}'** ({df[cat_choice].nunique()} unique values)")
-            st.bar_chart(vc)
-
-        if numeric_cols:
-            num_choice = st.selectbox("Select a numeric column to inspect:", numeric_cols, key="byod_num")
-            col_data = df[num_choice].dropna()
-            st.markdown(f"**Distribution of '{num_choice}'**")
-            c1, c2, c3, c4 = st.columns(4)
-            c1.metric("Min", f"{col_data.min():.2f}")
-            c2.metric("Max", f"{col_data.max():.2f}")
-            c3.metric("Mean", f"{col_data.mean():.2f}")
-            c4.metric("Std Dev", f"{col_data.std():.2f}")
-
-            # Histogram using value_counts on bins
-            try:
-                hist = col_data.value_counts(bins=20, sort=False)
-                st.bar_chart(hist)
-            except Exception:
-                st.write(col_data.describe())
-
-        # ── 6. Cross-tabulation ───────────────────────────────────────────────
-        if len(cat_cols) >= 2:
-            st.subheader("6. Cross-tabulation (optional)")
-            st.markdown("Compare two categorical columns to check for consistency or coverage gaps.")
-            c1, c2 = st.columns(2)
-            row_col = c1.selectbox("Row variable", cat_cols, key="byod_xtab_row")
-            col_col = c2.selectbox("Column variable", [c for c in cat_cols if c != row_col], key="byod_xtab_col")
-            if st.button("Generate Cross-tabulation", key="byod_xtab_btn"):
-                xtab = pd.crosstab(df[row_col], df[col_col])
-                st.dataframe(xtab, use_container_width=True)
-
-        # ── 7. Four-Criteria Self-Assessment ─────────────────────────────────
-        st.subheader("7. Four-Criteria Self-Assessment")
-        st.markdown("""
-Use the checks below to assess your dataset before using it in your research.
-These are the same criteria applied to the case study datasets in Apps 5 and 6.
-        """)
-
-        with st.expander("Coverage — Does the dataset represent your target population?"):
-            st.markdown("""
-- Check whether all expected countries, time periods, or groups are present.
-- Look for systematic absences (e.g., all records from one country, or only recent years).
-- Ask: would a missing subgroup bias your conclusions?
-            """)
-            st.text_area("Your coverage notes:", key="byod_coverage_notes", height=80)
-
-        with st.expander("Completeness — Are key fields sufficiently populated?"):
-            st.markdown("""
-- Review the Missingness Report above.
-- A column with >20% missing values may be unreliable for analysis.
-- Ask: is the missingness random, or does it follow a pattern (e.g., missing for certain countries)?
-            """)
-            st.text_area("Your completeness notes:", key="byod_completeness_notes", height=80)
-
-        with st.expander("Consistency — Are values standardized across records?"):
-            st.markdown("""
-- Look for label variants (e.g., `"USA"` vs `"United States"` vs `"US"`).
-- Check for mixed date formats or numeric formats.
-- Use the Value Distributions section above to spot inconsistencies.
-            """)
-            st.text_area("Your consistency notes:", key="byod_consistency_notes", height=80)
-
-        with st.expander("Plausibility — Do values fall within expected ranges?"):
-            st.markdown("""
-- Check minimum and maximum values for numeric columns.
-- Look for impossible values (negative counts, future dates, values outside known bounds).
-- Compare against external benchmarks if available.
-            """)
-            st.text_area("Your plausibility notes:", key="byod_plausibility_notes", height=80)
-
-        # ── 8. Downloads ──────────────────────────────────────────────────────
-        st.markdown("---")
-        st.subheader("⬇️ Download Exploratory Output")
-
-        summary_csv = df.describe(include="all").to_csv().encode("utf-8")
-        st.download_button("Download Summary Statistics (CSV)", summary_csv,
-                           "byod_summary_statistics.csv", "text/csv")
-
-        col_csv = col_info.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Column Profile (CSV)", col_csv,
-                           "byod_column_profile.csv", "text/csv")
-
-        full_csv = df.to_csv(index=False).encode("utf-8")
-        st.download_button("Download Full Dataset (CSV)", full_csv,
-                           "byod_full_dataset.csv", "text/csv")
-
-        try:
-            import io
-            buffer = io.BytesIO()
-            df.to_excel(buffer, index=False, engine="openpyxl")
-            buffer.seek(0)
-            st.download_button("Download Full Dataset (XLSX)", buffer,
-                               "byod_full_dataset.xlsx",
-                               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        except Exception:
-            pass
+        st.info("Upload a CSV file above to begin.")
 
 # ── Ethics ────────────────────────────────────────────────────────────────────
 
