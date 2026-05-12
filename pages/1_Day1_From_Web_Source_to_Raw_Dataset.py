@@ -80,7 +80,7 @@ def save_and_display_result(df, raw, source_label):
 st.sidebar.title("Day 1 Navigation")
 app_choice = st.sidebar.radio(
     "Select section",
-    ["Overview", "🔍 Collect Data"],
+    ["Overview", "📡 Collect API Data", "🌐 Scrape Webpage Tables"],
 )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -106,14 +106,14 @@ research data and how the extraction process works in a no-code setting.
 | **API** | A structured data service that returns JSON | Send a request with parameters; receive records |
 | **Webpage table** | An HTML `<table>` embedded in a webpage | Scrape the page; extract the table automatically |
 
-Use the sidebar to go to **🔍 Collect Data** and choose your source.
+Use the sidebar to go to **📡 Collect API Data** or **🌐 Scrape Webpage Tables** and choose your source.
     """)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # COLLECT DATA
 # ══════════════════════════════════════════════════════════════════════════════
 
-elif app_choice == "🔍 Collect Data":
+elif app_choice == "📡 Collect API Data":
     st.title("🔍 Day 1 — Collect Data")
     st.markdown("""
 This page lets you fetch data from a public online source — no code required.
@@ -470,7 +470,7 @@ a preview table, a distribution chart, and a download button appear below.
 
     method = st.radio(
         "Choose your data collection method:",
-        ["Query an API (GET request)", "Query an API (POST request)", "Scrape a Webpage Table"],
+        ["Query an API (GET request)", "Query an API (POST request)"],
         horizontal=True,
     )
 
@@ -572,92 +572,96 @@ Paste the base URL and the JSON body below.
                 except Exception as e:
                     st.error(f"Error: {e}")
 
-    # ── Method 3: Webpage scraping ────────────────────────────────────────────
-    elif method == "Scrape a Webpage Table":
-        st.markdown("""
+# ══════════════════════════════════════════════════════════════════════════════
+# SCRAPE WEBPAGE TABLES
+# ══════════════════════════════════════════════════════════════════════════════
+
+elif app_choice == "🌐 Scrape Webpage Tables":
+    st.title("🌐 Day 1 — Scrape Webpage Tables")
+    st.markdown("""
 Paste the URL of any webpage that contains an HTML `<table>`. The app will extract all tables
 it finds and let you choose which one to use.
-        """)
+    """)
 
-        # Example URLs reference table
-        _scrape = [
-            ("Health", "Wikipedia — Life Expectancy by Country",
-             "https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy"),
-            ("Health", "Wikipedia — COVID-19 pandemic by country",
-             "https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory"),
-            ("Life Sciences", "Wikipedia — Lists of endangered species",
-             "https://en.wikipedia.org/wiki/Lists_of_endangered_species"),
-            ("Life Sciences", "Wikipedia — Largest organisms",
-             "https://en.wikipedia.org/wiki/Largest_organisms"),
-            ("Social Sciences", "Wikipedia — World population by country",
-             "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"),
-            ("Social Sciences", "Wikipedia — Human Development Index",
-             "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index"),
-            ("Social Sciences", "Wikipedia — Global Peace Index",
-             "https://en.wikipedia.org/wiki/Global_Peace_Index"),
-            ("Social Sciences", "Wikipedia — List of countries by GDP (nominal)",
-             "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"),
-        ]
-        _s_rows = ["| Discipline | Description | URL |", "|---|---|---|"]
-        for _disc, _desc, _url in _scrape:
-            _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
-        st.markdown("**Example URLs you can paste below:**")
-        st.markdown("\n".join(_s_rows))
+    # Example URLs reference table
+    _scrape = [
+        ("Health", "Wikipedia — Life Expectancy by Country",
+         "https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy"),
+        ("Health", "Wikipedia — COVID-19 pandemic by country",
+         "https://en.wikipedia.org/wiki/COVID-19_pandemic_by_country_and_territory"),
+        ("Life Sciences", "Wikipedia — Lists of endangered species",
+         "https://en.wikipedia.org/wiki/Lists_of_endangered_species"),
+        ("Life Sciences", "Wikipedia — Largest organisms",
+         "https://en.wikipedia.org/wiki/Largest_organisms"),
+        ("Social Sciences", "Wikipedia — World population by country",
+         "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"),
+        ("Social Sciences", "Wikipedia — Human Development Index",
+         "https://en.wikipedia.org/wiki/List_of_countries_by_Human_Development_Index"),
+        ("Social Sciences", "Wikipedia — Global Peace Index",
+         "https://en.wikipedia.org/wiki/Global_Peace_Index"),
+        ("Social Sciences", "Wikipedia — List of countries by GDP (nominal)",
+         "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"),
+    ]
+    _s_rows = ["| Discipline | Description | URL |", "|---|---|---|"]
+    for _disc, _desc, _url in _scrape:
+        _s_rows.append(f"| {_disc} | {_desc} | [{_url}]({_url}) |")
+    st.markdown("**Example URLs you can paste below:**")
+    st.markdown("\n".join(_s_rows))
 
-        st.markdown("""
+    st.markdown("""
 > **Note:** This method works on *static* HTML tables only. Pages that load their tables
 > dynamically via JavaScript (e.g., interactive dashboards) will not work with this approach —
 > this is itself an important methodological distinction to understand.
-        """)
+    """)
 
-        page_url = st.text_input(
-            "Webpage URL",
-            placeholder="e.g. https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy",
+    page_url = st.text_input(
+        "Webpage URL",
+        placeholder="e.g. https://en.wikipedia.org/wiki/List_of_countries_by_life_expectancy",
+    )
+
+    if st.button("🔍 Find Tables", key="scrape_btn"):
+        if not page_url:
+            st.warning("Please enter a URL.")
+        else:
+            try:
+                with st.spinner("Fetching and parsing webpage…"):
+                    from io import StringIO
+                    _resp = requests.get(
+                        page_url,
+                        headers={"User-Agent": "Mozilla/5.0 (workshop-byod)"},
+                        timeout=30,
+                    )
+                    _resp.raise_for_status()
+                    tables = pd.read_html(StringIO(_resp.text))
+                    tables = flatten_multiindex(tables)
+                if tables:
+                    st.success(f"Found {len(tables)} table(s) on the page.")
+                    st.session_state["byod_scraped_dfs"] = tables
+                    st.session_state["byod_source"] = "scrape"
+                else:
+                    st.warning("No tables found on this page. The page may use JavaScript to render its tables — try a different URL.")
+            except Exception as e:
+                st.error(f"Could not extract tables: {e}")
+                st.info("This may happen if the page uses JavaScript to render its tables, or if the URL is not publicly accessible.")
+
+    if "byod_scraped_dfs" in st.session_state:
+        tables = st.session_state["byod_scraped_dfs"]
+        table_labels = [f"Table {i+1} — {t.shape[0]} rows × {t.shape[1]} cols" for i, t in enumerate(tables)]
+        chosen = st.selectbox("Select the table you want to use:", table_labels)
+        idx = table_labels.index(chosen)
+        selected_table = tables[idx]
+
+        st.markdown("#### Preview (first 20 rows)")
+        st.dataframe(selected_table.head(20), use_container_width=True)
+
+        _json_bytes = selected_table.to_json(orient="records", indent=2).encode("utf-8")
+        st.download_button(
+            "⬇️ Download Table as JSON to your computer",
+            _json_bytes, "byod_scraped_table.json", "application/json",
+            key="dl_scrape_json",
         )
 
-        if st.button("🔍 Find Tables", key="scrape_btn"):
-            if not page_url:
-                st.warning("Please enter a URL.")
-            else:
-                try:
-                    with st.spinner("Fetching and parsing webpage…"):
-                        from io import StringIO
-                        _resp = requests.get(
-                            page_url,
-                            headers={"User-Agent": "Mozilla/5.0 (workshop-byod)"},
-                            timeout=30,
-                        )
-                        _resp.raise_for_status()
-                        tables = pd.read_html(StringIO(_resp.text))
-                        tables = flatten_multiindex(tables)
-                    if tables:
-                        st.success(f"Found {len(tables)} table(s) on the page.")
-                        st.session_state["byod_scraped_dfs"] = tables
-                        st.session_state["byod_source"] = "scrape"
-                    else:
-                        st.warning("No tables found on this page. The page may use JavaScript to render its tables — try a different URL.")
-                except Exception as e:
-                    st.error(f"Could not extract tables: {e}")
-                    st.info("This may happen if the page uses JavaScript to render its tables, or if the URL is not publicly accessible.")
-
-        if "byod_scraped_dfs" in st.session_state:
-            tables = st.session_state["byod_scraped_dfs"]
-            table_labels = [f"Table {i+1} — {t.shape[0]} rows × {t.shape[1]} cols" for i, t in enumerate(tables)]
-            chosen = st.selectbox("Select the table you want to use:", table_labels)
-            idx = table_labels.index(chosen)
-            selected_table = tables[idx]
-
-            st.markdown("#### Preview (first 20 rows)")
-            st.dataframe(selected_table.head(20), use_container_width=True)
-
-            _json_bytes = selected_table.to_json(orient="records", indent=2).encode("utf-8")
-            st.download_button(
-                "⬇️ Download Table as JSON to your computer",
-                _json_bytes, "byod_scraped_table.json", "application/json",
-                key="dl_scrape_json",
-            )
-
-            if st.button("✅ Use This Table → Day 2", key="use_table"):
-                st.session_state["byod_flat_df"] = selected_table
-                st.session_state["byod_source"] = "scrape"
-                st.success("✅ Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
+        if st.button("✅ Use This Table → Day 2", key="use_table"):
+            st.session_state["byod_flat_df"] = selected_table
+            st.session_state["byod_source"] = "scrape"
+            st.success("✅ Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
