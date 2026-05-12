@@ -635,6 +635,25 @@ it finds and let you choose which one to use.
                         )
                         _resp.raise_for_status()
                         tables = pd.read_html(StringIO(_resp.text))
+                        # Flatten MultiIndex column headers (common in Wikipedia tables)
+                        # e.g. ("Both sexes", "Life expectancy") → "Both sexes Life expectancy"
+                        cleaned = []
+                        for t in tables:
+                            if isinstance(t.columns, pd.MultiIndex):
+                                t.columns = [
+                                    " ".join(
+                                        str(lvl) for lvl in col
+                                        if str(lvl) != "nan" and not str(lvl).startswith("Unnamed")
+                                    ).strip() or f"Col_{i}"
+                                    for i, col in enumerate(t.columns)
+                                ]
+                            else:
+                                t.columns = [
+                                    c if not str(c).startswith("Unnamed") else f"Col_{i}"
+                                    for i, c in enumerate(t.columns)
+                                ]
+                            cleaned.append(t)
+                        tables = cleaned
                     if tables:
                         st.success(f"Found {len(tables)} table(s) on the page.")
                         st.session_state["byod_scraped_tables"] = [t.to_dict(orient='records') for t in tables]
