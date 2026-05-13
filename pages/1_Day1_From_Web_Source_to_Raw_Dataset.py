@@ -693,18 +693,23 @@ first page), enable pagination below and choose the method your API supports.
 
                     def _fetch_with_retry(url, params, headers, max_retries=5):
                         """GET with exponential backoff on 429 Too Many Requests."""
-                        delay = 2.0
+                        delay = 5.0
                         for attempt in range(max_retries):
                             r = requests.get(url, params=params, headers=headers, timeout=30)
                             if r.status_code == 429:
-                                retry_after = int(r.headers.get("Retry-After", delay))
-                                wait = max(retry_after, delay)
+                                # Cap wait at 60s — ignore absurdly large Retry-After values
+                                raw_retry = r.headers.get("Retry-After", delay)
+                                try:
+                                    suggested = float(raw_retry)
+                                except (ValueError, TypeError):
+                                    suggested = delay
+                                wait = min(max(suggested, delay), 60.0)
                                 status_box.warning(
                                     f"⏳ Rate limit hit (429) — waiting {wait:.0f}s before retrying "
                                     f"(attempt {attempt+1}/{max_retries})…"
                                 )
                                 _time.sleep(wait)
-                                delay *= 2   # exponential backoff
+                                delay = min(delay * 2, 60.0)   # exponential backoff, capped at 60s
                             else:
                                 r.raise_for_status()
                                 return r
@@ -758,7 +763,7 @@ first page), enable pagination below and choose the method your API supports.
                                     )
                                     break
                                 cursor_val = next_cur
-                                _time.sleep(0.5)   # polite delay between pages
+                                _time.sleep(1.0)   # polite delay between pages
 
                         else:
                             # ── Offset pagination ─────────────────────────────
@@ -801,7 +806,7 @@ first page), enable pagination below and choose the method your API supports.
                                     )
                                     break
                                 page_num += 1
-                                _time.sleep(0.5)   # polite delay between pages
+                                _time.sleep(1.0)   # polite delay between pages
 
                         progress_bar.progress(1.0)
                         status_box.success(
