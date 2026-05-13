@@ -51,6 +51,22 @@ def load_json_from_upload(uploaded_file):
     return df
 
 
+# ── sentinel cleaner (mirrors Day 2 logic) ────────────────────────────────────
+_SENTINELS = frozenset({"na", "n/a", "n.a.", "n.a", "none", "null", "nan",
+                        "-", "--", "?", "unknown", "missing", ""})
+
+def clean_sentinels(df: pd.DataFrame) -> pd.DataFrame:
+    """Replace string-based missing-value placeholders with proper NaN."""
+    df = df.copy()
+    for col in df.select_dtypes(include="object").columns:
+        df[col] = df[col].apply(
+            lambda v: float("nan")
+            if isinstance(v, str) and v.strip().lower() in _SENTINELS
+            else v
+        )
+    return df
+
+
 def classify_columns(df):
     types = {}
     for col in df.columns:
@@ -459,7 +475,7 @@ The same six-step flow applies to all datasets.
                         "Phase": ", ".join(design_mod.get("phases", [])),
                         "Conditions": ", ".join(cond_mod.get("conditions", [])[:2]),
                     })
-                df_fetched = pd.DataFrame(rows)
+                df_fetched = clean_sentinels(pd.DataFrame(rows))
                 st.session_state["d3_example_df"] = df_fetched
                 st.session_state["d3_example_label"] = dataset_label
             except Exception as e:
@@ -485,7 +501,7 @@ The same six-step flow applies to all datasets.
                     "Year": rec.get("TimeDim", ""),
                     "LifeExpectancy": rec.get("NumericValue", None),
                 } for rec in records if rec.get("Dim1") == "SEX_BTSX"])
-                st.session_state["d3_example_df"] = df_fetched
+                st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
                 st.session_state["d3_example_label"] = dataset_label
             except Exception as e:
                 st.error(f"Could not load data: {e}")
@@ -521,14 +537,14 @@ The same six-step flow applies to all datasets.
                     "AwardAmount": p.get("award_amount", None),
                     "ProjectStartDate": p.get("project_start_date", ""),
                 } for p in results])
-                st.session_state["d3_example_df"] = df_fetched
+                st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
                 st.session_state["d3_example_label"] = dataset_label
             except Exception as e:
                 st.error(f"Could not load data: {e}")
         if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
             df = st.session_state["d3_example_df"]
 
-    elif dataset_choice == "🏛️ Example 4 — Congress.gov Bills (Social Sciences)":
+    elif dataset_choice == "🏙️ Example 4 — Congress.gov Bills (Social Sciences)":
         dataset_label = "Congress.gov Bills"
         st.markdown("**Dataset:** Bills introduced in the 118th US Congress — title, type, chamber, latest action.")
         congress_key = st.text_input("Congress.gov API Key", type="password", key="d3_congress_key")
@@ -553,7 +569,7 @@ The same six-step flow applies to all datasets.
                         "OriginChamber": b.get("originChamber", ""),
                         "LatestActionDate": b.get("latestAction", {}).get("actionDate", ""),
                     } for b in bills])
-                    st.session_state["d3_example_df"] = df_fetched
+                    st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
                     st.session_state["d3_example_label"] = dataset_label
                 except Exception as e:
                     st.error(f"Could not load data: {e}")
