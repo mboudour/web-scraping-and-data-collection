@@ -35,7 +35,7 @@ Use the **sidebar** to select a day:
 |-----|-------|
 | **Day 1** | From Web Source to Raw Dataset |
 | **Day 2** | From Raw Output to Usable Data |
-| **Day 3** | From Shared Workflow to Participants' Own Data |
+| **Day 3** | From Usable Data to Basic Statistics |
 
 ---
 
