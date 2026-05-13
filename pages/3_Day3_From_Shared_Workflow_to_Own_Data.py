@@ -214,34 +214,112 @@ This is a Pearson correlation, which only detects straight-line relationships.
 4. **Validity** — Are values within expected and logically coherent ranges?
             """)
 
+        # ── Auto-generate draft observations ──────────────────────────────────
+        n_rows = len(df)
+        # Representativeness
+        rep_auto = f"This dataset contains {n_rows} records. "
+        if n_rows < 50:
+            rep_auto += "The sample is very small (<50 rows) — results may not generalise. Check whether the API page limit excluded relevant records."
+            rep_light = "🔴"
+        elif n_rows < 200:
+            rep_auto += "The sample size is moderate. Consider whether the API page limit may have excluded relevant records or groups."
+            rep_light = "🟡"
+        else:
+            rep_auto += "The sample size is reasonably large. Still verify that no systematic groups or time periods are excluded by the query or API limits."
+            rep_light = "🟢"
+
+        # Completeness
+        if miss.empty:
+            comp_auto = "No missing values were detected in the selected columns — completeness looks good."
+            comp_light = "🟢"
+        else:
+            high_miss = miss_pct[miss_pct > 20]
+            low_miss = miss_pct[(miss_pct > 0) & (miss_pct <= 20)]
+            parts = []
+            if not high_miss.empty:
+                cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in high_miss.items()])
+                parts.append(f"Columns with >20% missing values: {cols_str}. These may be unreliable for analysis.")
+            if not low_miss.empty:
+                cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in low_miss.items()])
+                parts.append(f"Columns with minor missingness (≤20%): {cols_str}.")
+            comp_auto = " ".join(parts)
+            comp_light = "🔴" if not high_miss.empty else "🟡"
+
+        # Consistency
+        con_parts = []
+        for col in categorical_cols:
+            series = df[col].dropna().astype(str)
+            lower_vals = series.str.lower().unique()
+            actual_vals = series.unique()
+            if len(lower_vals) < len(actual_vals):
+                con_parts.append(f"`{col}` has values that differ only in capitalisation — consider standardising.")
+            elif series.nunique() > 50:
+                con_parts.append(f"`{col}` has {series.nunique()} unique values — check for spelling variants or encoding differences.")
+        for col in date_cols:
+            con_parts.append(f"`{col}` was detected as a date column — verify all values follow a consistent format after parsing.")
+        if not con_parts:
+            con_auto = "No obvious consistency issues detected in the selected columns."
+            con_light = "🟢"
+        else:
+            con_auto = " ".join(con_parts)
+            con_light = "🟡"
+
+        # Validity
+        val_parts = []
+        for col in numeric_cols:
+            series = df[col].dropna()
+            if len(series) < 4:
+                continue
+            mean_val = series.mean()
+            std_val = series.std()
+            if std_val == 0:
+                continue
+            outliers = series[(series - mean_val).abs() > 3 * std_val]
+            if len(outliers) > 0:
+                val_parts.append(
+                    f"`{col}`: {len(outliers)} value(s) are more than 3 standard deviations from the mean "
+                    f"(range: {series.min():.2f} – {series.max():.2f}) — check for data entry errors or genuine extremes."
+                )
+        if not val_parts:
+            val_auto = "No extreme outliers detected (>3 standard deviations from the mean) in numeric columns."
+            val_light = "🟢"
+        else:
+            val_auto = " ".join(val_parts)
+            val_light = "🟡"
+
+        # ── Display the four criteria with traffic lights and editable text areas
+        st.markdown(
+            "**Traffic-light guide:** 🟢 No issues detected &nbsp;|&nbsp; "
+            "🟡 Minor issues — review recommended &nbsp;|&nbsp; 🔴 Significant issues — action needed"
+        )
+
         c1, c2 = st.columns(2)
         with c1:
-            st.markdown("**1. Representativeness**")
+            st.markdown(f"**1. Representativeness** {rep_light}")
             rep = st.text_area(
                 "Does the sample represent your target population?",
-                placeholder="e.g. Only trials registered in the US; missing data for low-income countries.",
+                value=rep_auto,
                 key=f"{key_prefix}_rep",
             )
-            st.markdown("**3. Consistency**")
+            st.markdown(f"**3. Consistency** {con_light}")
             con = st.text_area(
                 "Are values recorded consistently across rows?",
-                placeholder="e.g. Date formats are mixed; status labels vary in capitalisation.",
+                value=con_auto,
                 key=f"{key_prefix}_con",
             )
         with c2:
-            st.markdown("**2. Completeness**")
+            st.markdown(f"**2. Completeness** {comp_light}")
             comp = st.text_area(
                 "Are there systematic missing values?",
-                placeholder="e.g. NumericValue is null for 12% of rows, mostly for small countries.",
+                value=comp_auto,
                 key=f"{key_prefix}_comp",
             )
-            st.markdown("**4. Validity**")
+            st.markdown(f"**4. Validity** {val_light}")
             val = st.text_area(
                 "Are values within expected ranges?",
-                placeholder="e.g. All life expectancy values are between 40 and 90 — plausible.",
+                value=val_auto,
                 key=f"{key_prefix}_val",
             )
-
         # Step 6
         st.markdown("### Step 6 — Download Summary")
 
