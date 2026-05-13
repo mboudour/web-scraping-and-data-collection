@@ -617,22 +617,210 @@ You can rename these columns using the **Rename a column** operation below.
         st.dataframe(df.head(20), use_container_width=True)
 
         st.markdown("---")
-        st.subheader("🧹 Cleaning Operations")
-        st.markdown("#### Five Common Cleaning Problems — Quick Reference")
-        st.markdown("""
-| Problem | What it looks like | How to fix it |
-|---|---|---|
-| **Label inconsistency** | `"Male"`, `"male"`, `"M"` in the same column | Standardize to UPPERCASE |
-| **Duplicate records** | Same row appearing twice | Remove duplicate rows |
-| **Irregular date formats** | `"2023-01-15"` and `"15/01/2023"` mixed | Parse as dates |
-| **Missing values** | `NaN`, `null`, empty cells | Drop rows or fill |
-| **Nested fields** | Column containing `{"city": "Boston"}` | Already flattened by JSON normalization above |
-        """)
+        st.subheader("🔎 Automatic Data Quality Scan")
+        st.markdown(
+            "The app has scanned your dataset and found the following issues. "
+            "Each issue is **pre-selected** — untick any you want to skip, "
+            "then click **Apply Selected Fixes**."
+        )
 
-        result, log = show_cleaning_ops(df, key_prefix="byod")
+        # ── Diagnostic detection ──────────────────────────────────────────────
+        issues = []  # list of dicts: {id, label, description, fix_fn}
 
-        if result is not None:
-            show_result(result, log, session_key="byod_clean_df")
+        # 1. Duplicate rows
+        n_dupes = df.duplicated().sum()
+        if n_dupes > 0:
+            issues.append({
+                "id": "dupes",
+                "label": f"🔁 Remove {n_dupes} duplicate row(s)",
+                "description": f"Found **{n_dupes}** rows that are exact copies of another row.",
+                "fix": lambda d: (d.drop_duplicates(), f"Removed {n_dupes} duplicate rows."),
+            })
+
+        # 2. Missing values per column
+        miss_counts = df.isnull().sum()
+        miss_cols = miss_counts[miss_counts > 0]
+        for col, cnt in miss_cols.items():
+            pct = 100 * cnt / len(df)
+            col_snap = col  # capture for lambda
+            cnt_snap = int(cnt)
+            issues.append({
+                "id": f"miss_{col_snap}",
+                "label": f"🕳️ Drop rows missing `{col_snap}` ({cnt_snap} rows, {pct:.0f}%)",
+                "description": (
+                    f"Column **`{col_snap}`** has **{cnt_snap}** empty values ({pct:.0f}% of rows). "
+                    "Dropping these rows removes incomplete records."
+                ),
+                "fix": lambda d, c=col_snap, n=cnt_snap: (
+                    d.dropna(subset=[c]),
+                    f"Dropped {n} rows with missing values in '{c}'.",
+                ),
+            })
+
+        # 3. Whitespace in text columns
+        str_cols = df.select_dtypes(include="object").columns.tolist()
+        ws_cols = [
+            c for c in str_cols
+            if df[c].dropna().astype(str).str.match(r"^\s+|\s+$").any()
+        ]
+        if ws_cols:
+            issues.append({
+                "id": "whitespace",
+                "label": f"✂️ Strip whitespace from {len(ws_cols)} text column(s)",
+                "description": (
+                    f"Found leading or trailing spaces in: **{', '.join(ws_cols)}**. "
+                    "This can cause mismatches when grouping or filtering."
+                ),
+                "fix": lambda d, cols=ws_cols: (
+                    d.assign(**{c: d[c].str.strip() for c in cols if c in d.columns}),
+                    f"Stripped whitespace from: {cols}.",
+                ),
+            })
+
+        # 4. Columns that look like dates stored as text
+        date_candidates = []
+        date_pattern = r"^\d{4}[-/]\d{2}[-/]\d{2}|^\d{2}[-/]\d{2}[-/]\d{4}"
+        for c in str_cols:
+            sample = df[c].dropna().astype(str).head(20)
+            if sample.str.match(date_pattern).mean() > 0.7:
+                date_candidates.append(c)
+        for col in date_candidates:
+            col_snap = col
+            issues.append({
+                "id": f"date_{col_snap}",
+                "label": f"📅 Parse `{col_snap}` as dates",
+                "description": (
+                    f"Column **`{col_snap}`** appears to contain dates stored as text. "
+                    "Converting to `YYYY-MM-DD` enables correct sorting and filtering."
+                ),
+                "fix": lambda d, c=col_snap: (
+                    d.assign(**{c: pd.to_datetime(d[c], errors="coerce").dt.strftime("%Y-%m-%d")}),
+                    f"Parsed '{c}' as dates (YYYY-MM-DD).",
+                ),
+            })
+
+        # 5. Columns that look numeric but are stored as object
+        numeric_candidates = []
+        for c in str_cols:
+            sample = df[c].dropna().astype(str).head(30)
+            cleaned = sample.str.replace(r"[\$,\s%]", "", regex=True)
+            if pd.to_numeric(cleaned, errors="coerce").notna().mean() > 0.7:
+                numeric_candidates.append(c)
+        for col in numeric_candidates:
+            col_snap = col
+            issues.append({
+                "id": f"num_{col_snap}",
+                "label": f"🔢 Convert `{col_snap}` to numeric",
+                "description": (
+                    f"Column **`{col_snap}`** contains mostly numbers stored as text. "
+                    "Converting enables arithmetic, sorting, and statistics."
+                ),
+                "fix": lambda d, c=col_snap: (
+                    d.assign(**{c: pd.to_numeric(d[c], errors="coerce")}),
+                    f"Converted '{c}' to numeric.",
+                ),
+            })
+
+        # 6. Mixed-case text columns (label inconsistency)
+        mixed_case_cols = []
+        for c in str_cols:
+            vals = df[c].dropna().astype(str).unique()
+            if len(vals) >= 2:
+                lower_vals = set(v.lower() for v in vals)
+                if len(lower_vals) < len(vals):
+                    mixed_case_cols.append(c)
+        for col in mixed_case_cols:
+            col_snap = col
+            issues.append({
+                "id": f"case_{col_snap}",
+                "label": f"🔤 Standardize `{col_snap}` to UPPERCASE (mixed case detected)",
+                "description": (
+                    f"Column **`{col_snap}`** has values that differ only in capitalisation "
+                    f"(e.g. `Male` and `male`). Standardising prevents incorrect group counts."
+                ),
+                "fix": lambda d, c=col_snap: (
+                    d.assign(**{c: d[c].astype(str).str.upper()}),
+                    f"Standardized '{c}' to UPPERCASE.",
+                ),
+            })
+
+        # 7. Dot-separated column names from JSON flattening
+        dot_cols = [c for c in df.columns if "." in str(c)]
+        if dot_cols:
+            issues.append({
+                "id": "dotcols",
+                "label": f"🏷️ Rename {len(dot_cols)} dot-separated column(s) from JSON flattening",
+                "description": (
+                    f"These columns have dots in their names from nested JSON: "
+                    f"**{', '.join(dot_cols[:5])}{'…' if len(dot_cols) > 5 else ''}**. "
+                    "Dots are replaced with underscores for compatibility with most tools."
+                ),
+                "fix": lambda d, cols=dot_cols: (
+                    d.rename(columns={c: c.replace(".", "_") for c in cols}),
+                    f"Renamed {len(cols)} dot-separated column(s) (dots → underscores).",
+                ),
+            })
+
+        # ── Render checkboxes ─────────────────────────────────────────────────
+        if not issues:
+            st.success(
+                "✅ No common data quality issues detected in this dataset. "
+                "Your data looks clean — you can go straight to **⬇️ Export**."
+            )
+        else:
+            st.markdown(f"**{len(issues)} issue(s) detected:**")
+            selected = {}
+            for issue in issues:
+                with st.container():
+                    col_cb, col_desc = st.columns([0.05, 0.95])
+                    with col_cb:
+                        selected[issue["id"]] = st.checkbox(
+                            "", value=True, key=f"diag_{issue['id']}"
+                        )
+                    with col_desc:
+                        st.markdown(f"**{issue['label']}**")
+                        st.caption(issue["description"])
+
+            st.markdown("---")
+            if st.button("✅ Apply Selected Fixes", key="byod_apply_diag"):
+                result = df.copy()
+                log = []
+                for issue in issues:
+                    if selected.get(issue["id"], False):
+                        try:
+                            result, entry = issue["fix"](result)
+                            log.append(entry)
+                        except Exception as e:
+                            log.append(f"⚠️ Could not apply '{issue['label']}': {e}")
+
+                st.subheader("📋 Processing Log")
+                if log:
+                    for entry in log:
+                        st.write(f"✅ {entry}")
+                else:
+                    st.info("No fixes were selected.")
+
+                st.write(
+                    f"**Final dataset:** {len(result)} rows × {len(result.columns)} columns"
+                )
+                st.subheader("✅ Cleaned Dataset Preview")
+                st.dataframe(result.head(20), use_container_width=True)
+
+                miss = result.isnull().sum()
+                miss = miss[miss > 0]
+                st.subheader("🔍 Remaining Missingness")
+                if miss.empty:
+                    st.success("No missing values in cleaned dataset.")
+                else:
+                    st.dataframe(
+                        miss.rename("Missing Count").to_frame(), use_container_width=True
+                    )
+
+                st.session_state["byod_clean_df"] = result
+                st.info(
+                    "✅ Cleaned data saved to this session. "
+                    "Go to **⬇️ Export** in the sidebar to download it."
+                )
 
 # ── EXPORT ─────────────────────────────────────────────────────────────────────
 
