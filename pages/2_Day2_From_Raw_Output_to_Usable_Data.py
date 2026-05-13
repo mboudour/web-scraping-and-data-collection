@@ -364,7 +364,7 @@ This section has two parts:
                 ]
             ),
             "clean": lambda df: (
-                df[df["Dim1"] == "BTSX"]
+                df[df["Dim1"] == "SEX_BTSX"]
                 .drop(columns=["Dim1"])
                 .rename(
                     columns={
@@ -379,7 +379,7 @@ This section has two parts:
                 .reset_index(drop=True)
             ),
             "steps": [
-                "Filtered to `Dim1 == 'BTSX'` (Both sexes) — removes sex-disaggregated duplicates",
+                "Filtered to `Dim1 == 'SEX_BTSX'` (Both sexes) — removes sex-disaggregated duplicates",
                 "Dropped the `Dim1` column (no longer needed after filtering)",
                 "Renamed: `SpatialDim` → `CountryCode`, `TimeDim` → `Year`, `NumericValue` → `LifeExpectancy`",
                 "Dropped records with missing `LifeExpectancy`",
