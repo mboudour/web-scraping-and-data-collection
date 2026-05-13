@@ -670,7 +670,13 @@ it finds and let you choose which one to use.
             key="dl_scrape_json",
         )
 
-        if st.button("✅ Use This Table → Day 2", key="use_table"):
-            st.session_state["byod_flat_df"] = selected_table
-            st.session_state["byod_source"] = "scrape"
-            st.success("✅ Table saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** to continue.")
+        # Auto-save the currently selected table to session immediately
+        st.session_state["byod_flat_df"] = selected_table
+        st.session_state["byod_source"] = "scrape"
+        st.info(
+            "✅ Table auto-saved to session. "
+            "Go to **Day 2 → 🧹 Clean Your Data** when you are ready, "
+            "or download the JSON above to use it in a later session."
+        )
+        if st.button("➡️ Go to Day 2 →", key="use_table"):
+            st.success("✅ Navigate to Day 2 using the sidebar.")

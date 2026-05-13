@@ -1,528 +1,539 @@
 """
-Day 3 — From Shared Workflow to Participants' Own Data
-Applications: World Bank (explore), GBIF, and participant-uploaded data
-+ Bring Your Own Data — Explore
+Day 3 — From Usable Data to Basic Statistics
+Homogeneous six-step explore flow: four guided presets + BYOD
 """
 
-import os, json, io
+import json
+import io
+import requests
+import numpy as np
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="Day 3 — From Shared Workflow to Own Data", page_icon="🔍", layout="wide")
+st.set_page_config(
+    page_title="Day 3 — From Usable Data to Basic Statistics",
+    page_icon="📊",
+    layout="wide",
+)
 
-# Robust cache path — works locally and on Streamlit Cloud
-import pathlib
-_repo_root = pathlib.Path(__file__).resolve().parent
-if _repo_root.name == "pages":
-    _repo_root = _repo_root.parent
-CACHE_DIR = str(_repo_root / "data" / "cache")
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-def load_clean_csv(filename):
-    path = os.path.join(CACHE_DIR, filename)
-    if os.path.exists(path):
-        return pd.read_csv(path)
-    return None
-
-# ── sidebar ───────────────────────────────────────────────────────────────────
+# ── sidebar ────────────────────────────────────────────────────────────────────
 
 st.sidebar.title("Day 3 Navigation")
 app_choice = st.sidebar.radio(
-    "Select Section",
+    "Select section",
     [
         "Overview",
-        "App 5 — World Bank Population (Explore)",
-        "App 6 — GBIF Biodiversity (Explore)",
-        "🔍 Explore Your Own Data",
-        "🔍 Bring Your Own Data — Explore",
+        "📊 Explore Your Data",
         "⚖️ Ethics and Open Science",
     ],
 )
 
-# ── overview ──────────────────────────────────────────────────────────────────
+# ── helpers ────────────────────────────────────────────────────────────────────
+
+def load_json_from_upload(uploaded_file):
+    raw = json.load(uploaded_file)
+    if isinstance(raw, list):
+        df = pd.json_normalize(raw)
+    elif isinstance(raw, dict):
+        list_keys = [k for k, v in raw.items() if isinstance(v, list)]
+        if len(list_keys) == 1:
+            df = pd.json_normalize(raw[list_keys[0]])
+        elif len(list_keys) > 1:
+            key_used = st.selectbox(
+                "Your JSON has multiple record arrays. Select the one to use:",
+                list_keys, key="json_key_selector_d3",
+            )
+            df = pd.json_normalize(raw[key_used])
+        else:
+            df = pd.DataFrame([raw])
+    else:
+        df = pd.DataFrame()
+    return df
+
+
+def classify_columns(df):
+    types = {}
+    for col in df.columns:
+        series = df[col].dropna()
+        if series.empty:
+            types[col] = "categorical"
+            continue
+        try:
+            pd.to_numeric(series, errors="raise")
+            types[col] = "numeric"
+            continue
+        except (ValueError, TypeError):
+            pass
+        try:
+            parsed = pd.to_datetime(series, infer_datetime_format=True, errors="coerce")
+            if parsed.notna().mean() > 0.7:
+                types[col] = "date"
+                continue
+        except Exception:
+            pass
+        types[col] = "categorical"
+    return types
+
+
+def show_explore_flow(df, key_prefix, dataset_label):
+    # Step 1
+    st.markdown("### Step 1 — Dataset Overview")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Rows", len(df))
+    c2.metric("Columns", len(df.columns))
+    c3.metric("Missing Cells", int(df.isnull().sum().sum()))
+    st.markdown("**First 20 rows:**")
+    st.dataframe(df.head(20), use_container_width=True)
+
+    # Step 2
+    st.markdown("### Step 2 — Column Profile")
+    col_types = classify_columns(df)
+    profile_rows = []
+    for col in df.columns:
+        n_missing = int(df[col].isnull().sum())
+        pct_missing = round(n_missing / len(df) * 100, 1) if len(df) > 0 else 0
+        n_unique = df[col].nunique()
+        profile_rows.append({
+            "Column": col,
+            "Detected Type": col_types[col],
+            "Unique Values": n_unique,
+            "Missing": n_missing,
+            "% Missing": pct_missing,
+        })
+    st.dataframe(pd.DataFrame(profile_rows), use_container_width=True)
+
+    # Step 3
+    st.markdown("### Step 3 — Select Statistics to Compute")
+    st.markdown(
+        "All columns are pre-selected. Untick any column you want to skip, "
+        "then click **Compute Statistics**."
+    )
+    selected_cols = []
+    cols_per_row = 3
+    col_list = list(df.columns)
+    for i in range(0, len(col_list), cols_per_row):
+        row_cols = col_list[i:i + cols_per_row]
+        check_cols = st.columns(cols_per_row)
+        for j, col in enumerate(row_cols):
+            ctype = col_types.get(col, "categorical")
+            label = f"**{col}** _{ctype}_"
+            if check_cols[j].checkbox(label, value=True, key=f"{key_prefix}_sel_{col}"):
+                selected_cols.append(col)
+
+    compute_btn = st.button("📊 Compute Statistics", key=f"{key_prefix}_compute")
+
+    if compute_btn:
+        if not selected_cols:
+            st.warning("No columns selected.")
+            return
+
+        st.markdown("### Step 4 — Statistics")
+
+        numeric_cols = [c for c in selected_cols if col_types.get(c) == "numeric"]
+        categorical_cols = [c for c in selected_cols if col_types.get(c) == "categorical"]
+        date_cols = [c for c in selected_cols if col_types.get(c) == "date"]
+
+        if numeric_cols:
+            st.markdown("#### Numeric Columns — Descriptive Statistics")
+            desc = df[numeric_cols].describe().T.round(3)
+            desc.index.name = "Column"
+            st.dataframe(desc, use_container_width=True)
+
+            st.markdown("#### Histograms")
+            n_bins = st.slider(
+                "Number of bins for histograms",
+                min_value=5, max_value=100, value=20,
+                key=f"{key_prefix}_bins",
+            )
+            for col in numeric_cols:
+                series = df[col].dropna()
+                if len(series) == 0:
+                    continue
+                st.markdown(f"**{col}**")
+                try:
+                    counts, bin_edges = np.histogram(series, bins=n_bins)
+                    bin_labels = [f"{bin_edges[i]:.2f}-{bin_edges[i+1]:.2f}" for i in range(len(counts))]
+                    hist_df = pd.DataFrame({"Bin": bin_labels, "Count": counts}).set_index("Bin")
+                    st.bar_chart(hist_df)
+                except Exception:
+                    st.bar_chart(series.value_counts().sort_index().rename("Count"))
+
+        if categorical_cols:
+            st.markdown("#### Categorical Columns — Value Counts")
+            for col in categorical_cols:
+                series = df[col].dropna()
+                if len(series) == 0:
+                    continue
+                vc = series.value_counts().head(20)
+                pct = (vc / len(series) * 100).round(1)
+                vc_df = pd.DataFrame({"Count": vc, "% of non-missing": pct})
+                st.markdown(f"**{col}** — top {min(20, len(vc))} values")
+                st.dataframe(vc_df, use_container_width=True)
+                st.bar_chart(vc.rename("Count"))
+
+        if date_cols:
+            st.markdown("#### Date Columns — Records Over Time")
+            for col in date_cols:
+                try:
+                    parsed = pd.to_datetime(df[col], infer_datetime_format=True, errors="coerce")
+                    year_counts = parsed.dt.year.value_counts().sort_index()
+                    st.markdown(f"**{col}** — records by year")
+                    st.bar_chart(year_counts.rename("Count"))
+                except Exception as ex:
+                    st.warning(f"Could not parse {col} as dates: {ex}")
+
+        st.markdown("#### Missingness Report")
+        miss = df[selected_cols].isnull().sum()
+        miss = miss[miss > 0]
+        if miss.empty:
+            st.success("No missing values in the selected columns.")
+        else:
+            miss_pct = (miss / len(df) * 100).round(1)
+            miss_df = pd.DataFrame({"Missing Count": miss, "% Missing": miss_pct})
+            st.dataframe(miss_df, use_container_width=True)
+            st.bar_chart(miss_pct.rename("% Missing"))
+
+        if len(numeric_cols) >= 2:
+            st.markdown("#### Correlation Matrix (Numeric Columns)")
+            with st.expander("What is a correlation matrix?"):
+                st.markdown("""
+A correlation matrix shows how strongly pairs of numeric columns move together.
+Values range from -1 (perfect negative) to +1 (perfect positive). 0 means no linear relationship.
+This is a Pearson correlation, which only detects straight-line relationships.
+                """)
+            corr = df[numeric_cols].corr().round(2)
+            st.dataframe(corr, use_container_width=True)
+
+        # Step 5
+        st.markdown("### Step 5 — Four-Criteria Self-Assessment")
+        with st.expander("What do the four criteria mean?"):
+            st.markdown("""
+1. **Representativeness** — Does the sample reflect the population you want to study?
+2. **Completeness** — Are there systematic missing values in key fields?
+3. **Consistency** — Are values recorded in the same format throughout?
+4. **Validity** — Are values within expected and logically coherent ranges?
+            """)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("**1. Representativeness**")
+            rep = st.text_area(
+                "Does the sample represent your target population?",
+                placeholder="e.g. Only trials registered in the US; missing data for low-income countries.",
+                key=f"{key_prefix}_rep",
+            )
+            st.markdown("**3. Consistency**")
+            con = st.text_area(
+                "Are values recorded consistently across rows?",
+                placeholder="e.g. Date formats are mixed; status labels vary in capitalisation.",
+                key=f"{key_prefix}_con",
+            )
+        with c2:
+            st.markdown("**2. Completeness**")
+            comp = st.text_area(
+                "Are there systematic missing values?",
+                placeholder="e.g. NumericValue is null for 12% of rows, mostly for small countries.",
+                key=f"{key_prefix}_comp",
+            )
+            st.markdown("**4. Validity**")
+            val = st.text_area(
+                "Are values within expected ranges?",
+                placeholder="e.g. All life expectancy values are between 40 and 90 — plausible.",
+                key=f"{key_prefix}_val",
+            )
+
+        # Step 6
+        st.markdown("### Step 6 — Download Summary")
+
+        summary_parts = []
+        if numeric_cols:
+            desc_out = df[numeric_cols].describe().T.round(3).reset_index()
+            desc_out.insert(0, "section", "Descriptive Statistics")
+            summary_parts.append(desc_out.rename(columns={"index": "column"}))
+        if categorical_cols:
+            for col in categorical_cols:
+                vc = df[col].dropna().value_counts().head(20).reset_index()
+                vc.columns = ["value", "count"]
+                vc.insert(0, "column", col)
+                vc.insert(0, "section", "Value Counts")
+                summary_parts.append(vc)
+        if not miss.empty:
+            miss_out = pd.DataFrame({"Missing Count": miss, "% Missing": miss_pct}).reset_index()
+            miss_out.insert(0, "section", "Missingness")
+            summary_parts.append(miss_out)
+
+        if summary_parts:
+            summary_csv = pd.concat(summary_parts, ignore_index=True)
+            csv_bytes = summary_csv.to_csv(index=False).encode("utf-8")
+            st.download_button(
+                "Download Statistics Summary (CSV)",
+                csv_bytes,
+                f"{key_prefix}_statistics_summary.csv",
+                "text/csv",
+                key=f"{key_prefix}_dl_stats",
+            )
+
+        assessment_text = f"""Four-Criteria Self-Assessment -- {dataset_label}
+
+1. Representativeness:
+{rep if rep else "(not filled in)"}
+
+2. Completeness:
+{comp if comp else "(not filled in)"}
+
+3. Consistency:
+{con if con else "(not filled in)"}
+
+4. Validity:
+{val if val else "(not filled in)"}
+"""
+        st.download_button(
+            "Download Self-Assessment (TXT)",
+            assessment_text.encode("utf-8"),
+            f"{key_prefix}_self_assessment.txt",
+            "text/plain",
+            key=f"{key_prefix}_dl_assess",
+        )
+
+        st.success(f"Exploration of **{dataset_label}** complete.")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# OVERVIEW
+# ══════════════════════════════════════════════════════════════════════════════
 
 if app_choice == "Overview":
-    st.title("🔍 Day 3 — From Shared Workflow to Participants' Own Data")
+    st.title("📊 Day 3 — From Usable Data to Basic Statistics")
     st.markdown("""
-**Theme:** Enable participants to adapt the app to their own URLs or datasets
-and interpret preliminary output.
+**Theme:** Take the clean dataset from Day 2 and produce descriptive statistics, distributions,
+and a structured self-assessment of data quality.
 
-### Day 3 Structure
-| Section | Activity |
-|---------|----------|
-| App 5 — World Bank | Explore cleaned population data |
-| App 6 — GBIF | Full extract-clean-explore pipeline on biodiversity data |
-| Explore Your Own Data | Upload a CSV to explore |
-| **Bring Your Own Data — Explore** | Full end-to-end exploration for data collected in Days 1–2 |
-| Ethics | Legal, privacy, and server-load considerations |
+### What You Will Do Today
+1. Load your cleaned dataset (guided example or your own Day 2 output).
+2. Review the column profile — detected types, unique values, missingness.
+3. Select which columns to analyse.
+4. Compute descriptive statistics, histograms, value counts, and a correlation matrix.
+5. Assess your dataset against four standard data quality criteria.
+6. Download a statistics summary and your self-assessment.
 
-### Entry Points into the Pipeline
-Participants may enter at different stages depending on their situation:
+### Four Data Quality Criteria
+| Criterion | Key question |
+|---|---|
+| **Representativeness** | Does the sample reflect the population you want to study? |
+| **Completeness** | Are there systematic missing values in key fields? |
+| **Consistency** | Are values recorded in the same format throughout? |
+| **Validity** | Are values within expected and logically coherent ranges? |
 
-- **I have a URL or API** → Use **Day 1 → 🔍 Bring Your Own Data — Collect**
-- **I have raw data** → Use **Day 2 → 🔍 Bring Your Own Data — Clean**
-- **I have clean data** → Use **Day 3 → 🔍 Bring Your Own Data — Explore** or **🔍 Explore Your Own Data**
-
-Use the sidebar to navigate.
+Use the sidebar to go to **📊 Explore Your Data** to start.
     """)
 
-# ── App 5: World Bank explore ─────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# EXPLORE YOUR DATA
+# ══════════════════════════════════════════════════════════════════════════════
 
-elif app_choice == "App 5 — World Bank Population (Explore)":
-    st.title("🌱 App 5 — World Bank Population: Exploratory Analysis")
-
-    df = load_clean_csv("day3_app5_worldbank_clean.csv")
-    if df is None:
-        df = load_clean_csv("day2_app5_co2_clean.csv")
-
-    if df is None:
-        st.error("Cache file not found.")
-    else:
-        st.subheader("Dataset Overview")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Total Records", len(df))
-        col2.metric("Countries", df["CountryCode"].nunique() if "CountryCode" in df.columns else "—")
-        col3.metric("Years", df["Year"].nunique() if "Year" in df.columns else "—")
-
-        st.subheader("Summary Statistics")
-        st.dataframe(df.describe(), use_container_width=True)
-
-        st.subheader("Missingness Check")
-        miss = df.isnull().sum()
-        if miss.sum() == 0:
-            st.success("No missing values.")
-        else:
-            st.dataframe(miss[miss > 0].rename("Missing Count").to_frame(), use_container_width=True)
-
-        if "Population" in df.columns and "Year" in df.columns:
-            st.subheader("Population Over Time (Top 5 Countries by Max Population)")
-            top5 = df.groupby("CountryCode")["Population"].max().nlargest(5).index.tolist()
-            filtered = df[df["CountryCode"].isin(top5)]
-            pivot = filtered.pivot_table(index="Year", columns="CountryCode", values="Population")
-            st.line_chart(pivot)
-
-        with st.expander("📌 Day 3 Teaching Note"):
-            st.markdown("""
-- Exploratory analysis checks **plausibility before inference**.
-- Population values should be positive and consistent with known country sizes.
-- Implausible values may indicate extraction errors, cleaning mistakes, or genuine source anomalies.
-            """)
-
-# ── App 6: GBIF explore ───────────────────────────────────────────────────────
-
-elif app_choice == "App 6 — GBIF Biodiversity (Explore)":
-    st.title("🦁 App 6 — GBIF: Biodiversity Occurrence Data")
+elif app_choice == "📊 Explore Your Data":
+    st.title("📊 Day 3 — Explore Your Data")
     st.markdown("""
-**Source:** [GBIF API](https://api.gbif.org/v1/occurrence/search)
-
-The Global Biodiversity Information Facility (GBIF) aggregates species occurrence records
-from institutions worldwide. This application demonstrates the **full pipeline**:
-extract → clean → explore, using *Panthera leo* (lion) occurrence records.
+Choose a guided example or load your own cleaned data from Day 2.
+The same six-step flow applies to all datasets.
     """)
 
-    df = load_clean_csv("day3_app6_gbif_clean.csv")
-
-    if df is None:
-        st.error("Cache file not found.")
-    else:
-        st.subheader("Dataset Overview")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Total Records", len(df))
-        col2.metric("Countries", df["CountryCode"].nunique() if "CountryCode" in df.columns else "—")
-        col3.metric("Years Range",
-                    f"{int(df['Year'].min())}–{int(df['Year'].max())}"
-                    if "Year" in df.columns and df["Year"].notna().any() else "—")
-
-        st.subheader("Cleaned Dataset Preview")
-        st.dataframe(df.head(20), use_container_width=True)
-
-        st.subheader("Missingness Report")
-        miss = df.isnull().sum()
-        miss = miss[miss > 0]
-        if miss.empty:
-            st.success("No missing values in cleaned dataset.")
-        else:
-            st.dataframe(miss.rename("Missing Count").to_frame(), use_container_width=True)
-
-        if "CountryCode" in df.columns:
-            st.subheader("Records by Country")
-            st.bar_chart(df["CountryCode"].value_counts().head(15))
-
-        if "Year" in df.columns:
-            st.subheader("Records by Year")
-            year_counts = df["Year"].dropna().astype(int).value_counts().sort_index()
-            st.bar_chart(year_counts)
-
-        if "BasisOfRecord" in df.columns:
-            st.subheader("Basis of Record")
-            st.bar_chart(df["BasisOfRecord"].value_counts())
-
-        with st.expander("📌 Day 3 Teaching Note"):
-            st.markdown("""
-- GBIF data illustrates **coverage bias**: records are concentrated in countries with
-  active biodiversity monitoring institutions.
-- The `basisOfRecord` field distinguishes human observations from preserved specimens —
-  a structural feature that affects how the data can be used.
-- Exploratory output should **feed back into research question refinement**:
-  if coverage is too sparse for a country-level analysis, a regional or global question
-  may be more defensible.
-            """)
-
-# ── Explore Your Own Data ─────────────────────────────────────────────────────
-
-elif app_choice == "🔍 Explore Your Own Data":
-    st.title("🔍 Explore Your Own Data")
-    st.markdown("""
-Upload a CSV or JSON file — from your own collection, a cleaned Day 2 output, or any other source —
-and use the tools below to generate a preliminary exploratory analysis.
-    """)
-
-    uploaded = st.file_uploader("Upload file", type=["csv", "json"])
-
-    if uploaded:
-        try:
-            if uploaded.name.endswith(".json"):
-                raw = json.load(uploaded)
-                if isinstance(raw, list):
-                    df = pd.json_normalize(raw)
-                elif isinstance(raw, dict):
-                    list_keys = [k for k, v in raw.items() if isinstance(v, list)]
-                    if list_keys:
-                        chosen_key = st.selectbox("Select the records array:", list_keys)
-                        df = pd.json_normalize(raw[chosen_key])
-                    else:
-                        df = pd.DataFrame([raw])
-            else:
-                df = pd.read_csv(uploaded)
-            st.success(f"Loaded: {len(df)} rows × {len(df.columns)} columns")
-        except Exception as e:
-            st.error(f"Could not load file: {e}")
-            df = None
-    else:
-        df = None
-
-    if df is not None:
-        st.subheader("Column Types")
-        col_info = pd.DataFrame({
-            "Column": df.columns,
-            "Type": df.dtypes.astype(str).values,
-            "Non-Null": df.notnull().sum().values,
-            "Unique": df.nunique().values,
-        })
-        st.dataframe(col_info, use_container_width=True)
-
-        st.subheader("Summary Statistics")
-        st.dataframe(df.describe(include="all"), use_container_width=True)
-
-        st.subheader("Missingness Report")
-        miss = df.isnull().sum()
-        miss = miss[miss > 0]
-        if miss.empty:
-            st.success("No missing values.")
-        else:
-            st.dataframe(miss.rename("Missing Count").to_frame(), use_container_width=True)
-
-        st.subheader("Value Counts for a Selected Column")
-        col_choice = st.selectbox("Select column", df.columns.tolist())
-        if col_choice:
-            vc = df[col_choice].value_counts().head(20)
-            st.bar_chart(vc)
-
-        st.subheader("Assess Against Four Criteria")
-        st.markdown("""
-Before using this dataset in your research, check:
-
-1. **Coverage**: Does the dataset represent the population you intend to study?
-2. **Completeness**: Are there systematic missing values in key fields?
-3. **Consistency**: Are field values consistent across records?
-4. **Plausibility**: Do numeric values fall within expected ranges?
-        """)
-
-        st.subheader("Download Exploratory Summary")
-        summary = df.describe(include="all").to_csv().encode("utf-8")
-        st.download_button("⬇️ Download Summary Statistics CSV", summary, "exploratory_summary.csv", "text/csv")
-    else:
-        st.info("Upload a file above to begin.")
-
-# ── BYOD: Explore ─────────────────────────────────────────────────────────────
-
-elif app_choice == "🔍 Bring Your Own Data — Explore":
-    st.title("🔍 Bring Your Own Data — Step 3: Explore")
-    st.markdown("""
-This section provides a full exploratory analysis dashboard for the data you collected and
-cleaned in Days 1 and 2. You can also upload a new file directly.
-
-The same four criteria used to assess the case study datasets apply here:
-**Coverage, Completeness, Consistency, and Plausibility.**
-    """)
-
-    # ── Four-Criteria Plain-English Guide ─────────────────────────────────────
-    with st.expander("📖 What do the four criteria mean? (click to expand)"):
-        st.markdown("""
-Before analysing any dataset, researchers ask four questions. These are not technical checks —
-they are **research quality checks** that apply to any data, from any source.
-
-| Criterion | Plain-English Question | Why It Matters |
-|---|---|---|
-| **Coverage** | Does my data include all the cases I want to study? | A dataset that only covers some countries, years, or groups will produce conclusions that do not generalise. |
-| **Completeness** | Are the important fields filled in for most records? | A column with many blank values cannot be used reliably for analysis. |
-| **Consistency** | Are the same things described the same way throughout? | If `"United States"`, `"USA"`, and `"US"` all appear in a country column, counting by country will give wrong totals. |
-| **Plausibility** | Do the numbers and values make sense? | A population of −500 or a date of 2099 signals an error in the source or the extraction. |
-
-You will find a self-assessment section at the bottom of this page where you can record your
-own notes on each criterion for your dataset.
-        """)
-
-    st.markdown("---")
-    st.subheader("⚙️ Load Your Cleaned Data")
-
-    st.info("""
-**How to bring your data here:**
-- If you cleaned data in **Day 2 → 🔍 Bring Your Own Data — Clean** and downloaded it,
-  select **"Upload a file"** and upload that CSV or JSON file.
-- If you are still in the same browser session as Day 2, select **"Carried forward from Day 2"**.
-    """)
-
-    data_source = st.radio(
-        "Where is your data coming from?",
+    dataset_choice = st.radio(
+        "Select a dataset to explore:",
         [
-            "Upload a file (CSV or JSON)",
-            "Carried forward from Day 2 BYOD cleaning (same browser session only)",
+            "🏥 Example 1 — ClinicalTrials.gov (Health)",
+            "🌍 Example 2 — WHO Global Health Observatory (Health)",
+            "🔬 Example 3 — NIH RePORTER (Life Sciences)",
+            "🏛️ Example 4 — Congress.gov Bills (Social Sciences)",
+            "📂 My Own Data (from Day 2)",
         ],
+        key="d3_dataset_choice",
     )
 
     df = None
+    dataset_label = ""
 
-    if data_source == "Carried forward from Day 2 BYOD cleaning (same browser session only)":
-        if "byod_clean_df" in st.session_state:
-            df = st.session_state["byod_clean_df"]
-            st.success(f"Loaded from Day 2 session: {len(df)} rows × {len(df.columns)} columns.")
-        elif "byod_flat_df" in st.session_state:
-            df = st.session_state["byod_flat_df"]
-            st.info(f"No cleaned data found — using raw collected data from Day 1 session: {len(df)} rows × {len(df.columns)} columns.")
-        else:
-            st.warning("""
-**No session data found.** Session data is only available if you worked through Days 1 and 2
-in the same browser session without refreshing the page.
-
-👉 If you downloaded a CSV or JSON file from Day 2, select **"Upload a file"** above and upload it instead.
-            """)
-
-    else:
-        uploaded = st.file_uploader(
-            "Upload your cleaned data file",
-            type=["csv", "json"],
-            help="Upload the CSV or JSON file downloaded from Day 2, or any other clean data file.",
-        )
-        if uploaded:
+    if dataset_choice == "🏥 Example 1 — ClinicalTrials.gov (Health)":
+        dataset_label = "ClinicalTrials.gov"
+        st.markdown("**Dataset:** Clinical trials related to *diabetes* — status, phase, and conditions.")
+        if st.button("▶ Fetch & Explore — ClinicalTrials.gov", key="d3_fetch_ct"):
             try:
-                if uploaded.name.endswith(".json"):
-                    raw = json.load(uploaded)
-                    if isinstance(raw, list):
-                        df = pd.json_normalize(raw)
-                    elif isinstance(raw, dict):
-                        list_keys = [k for k, v in raw.items() if isinstance(v, list)]
-                        if list_keys:
-                            if len(list_keys) == 1:
-                                df = pd.json_normalize(raw[list_keys[0]])
-                            else:
-                                chosen_key = st.selectbox("Select the records array:", list_keys)
-                                df = pd.json_normalize(raw[chosen_key])
-                        else:
-                            df = pd.DataFrame([raw])
-                    st.success(f"Loaded JSON: {len(df)} rows × {len(df.columns)} columns.")
-                else:
-                    df = pd.read_csv(uploaded)
-                    st.success(f"Loaded CSV: {len(df)} rows × {len(df.columns)} columns.")
+                with st.spinner("Fetching ClinicalTrials.gov data..."):
+                    r = requests.get(
+                        "https://clinicaltrials.gov/api/v2/studies",
+                        params={"query.cond": "diabetes", "pageSize": 50, "format": "json"},
+                        timeout=30,
+                    )
+                    r.raise_for_status()
+                    data = r.json()
+                studies = data.get("studies", [])
+                rows = []
+                for s in studies:
+                    proto = s.get("protocolSection", {})
+                    id_mod = proto.get("identificationModule", {})
+                    status_mod = proto.get("statusModule", {})
+                    design_mod = proto.get("designModule", {})
+                    cond_mod = proto.get("conditionsModule", {})
+                    rows.append({
+                        "NCT_ID": id_mod.get("nctId", ""),
+                        "Title": str(id_mod.get("briefTitle", ""))[:60],
+                        "Status": status_mod.get("overallStatus", ""),
+                        "Phase": ", ".join(design_mod.get("phases", [])),
+                        "Conditions": ", ".join(cond_mod.get("conditions", [])[:2]),
+                    })
+                df_fetched = pd.DataFrame(rows)
+                st.session_state["d3_example_df"] = df_fetched
+                st.session_state["d3_example_label"] = dataset_label
             except Exception as e:
-                st.error(f"Could not load file: {e}")
+                st.error(f"Could not load data: {e}")
+        if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
+            df = st.session_state["d3_example_df"]
 
-    # ── Exploration Dashboard ─────────────────────────────────────────────────
-    if df is not None:
-        st.markdown("---")
+    elif dataset_choice == "🌍 Example 2 — WHO Global Health Observatory (Health)":
+        dataset_label = "WHO GHO"
+        st.markdown("**Dataset:** Life expectancy at birth — country, year, and value (Both sexes only).")
+        if st.button("▶ Fetch & Explore — WHO GHO", key="d3_fetch_who"):
+            try:
+                with st.spinner("Fetching WHO GHO data..."):
+                    r = requests.get(
+                        "https://ghoapi.azureedge.net/api/WHOSIS_000001",
+                        params={"$top": 300}, timeout=30,
+                    )
+                    r.raise_for_status()
+                    data = r.json()
+                records = data.get("value", [])
+                df_fetched = pd.DataFrame([{
+                    "CountryCode": rec.get("SpatialDim", ""),
+                    "Year": rec.get("TimeDim", ""),
+                    "LifeExpectancy": rec.get("NumericValue", None),
+                } for rec in records if rec.get("Dim1") == "SEX_BTSX"])
+                st.session_state["d3_example_df"] = df_fetched
+                st.session_state["d3_example_label"] = dataset_label
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
+        if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
+            df = st.session_state["d3_example_df"]
 
-        # ── 1. Dataset Overview ───────────────────────────────────────────────
-        st.subheader("1. Dataset Overview")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Rows", len(df))
-        col2.metric("Columns", len(df.columns))
-        col3.metric("Missing Cells", int(df.isnull().sum().sum()))
+    elif dataset_choice == "🔬 Example 3 — NIH RePORTER (Life Sciences)":
+        dataset_label = "NIH RePORTER"
+        st.markdown("**Dataset:** NIH research grants related to *genomics* — title, agency, fiscal year, award amount.")
+        if st.button("▶ Fetch & Explore — NIH RePORTER", key="d3_fetch_nih"):
+            try:
+                with st.spinner("Fetching NIH RePORTER data..."):
+                    r = requests.post(
+                        "https://api.reporter.nih.gov/v2/projects/search",
+                        json={
+                            "criteria": {"advanced_text_search": {
+                                "operator": "and",
+                                "search_field": "all",
+                                "search_text": "genomics",
+                            }},
+                            "offset": 0, "limit": 50,
+                        },
+                        headers={"Content-Type": "application/json"},
+                        timeout=30,
+                    )
+                    r.raise_for_status()
+                    data = r.json()
+                results = data.get("results", [])
+                df_fetched = pd.DataFrame([{
+                    "ProjectTitle": str(p.get("project_title", ""))[:60],
+                    "AgencyCode": p.get("agency_code", ""),
+                    "FiscalYear": p.get("fiscal_year", ""),
+                    "AwardAmount": p.get("award_amount", None),
+                    "ProjectStartDate": p.get("project_start_date", ""),
+                } for p in results])
+                st.session_state["d3_example_df"] = df_fetched
+                st.session_state["d3_example_label"] = dataset_label
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
+        if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
+            df = st.session_state["d3_example_df"]
 
-        # ── 2. Column Profile ─────────────────────────────────────────────────
-        st.subheader("2. Column Profile")
-        col_info = pd.DataFrame({
-            "Column": df.columns,
-            "Type": df.dtypes.astype(str).values,
-            "Non-Null Count": df.notnull().sum().values,
-            "Null Count": df.isnull().sum().values,
-            "Unique Values": df.nunique().values,
-        })
-        st.dataframe(col_info, use_container_width=True)
-
-        # ── 3. Summary Statistics ─────────────────────────────────────────────
-        st.subheader("3. Summary Statistics")
-        with st.expander("📖 How to read Summary Statistics"):
-            st.markdown("""
-Summary statistics describe the distribution of each column:
-
-| Statistic | What it means |
-|---|---|
-| **count** | How many non-blank values are in this column |
-| **mean** | The average value (numeric columns only) |
-| **std** | Standard deviation — how spread out the values are |
-| **min / max** | The smallest and largest values |
-| **25% / 50% / 75%** | Quartiles — 50% is the median (middle value) |
-| **unique** | How many different values appear (text columns) |
-| **top** | The most common value (text columns) |
-| **freq** | How many times the most common value appears |
-
-**What to look for:** Very large `std` relative to `mean` suggests outliers. A `min` of 0 or negative for a count column suggests errors.
-            """)
-        st.dataframe(df.describe(include="all"), use_container_width=True)
-
-        # ── 4. Missingness Report ─────────────────────────────────────────────
-        st.subheader("4. Missingness Report")
-        miss = df.isnull().sum()
-        miss = miss[miss > 0]
-        if miss.empty:
-            st.success("No missing values in this dataset.")
-        else:
-            st.dataframe(miss.rename("Missing Count").to_frame(), use_container_width=True)
-            miss_pct = (miss / len(df) * 100).round(1)
-            st.bar_chart(miss_pct.rename("% Missing"))
-
-        # ── 5. Value Distributions ────────────────────────────────────────────
-        st.subheader("5. Value Distributions")
-        st.markdown("Select a column to view its value distribution.")
-        dist_col = st.selectbox("Select column for distribution chart:", df.columns.tolist(), key="byod_dist")
-        if dist_col:
-            if pd.api.types.is_numeric_dtype(df[dist_col]):
-                st.bar_chart(df[dist_col].dropna().value_counts(bins=20).sort_index())
+    elif dataset_choice == "🏛️ Example 4 — Congress.gov Bills (Social Sciences)":
+        dataset_label = "Congress.gov Bills"
+        st.markdown("**Dataset:** Bills introduced in the 118th US Congress — title, type, chamber, latest action.")
+        congress_key = st.text_input("Congress.gov API Key", type="password", key="d3_congress_key")
+        if st.button("▶ Fetch & Explore — Congress.gov", key="d3_fetch_congress"):
+            if not congress_key:
+                st.warning("Please enter your Congress.gov API key.")
             else:
-                vc = df[dist_col].value_counts().head(25)
-                st.bar_chart(vc)
+                try:
+                    with st.spinner("Fetching Congress.gov data..."):
+                        r = requests.get(
+                            "https://api.congress.gov/v3/bill/118",
+                            params={"limit": 50, "api_key": congress_key},
+                            timeout=30,
+                        )
+                        r.raise_for_status()
+                        data = r.json()
+                    bills = data.get("bills", [])
+                    df_fetched = pd.DataFrame([{
+                        "BillNumber": f"{b.get('type','')}{b.get('number','')}",
+                        "Title": str(b.get("title", ""))[:60],
+                        "BillType": b.get("type", ""),
+                        "OriginChamber": b.get("originChamber", ""),
+                        "LatestActionDate": b.get("latestAction", {}).get("actionDate", ""),
+                    } for b in bills])
+                    st.session_state["d3_example_df"] = df_fetched
+                    st.session_state["d3_example_label"] = dataset_label
+                except Exception as e:
+                    st.error(f"Could not load data: {e}")
+        if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
+            df = st.session_state["d3_example_df"]
 
-        # ── 6. Numeric Correlations ───────────────────────────────────────────
-        num_cols = df.select_dtypes(include="number").columns.tolist()
-        if len(num_cols) >= 2:
-            st.subheader("6. Numeric Column Correlations")
-            with st.expander("📖 What is a correlation matrix?"):
-                st.markdown("""
-A correlation matrix shows how strongly pairs of numeric columns move together.
+    elif dataset_choice == "📂 My Own Data (from Day 2)":
+        dataset_label = "My Own Data"
+        data_source = st.radio(
+            "How do you want to load your data?",
+            [
+                "Carried forward from Day 2 (same browser session)",
+                "Upload a CSV file (downloaded from Day 2)",
+                "Upload a JSON file (downloaded from Day 1 or Day 2)",
+            ],
+            key="d3_byod_source",
+        )
+        if data_source == "Carried forward from Day 2 (same browser session)":
+            if "byod_clean_df" in st.session_state:
+                df = st.session_state["byod_clean_df"]
+                st.success(f"Loaded cleaned dataset from Day 2 session ({len(df)} rows x {len(df.columns)} cols).")
+            elif "byod_flat_df" in st.session_state:
+                df = st.session_state["byod_flat_df"]
+                st.info(f"No cleaned dataset found -- using raw Day 1 dataset ({len(df)} rows x {len(df.columns)} cols).")
+            else:
+                st.warning("No dataset found in this session. Go to Day 1 to collect data, or upload a file below.")
+        elif data_source == "Upload a CSV file (downloaded from Day 2)":
+            uploaded = st.file_uploader("Upload your cleaned CSV file", type=["csv"], key="d3_upload_csv")
+            if uploaded:
+                try:
+                    df = pd.read_csv(uploaded)
+                    st.success(f"Loaded {len(df)} rows x {len(df.columns)} cols from CSV.")
+                except Exception as e:
+                    st.error(f"Could not read CSV: {e}")
+        else:
+            uploaded = st.file_uploader("Upload your JSON file", type=["json"], key="d3_upload_json")
+            if uploaded:
+                try:
+                    df = load_json_from_upload(uploaded)
+                    st.success(f"Loaded {len(df)} rows x {len(df.columns)} cols from JSON.")
+                except Exception as e:
+                    st.error(f"Could not read JSON: {e}")
 
-- Values range from **−1 to +1**
-- **+1** means the two columns increase together perfectly (e.g., height and weight)
-- **−1** means one increases as the other decreases perfectly
-- **0** means no linear relationship
-
-**What to look for:**
-- Values above **0.7** or below **−0.7** suggest a strong relationship worth investigating
-- A column perfectly correlated with itself always shows **1.0** on the diagonal — this is normal
-- Correlation does **not** mean causation
-
-This is a **Pearson correlation**, which only detects straight-line (linear) relationships.
-                """)
-            corr = df[num_cols].corr().round(2)
-            st.dataframe(corr, use_container_width=True)
-
-        # ── 7. Four-Criteria Self-Assessment ─────────────────────────────────
-        st.subheader("7. Four-Criteria Self-Assessment")
-        st.markdown("""
-Use the checks below to assess your dataset before using it in your research.
-These are the same criteria applied to the case study datasets in Apps 5 and 6.
-See the **"What do the four criteria mean?"** guide at the top of this page for plain-English explanations.
-        """)
-
-        with st.expander("Coverage — Does the dataset represent your target population?"):
-            st.markdown("""
-- Check whether all expected countries, time periods, or groups are present.
-- Look for systematic absences (e.g., all records from one country, or only recent years).
-- Ask: would a missing subgroup bias your conclusions?
-
-**Example:** If you collected clinical trials data for "cancer" but only trials from the US appear,
-your conclusions about global trial activity would be misleading.
-            """)
-            st.text_area("Your coverage notes:", key="byod_coverage_notes", height=80)
-
-        with st.expander("Completeness — Are key fields sufficiently populated?"):
-            st.markdown("""
-- Review the Missingness Report above.
-- A column with >20% missing values may be unreliable for analysis.
-- Ask: is the missingness random, or does it follow a pattern (e.g., missing for certain countries)?
-
-**Example:** If the `award_amount` column is blank for 40% of NIH grants, you cannot reliably
-calculate average funding without understanding why those values are missing.
-            """)
-            st.text_area("Your completeness notes:", key="byod_completeness_notes", height=80)
-
-        with st.expander("Consistency — Are values standardized across records?"):
-            st.markdown("""
-- Look for label variants (e.g., `"USA"` vs `"United States"` vs `"US"`).
-- Check for mixed date formats or numeric formats.
-- Use the Value Distributions section above to spot inconsistencies.
-
-**Example:** If a country column contains `"United Kingdom"`, `"UK"`, and `"Great Britain"`,
-a count of records by country will split them into three separate groups instead of one.
-            """)
-            st.text_area("Your consistency notes:", key="byod_consistency_notes", height=80)
-
-        with st.expander("Plausibility — Do values fall within expected ranges?"):
-            st.markdown("""
-- Check minimum and maximum values for numeric columns (see Summary Statistics above).
-- Look for impossible values: negative counts, future dates, values outside known bounds.
-- Compare against external benchmarks if available.
-
-**Example:** A population value of −500 or a year of 2099 in a historical dataset
-signals an extraction error or a data entry mistake in the source.
-            """)
-            st.text_area("Your plausibility notes:", key="byod_plausibility_notes", height=80)
-
-        # ── 8. Downloads ──────────────────────────────────────────────────────
+    if df is not None and len(df) > 0:
         st.markdown("---")
-        st.subheader("⬇️ Download Exploratory Output")
-        st.markdown("All downloads are in CSV format, which can be opened in Excel, R, or any spreadsheet application.")
+        show_explore_flow(df, key_prefix=f"d3_{dataset_label.replace(' ', '_')}", dataset_label=dataset_label)
+    elif df is not None and len(df) == 0:
+        st.warning("The loaded dataset is empty. Please check your source.")
 
-        summary_csv = df.describe(include="all").to_csv().encode("utf-8")
-        st.download_button(
-            "⬇️ Download Summary Statistics (CSV)",
-            summary_csv,
-            "byod_summary_statistics.csv",
-            "text/csv",
-        )
-
-        col_csv = col_info.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "⬇️ Download Column Profile (CSV)",
-            col_csv,
-            "byod_column_profile.csv",
-            "text/csv",
-        )
-
-        full_csv = df.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            "⬇️ Download Full Dataset (CSV)",
-            full_csv,
-            "byod_full_dataset.csv",
-            "text/csv",
-        )
-
-        full_json = df.to_json(orient="records", indent=2).encode("utf-8")
-        st.download_button(
-            "⬇️ Download Full Dataset (JSON)",
-            full_json,
-            "byod_full_dataset.json",
-            "application/json",
-        )
-
-# ── Ethics ────────────────────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# ETHICS AND OPEN SCIENCE
+# ══════════════════════════════════════════════════════════════════════════════
 
 elif app_choice == "⚖️ Ethics and Open Science":
     st.title("⚖️ Ethics of Web Scraping and Digital Data Collection")
     st.markdown("""
 Ethical considerations in web scraping are **not optional** — they are part of research design.
-
 ---
-
 ### Legal Considerations
 - **Terms of Service**: Review the ToS of every source before collecting data.
   Many platforms prohibit automated access.
@@ -530,37 +541,29 @@ Ethical considerations in web scraping are **not optional** — they are part of
   but compilations may be.
 - **GDPR / Privacy law**: If data includes personal information about EU residents,
   GDPR applies regardless of where you are located.
-
 ---
-
 ### Privacy Considerations
-- **Publicly accessible ≠ appropriate to collect and publish**.
+- **Publicly accessible does not mean appropriate to collect and publish**.
   Consider whether individuals would expect their information to be used for research.
 - **Pseudonymization**: Remove or hash identifiers before sharing data.
 - **Sensitive categories**: Health, political opinion, religion, and sexual orientation
   require extra care under most privacy frameworks.
-
 ---
-
 ### Responsible Scraping
 | Practice | Why It Matters |
 |----------|---------------|
 | Use APIs when available | APIs are the intended access method; HTML scraping may violate ToS |
-| Respect `robots.txt` | Signals which pages the site owner permits automated access to |
+| Respect robots.txt | Signals which pages the site owner permits automated access to |
 | Add delays between requests | Avoids overloading servers (rate limiting) |
 | Cache data locally | Reduces repeated requests to the same source |
 | Preserve raw files | Enables replication and error detection |
-
 ---
-
 ### Open Science
 - Publish your **processing log** and **metadata sheet** alongside the dataset.
 - Deposit raw and cleaned data in an open repository (OSF, Zenodo, Harvard Dataverse).
 - Link your data to the scripts that produced it (GitHub + DOI via Zenodo).
 - Acknowledge limitations explicitly in your methods section.
-
 ---
-
 ### Key References
 - Brown et al. (2025). Web scraping for research: Legal, ethical, institutional, and scientific considerations. *Big Data & Society*.
 - Boudourides, M. (2025). *Web Scraping and Data Collection for Life and Social Sciences*. Northwestern University.
