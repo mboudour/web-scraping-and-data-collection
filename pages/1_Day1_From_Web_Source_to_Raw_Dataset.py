@@ -61,16 +61,78 @@ def flatten_multiindex(tables):
 
 
 def save_and_display_result(df, raw, source_label):
-    """Show preview, chart, download button, and Day 2 handoff for any fetched dataset."""
+    """Show preview, JSON inspector, download button, and Day 2 handoff for any fetched dataset."""
     st.success(f"✅ Loaded {len(df)} records from {source_label}.")
 
     st.markdown("#### Preview (first 20 rows)")
     st.dataframe(df.head(20), use_container_width=True)
 
-    st.markdown("#### Raw JSON (first record)")
-    preview = raw[0] if isinstance(raw, list) else raw
-    st.json(preview, expanded=False)
+    # ── JSON Inspector ────────────────────────────────────────────────────────
+    raw_list = raw if isinstance(raw, list) else [raw]
+    n_records = len(raw_list)
 
+    with st.expander("🔍 Inspect Raw JSON Structure", expanded=False):
+        st.markdown("""
+**What you are looking at:** This is the raw JSON returned by the API — exactly as the server
+sent it, before any processing. Each *record* is one item in the list (one trial, one country,
+one grant, one bill …).
+
+Use the selector below to browse individual records and see how the data is structured.
+        """)
+
+        record_idx = st.number_input(
+            f"Inspect record (1 – {n_records})",
+            min_value=1, max_value=max(n_records, 1), value=1, step=1,
+            key=f"json_idx_{source_label.replace(' ', '_')}",
+        ) - 1  # convert to 0-based index
+
+        selected_record = raw_list[int(record_idx)]
+        st.json(selected_record, expanded=True)
+
+        # ── Field inventory table ─────────────────────────────────────────────
+        st.markdown("##### Field inventory — what is in this record?")
+        st.markdown("""
+The table below lists every top-level field in this record, its Python type, and an example
+value. Fields whose type is **dict** or **list** are *nested* — they contain sub-objects that
+will need to be flattened or extracted during Day 2 cleaning.
+        """)
+
+        if isinstance(selected_record, dict):
+            inventory_rows = []
+            for field, value in selected_record.items():
+                py_type = type(value).__name__
+                if isinstance(value, dict):
+                    example = "{" + ", ".join(list(value.keys())[:3]) + ("…" if len(value) > 3 else "") + "}"
+                    note = "⚠️ Nested object — will need flattening"
+                elif isinstance(value, list):
+                    example = f"[{len(value)} item(s)]"
+                    note = "⚠️ Nested list — will need flattening or joining"
+                elif value is None:
+                    example = "null"
+                    note = "Missing value"
+                else:
+                    example = str(value)[:60] + ("…" if len(str(value)) > 60 else "")
+                    note = ""
+                inventory_rows.append({
+                    "Field": field,
+                    "Type": py_type,
+                    "Example value": example,
+                    "Note": note,
+                })
+            st.dataframe(
+                pd.DataFrame(inventory_rows),
+                use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            st.info("This record is not a JSON object — it cannot be inventoried as a table.")
+
+        st.markdown("""
+> **Key observation for Day 2:** Fields marked ⚠️ cannot be used directly in a spreadsheet.
+> On Day 2 we will extract or flatten them into separate columns.
+        """)
+
+    # ── Download + session save ───────────────────────────────────────────────
     _raw_bytes = json.dumps(raw, indent=2).encode("utf-8")
     st.download_button(
         "⬇️ Download Raw JSON to your computer",
@@ -81,7 +143,7 @@ def save_and_display_result(df, raw, source_label):
     st.session_state["byod_raw"] = raw
     st.session_state["byod_flat_df"] = df
     st.session_state["byod_source"] = "api_get"
-    st.info("✅ Data saved. Go to **Day 2 → 🔍 Bring Your Own Data — Clean** when you are ready.")
+    st.info("✅ Data saved. Go to **Day 2 → 🧹 Clean Your Data** when you are ready.")
 
 
 # ── sidebar ───────────────────────────────────────────────────────────────────
@@ -292,22 +354,38 @@ sent as a JSON body. The API returns structured records for funded research proj
 **Research question:** What bills were introduced in the 118th Congress (2023–2024),
 and what are their types, chambers of origin, and latest actions?
 
-**How it works:** The API is queried with `format=json&limit=50&api_key=DEMO_KEY`.
+**How it works:** The API is queried with `format=json&limit=50&api_key=YOUR_KEY`.
 It returns structured JSON records for bills, each with nested `latestAction` objects.
         """)
+        st.info(
+            "🔑 **API key required.** Congress.gov requires a free personal API key. "
+            "Register in seconds at [api.congress.gov](https://api.congress.gov/) — "
+            "you will receive your key by e-mail immediately. "
+            "The other three examples (ClinicalTrials, WHO GHO, NIH RePORTER) work without any key."
+        )
+        congress_api_key = st.text_input(
+            "Your Congress.gov API key",
+            value="DEMO_KEY",
+            help="Paste your personal key here. DEMO_KEY works but is heavily rate-limited.",
+            key="congress_api_key",
+        )
         if st.button("▶ Run Example 4 — Congress.gov", key="run_preset4"):
-            cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json")
+            _ckey = st.session_state.get("congress_api_key", "DEMO_KEY") or "DEMO_KEY"
+            # Do not cache when a real key is used (personalised results)
+            cache_path = os.path.join(CACHE_DIR, "day1_app4_congress_raw.json") \
+                if _ckey == "DEMO_KEY" else None
             def fetch_congress():
                 r = requests.get(
                     "https://api.congress.gov/v3/bill/118",
-                    params={"format": "json", "limit": 50, "api_key": "DEMO_KEY"},
+                    params={"format": "json", "limit": 50, "api_key": _ckey},
                     timeout=30,
                 )
                 r.raise_for_status()
                 return r.json()
             try:
                 with st.spinner("Fetching Congress.gov data…"):
-                    data = load_or_fetch_json(cache_path, fetch_congress)
+                    data = load_or_fetch_json(cache_path, fetch_congress) \
+                        if cache_path else fetch_congress()
                 bills = data.get("bills", [])
                 df = pd.DataFrame([{
                     "Number": b.get("number", ""),
