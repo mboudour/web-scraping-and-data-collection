@@ -107,11 +107,11 @@ def auto_detect_issues(df, prefix, extra_issues=None):
                     f'as text strings (e.g. `"NA"`, `"N/A"`, empty string). '
                     "These will be replaced with proper `NaN` so they are treated as missing in all subsequent steps."
                 ),
-                "fix": lambda d, col=_col, sents=_SENTINELS: (
+                "fix": lambda d, col=_col, sents=_SENTINELS, n=_n_sent: (
                     d.assign(**{col: d[col].apply(
                         lambda v: float("nan") if (isinstance(v, str) and v.strip().lower() in sents) else v
-                    )}),
-                    f"Replaced placeholder strings with NaN in '{col}' ({_n_sent} values).",
+                    )}) if col in d.columns else d,
+                    f"Replaced placeholder strings with NaN in '{col}' ({n} values)." if col in d.columns else f"Skipped '{col}' (column was renamed by a prior fix).",
                 ),
             })
 
@@ -259,8 +259,15 @@ def render_cleaning_flow(raw_df, prefix, session_key="byod_clean_df", extra_issu
         result = raw_df.copy()
         log = []
 
-        # Step 3: Apply
-        for issue in issues:
+        # Step 3: Apply — sentinel fixes must run before rename fixes
+        # Priority order: sentinel → all others
+        priority_ids = [i["id"] for i in issues if "_sentinel_" in i["id"]]
+        other_ids = [i["id"] for i in issues if "_sentinel_" not in i["id"]]
+        ordered_issues = (
+            [i for i in issues if i["id"] in priority_ids] +
+            [i for i in issues if i["id"] in other_ids]
+        )
+        for issue in ordered_issues:
             if selected.get(issue["id"], False):
                 try:
                     result, entry = issue["fix"](result)
