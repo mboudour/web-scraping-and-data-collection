@@ -691,19 +691,36 @@ first page), enable pagination below and choose the method your API supports.
                     progress_bar = st.progress(0)
                     cap = int(max_records) if max_records > 0 else None
 
+                    def _fetch_with_retry(url, params, headers, max_retries=5):
+                        """GET with exponential backoff on 429 Too Many Requests."""
+                        delay = 2.0
+                        for attempt in range(max_retries):
+                            r = requests.get(url, params=params, headers=headers, timeout=30)
+                            if r.status_code == 429:
+                                retry_after = int(r.headers.get("Retry-After", delay))
+                                wait = max(retry_after, delay)
+                                status_box.warning(
+                                    f"⏳ Rate limit hit (429) — waiting {wait:.0f}s before retrying "
+                                    f"(attempt {attempt+1}/{max_retries})…"
+                                )
+                                _time.sleep(wait)
+                                delay *= 2   # exponential backoff
+                            else:
+                                r.raise_for_status()
+                                return r
+                        raise Exception("Rate limit persists after maximum retries — please try again later.")
+
                     try:
                         if "Cursor" in pagination_method:
                             # ── Cursor pagination ─────────────────────────────
-                            cursor_val = "*"   # OpenAlex convention; works for most cursor APIs
-                            page_num   = 0
+                            cursor_val  = "*"   # OpenAlex convention; works for most cursor APIs
+                            page_num    = 0
                             total_known = None
 
                             while True:
                                 page_params = dict(params)
                                 page_params[cursor_param_name] = cursor_val
-                                r = requests.get(base_url, params=page_params,
-                                                 headers=headers, timeout=30)
-                                r.raise_for_status()
+                                r    = _fetch_with_retry(base_url, page_params, headers)
                                 data = r.json()
 
                                 # extract records from common envelope keys
@@ -741,7 +758,7 @@ first page), enable pagination below and choose the method your API supports.
                                     )
                                     break
                                 cursor_val = next_cur
-                                _time.sleep(0.1)
+                                _time.sleep(0.5)   # polite delay between pages
 
                         else:
                             # ── Offset pagination ─────────────────────────────
@@ -751,9 +768,7 @@ first page), enable pagination below and choose the method your API supports.
                             while True:
                                 page_params = dict(params)
                                 page_params["page"] = str(page_num)
-                                r = requests.get(base_url, params=page_params,
-                                                 headers=headers, timeout=30)
-                                r.raise_for_status()
+                                r    = _fetch_with_retry(base_url, page_params, headers)
                                 data = r.json()
 
                                 batch = data if isinstance(data, list) else \
@@ -786,7 +801,7 @@ first page), enable pagination below and choose the method your API supports.
                                     )
                                     break
                                 page_num += 1
-                                _time.sleep(0.1)
+                                _time.sleep(0.5)   # polite delay between pages
 
                         progress_bar.progress(1.0)
                         status_box.success(
