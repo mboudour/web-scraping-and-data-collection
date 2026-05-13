@@ -288,7 +288,7 @@ with `$top=300`. It returns country-year-sex records in a flat JSON list.
                     st.markdown("""
 - Each country-year combination appears **three times**: Both sexes, Male, and Female.
 - This is a structural feature of the source — not an error — but it must be handled during
-  cleaning on Day 2 (e.g., filtering to `BTSX` = Both sexes).
+  cleaning on Day 2 (e.g., filtering to `SEX_BTSX` = Both sexes).
 - The `NumericValue` field may be `null` for some country-year combinations.
                     """)
             except Exception as e:
