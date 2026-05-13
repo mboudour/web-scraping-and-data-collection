@@ -89,6 +89,32 @@ def auto_detect_issues(df, prefix, extra_issues=None):
             ),
         })
 
+    # 2b. String-sentinel missing values ("NA", "N/A", "", "none", "null", "-", etc.)
+    _SENTINELS = {"na", "n/a", "n.a.", "n.a", "none", "null", "nan", "-", "--", "?", "unknown", "missing", ""}
+    _str_cols_early = df.select_dtypes(include="object").columns.tolist()
+    for _c in _str_cols_early:
+        _series = df[_c].dropna().astype(str)
+        _sent_mask = _series.str.strip().str.lower().isin(_SENTINELS)
+        _n_sent = int(_sent_mask.sum())
+        if _n_sent > 0:
+            _pct = 100 * _n_sent / max(len(df), 1)
+            _col = _c
+            issues.append({
+                "id": f"{prefix}_sentinel_{_c}",
+                "label": f"🚫 Replace placeholder values in `{_c}` with proper missing values ({_n_sent} rows, {_pct:.0f}%)",
+                "description": (
+                    f"Column **`{_c}`** contains **{_n_sent}** value(s) ({_pct:.0f}%) that represent missing data "
+                    f'as text strings (e.g. `"NA"`, `"N/A"`, empty string). '
+                    "These will be replaced with proper `NaN` so they are treated as missing in all subsequent steps."
+                ),
+                "fix": lambda d, col=_col, sents=_SENTINELS: (
+                    d.assign(**{col: d[col].apply(
+                        lambda v: float("nan") if (isinstance(v, str) and v.strip().lower() in sents) else v
+                    )}),
+                    f"Replaced placeholder strings with NaN in '{col}' ({_n_sent} values).",
+                ),
+            })
+
     # 3. Whitespace in text columns
     str_cols = df.select_dtypes(include="object").columns.tolist()
     ws_cols = [
