@@ -11,8 +11,6 @@ Uniform 6-step flow for both guided examples and BYOD:
   6. Save to session + carry-forward button
 """
 
-import gzip
-import io
 import json
 import requests
 import pandas as pd
@@ -35,15 +33,8 @@ app_choice = st.sidebar.radio(
 # ── shared helpers ─────────────────────────────────────────────────────────────
 
 def load_json_from_upload(uploaded_file):
-    """Load a JSON or gzip-compressed JSON file into a flat DataFrame; returns (df, key_used)."""
-    name = getattr(uploaded_file, "name", "")
-    if name.endswith(".gz"):
-        # Read all bytes into memory first — gzip.open requires a seekable file-like object
-        raw_bytes = io.BytesIO(uploaded_file.read())
-        with gzip.open(raw_bytes, "rt", encoding="utf-8") as f:
-            raw = json.load(f)
-    else:
-        raw = json.load(uploaded_file)
+    """Load a JSON file into a flat DataFrame; returns (df, key_used)."""
+    raw = json.load(uploaded_file)
     if isinstance(raw, list):
         return pd.json_normalize(raw), None
     elif isinstance(raw, dict):
@@ -60,105 +51,6 @@ def load_json_from_upload(uploaded_file):
         else:
             return pd.DataFrame([raw]), None
     return pd.DataFrame(), None
-
-
-def flatten_openalex_df(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Flatten all remaining list/dict columns in an OpenAlex (or any JSON-normalised)
-    DataFrame that pd.json_normalize could not fully expand.
-
-    Strategy per column type:
-    - list of dicts  (e.g. authorships)  → expand with pd.json_normalize, keep
-                                           useful scalar sub-fields as new columns
-    - list of scalars (e.g. issn)        → join values with " | "
-    - dict           (should not remain  → flatten with json_normalize and merge
-                      after json_normalize, but just in case)
-    """
-    df = df.copy()
-
-    # ── authorships: extract first-author name + all author names ──────────────
-    if "authorships" in df.columns:
-        def _first_author(cell):
-            if not isinstance(cell, list) or len(cell) == 0:
-                return None
-            for entry in cell:
-                if isinstance(entry, dict):
-                    a = entry.get("author", {})
-                    if isinstance(a, dict):
-                        return a.get("display_name")
-            return None
-
-        def _all_authors(cell):
-            if not isinstance(cell, list) or len(cell) == 0:
-                return None
-            names = []
-            for entry in cell:
-                if isinstance(entry, dict):
-                    a = entry.get("author", {})
-                    if isinstance(a, dict) and a.get("display_name"):
-                        names.append(a["display_name"])
-            return " | ".join(names) if names else None
-
-        def _author_count(cell):
-            return len(cell) if isinstance(cell, list) else None
-
-        def _first_affiliation(cell):
-            if not isinstance(cell, list) or len(cell) == 0:
-                return None
-            for entry in cell:
-                if isinstance(entry, dict):
-                    insts = entry.get("institutions", [])
-                    if isinstance(insts, list) and len(insts) > 0:
-                        inst = insts[0]
-                        if isinstance(inst, dict):
-                            return inst.get("display_name")
-            return None
-
-        df.insert(df.columns.get_loc("authorships"), "first_author",      df["authorships"].apply(_first_author))
-        df.insert(df.columns.get_loc("authorships"), "all_authors",       df["authorships"].apply(_all_authors))
-        df.insert(df.columns.get_loc("authorships"), "author_count",      df["authorships"].apply(_author_count))
-        df.insert(df.columns.get_loc("authorships"), "first_affiliation", df["authorships"].apply(_first_affiliation))
-        df.drop(columns=["authorships"], inplace=True)
-
-    # ── generic: flatten any remaining list/dict columns ───────────────────────
-    for col in list(df.columns):
-        sample = df[col].dropna()
-        if sample.empty:
-            continue
-        first = sample.iloc[0]
-
-        if isinstance(first, list):
-            # list of dicts → try to expand into sub-columns
-            if len(sample) > 0 and isinstance(sample.iloc[0], list) and \
-               len(sample.iloc[0]) > 0 and isinstance(sample.iloc[0][0], dict):
-                # join a representative scalar field if available
-                def _join_field(cell, field="display_name"):
-                    if not isinstance(cell, list):
-                        return None
-                    vals = [str(e.get(field, "")) for e in cell
-                            if isinstance(e, dict) and e.get(field)]
-                    return " | ".join(vals) if vals else None
-                df[col] = df[col].apply(_join_field)
-            else:
-                # list of scalars → join with " | "
-                df[col] = df[col].apply(
-                    lambda v: " | ".join(str(x) for x in v) if isinstance(v, list) else v
-                )
-
-        elif isinstance(first, dict):
-            # remaining dict column → flatten and merge
-            expanded = pd.json_normalize(df[col].apply(lambda v: v if isinstance(v, dict) else {}))
-            expanded.columns = [f"{col}.{c}" for c in expanded.columns]
-            expanded.index = df.index
-            df = pd.concat([df.drop(columns=[col]), expanded], axis=1)
-
-    return df
-
-
-def _is_openalex_df(df: pd.DataFrame) -> bool:
-    """Heuristic: True if the DataFrame looks like it came from OpenAlex."""
-    oa_cols = {"id", "title", "publication_year", "cited_by_count", "authorships"}
-    return len(oa_cols & set(df.columns)) >= 3
 
 
 def auto_detect_issues(df, prefix, extra_issues=None):
@@ -733,8 +625,8 @@ Both follow the same six-step flow.
                 )
         else:
             uploaded = st.file_uploader(
-                "Upload your Day 1 JSON file (.json or .json.gz)",
-                type=["json", "gz"],
+                "Upload your Day 1 JSON file",
+                type=["json"],
                 key="byod_upload",
             )
             if uploaded:
@@ -742,58 +634,16 @@ Both follow the same six-step flow.
                     raw_df, key_used = load_json_from_upload(uploaded)
                     label = f"(key: `{key_used}`)" if key_used else ""
                     st.success(
-                        f"Loaded JSON {label}: {len(raw_df)} rows \u00d7 {len(raw_df.columns)} columns."
+                        f"Loaded JSON {label}: {len(raw_df)} rows × {len(raw_df.columns)} columns."
                     )
-                    with st.expander("\ud83d\udcd6 What happened when you uploaded a JSON file?"):
+                    with st.expander("📖 What happened when you uploaded a JSON file?"):
                         st.markdown("""
 The app converted your JSON into a flat table using **JSON normalization**.
 Each top-level key in each record became a column.
 If a field contained a nested sub-object (e.g. `organism.scientificName`),
-it was flattened into a column with a dot in its name \u2014 these are automatically
+it was flattened into a column with a dot in its name — these are automatically
 detected and offered for renaming in the scan below.
                         """)
-
-                    # \u2500\u2500 Deep-flatten any remaining list/dict columns \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-                    nested_cols = [
-                        c for c in raw_df.columns
-                        if raw_df[c].dropna().apply(lambda v: isinstance(v, (list, dict))).any()
-                    ]
-                    if nested_cols:
-                        _ellipsis = "\u2026" if len(nested_cols) > 5 else ""
-                        with st.expander(
-                            f"\ud83d\udd27 Deep-flatten {len(nested_cols)} nested column(s) "
-                            f"({', '.join(nested_cols[:5])}{_ellipsis})",
-                            expanded=True,
-                        ):
-                            st.markdown(
-                                "The following columns still contain **lists or nested objects** "
-                                "after the initial JSON normalization. "
-                                "Click the button below to fully flatten them into usable columns."
-                            )
-                            st.markdown(
-                                "| Column | Type | Sample value |\n"
-                                "|---|---|---|\n" +
-                                "\n".join(
-                                    f"| `{c}` | "
-                                    f"{type(raw_df[c].dropna().iloc[0]).__name__} | "
-                                    f"{str(raw_df[c].dropna().iloc[0])[:80]}\u2026 |"
-                                    for c in nested_cols
-                                    if not raw_df[c].dropna().empty
-                                )
-                            )
-                            if st.button("\u2728 Flatten all nested columns", key="flatten_nested"):
-                                with st.spinner("Flattening nested columns\u2026"):
-                                    raw_df = flatten_openalex_df(raw_df)
-                                st.success(
-                                    f"\u2705 Flattening complete: "
-                                    f"{len(raw_df)} rows \u00d7 {len(raw_df.columns)} columns."
-                                )
-                                if "authorships" not in raw_df.columns and \
-                                   any(c in raw_df.columns for c in ["first_author", "all_authors"]):
-                                    st.info(
-                                        "\ud83d\udc64 **OpenAlex authorships** were expanded into: "
-                                        "`first_author`, `all_authors`, `author_count`, `first_affiliation`."
-                                    )
                 except Exception as e:
                     st.error(f"Could not load file: {e}")
 
