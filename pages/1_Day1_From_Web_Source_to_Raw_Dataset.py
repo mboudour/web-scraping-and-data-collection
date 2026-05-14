@@ -585,246 +585,34 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
             type="password",
             help="If the API requires a key in the Authorization header, enter it here.",
         )
-
-        # ── Pagination options ────────────────────────────────────────────────
-        st.markdown("---")
-        st.markdown("##### ♻️ Pagination — fetch more than one page")
-        st.markdown("""
-Some APIs return data in *pages*. If you want to collect **all available records** (not just the
-first page), enable pagination below and choose the method your API supports.
-        """)
-        use_pagination = st.checkbox(
-            "Enable pagination (fetch all pages automatically)",
-            value=False,
-            key="get_pagination_on",
-        )
-        if use_pagination:
-            pagination_method = st.radio(
-                "Pagination method",
-                [
-                    "Cursor (next_cursor) — e.g. OpenAlex",
-                    "Offset (page=1, 2, 3 …) — e.g. most REST APIs",
-                ],
-                key="get_pagination_method",
-                help=(
-                    "**Cursor**: the API returns a `next_cursor` token in each response — "
-                    "pass it back as `cursor=` in the next request. Works for any number of records.\n\n"
-                    "**Offset**: increment a `page` parameter (1, 2, 3 …). "
-                    "Usually capped at 10,000 records total."
-                ),
-            )
-            cursor_param_name = "cursor"
-            next_cursor_key  = "next_cursor"
-            if "Cursor" in pagination_method:
-                col_c1, col_c2 = st.columns(2)
-                cursor_param_name = col_c1.text_input(
-                    "Cursor parameter name (sent in request)",
-                    value="cursor",
-                    key="cursor_param_name",
-                    help="The URL parameter the API uses for the cursor. OpenAlex uses `cursor`.",
-                )
-                next_cursor_key = col_c2.text_input(
-                    "Next-cursor key (in response JSON)",
-                    value="next_cursor",
-                    key="next_cursor_key",
-                    help="The key inside the response `meta` object that holds the next cursor value. OpenAlex uses `next_cursor`.",
-                )
-            max_records = st.number_input(
-                "Safety cap — stop after this many records (0 = no cap)",
-                min_value=0, max_value=100_000, value=2000, step=100,
-                key="get_max_records",
-                help="Prevents runaway fetches. Set to 0 to collect everything.",
-            )
-            st.info(
-                "💡 **How it works in Streamlit:** when you click Fetch All Pages below, "
-                "the app runs a loop entirely on the server — each page is fetched one after "
-                "another and a live counter shows progress. The full combined dataset is "
-                "displayed and saved when the loop finishes."
-            )
-
-        st.markdown("---")
-
-        # ── Single-page fetch ─────────────────────────────────────────────────
-        if not use_pagination:
-            if st.button("🚀 Fetch Data", key="fetch_get"):
-                if not base_url:
-                    st.warning("Please enter a base URL.")
-                else:
-                    headers = {"User-Agent": "workshop-byod/1.0", "Accept": "application/json"}
-                    if api_key_header:
-                        headers["Authorization"] = f"Bearer {api_key_header}"
-                    try:
-                        with st.spinner("Fetching data…"):
-                            r = requests.get(base_url, params=params, headers=headers, timeout=30)
-                        st.info(f"HTTP Status: {r.status_code}")
-                        if r.status_code == 200:
-                            byod_raw = r.json()
-                            raw_list = byod_raw if isinstance(byod_raw, list) else \
-                                       byod_raw.get("results", byod_raw.get("value",
-                                       byod_raw.get("studies", byod_raw.get("bills",
-                                       byod_raw.get("works", [byod_raw])))))
-                            if not isinstance(raw_list, list):
-                                raw_list = [raw_list]
-                            try:
-                                df = pd.json_normalize(raw_list)
-                            except Exception:
-                                df = pd.DataFrame(raw_list)
-                            save_and_display_result(df, byod_raw, "API (GET)")
-                        else:
-                            st.error(f"Request failed: {r.text[:300]}")
-                    except Exception as e:
-                        st.error(f"Error: {e}")
-
-        # ── Paginated fetch ───────────────────────────────────────────────────
-        else:
-            if st.button("🚀 Fetch All Pages", key="fetch_get_paginated"):
-                if not base_url:
-                    st.warning("Please enter a base URL.")
-                else:
-                    import time as _time
-                    headers = {"User-Agent": "workshop-byod/1.0", "Accept": "application/json"}
-                    if api_key_header:
-                        headers["Authorization"] = f"Bearer {api_key_header}"
-
-                    all_raw_list = []
-                    status_box   = st.empty()   # live counter
-                    progress_bar = st.progress(0)
-                    cap = int(max_records) if max_records > 0 else None
-
-                    def _fetch_with_retry(url, params, headers, max_retries=5):
-                        """GET with exponential backoff on 429 Too Many Requests."""
-                        delay = 5.0
-                        for attempt in range(max_retries):
-                            r = requests.get(url, params=params, headers=headers, timeout=30)
-                            if r.status_code == 429:
-                                # Cap wait at 60s — ignore absurdly large Retry-After values
-                                raw_retry = r.headers.get("Retry-After", delay)
-                                try:
-                                    suggested = float(raw_retry)
-                                except (ValueError, TypeError):
-                                    suggested = delay
-                                wait = min(max(suggested, delay), 60.0)
-                                status_box.warning(
-                                    f"⏳ Rate limit hit (429) — waiting {wait:.0f}s before retrying "
-                                    f"(attempt {attempt+1}/{max_retries})…"
-                                )
-                                _time.sleep(wait)
-                                delay = min(delay * 2, 60.0)   # exponential backoff, capped at 60s
-                            else:
-                                r.raise_for_status()
-                                return r
-                        raise Exception("Rate limit persists after maximum retries — please try again later.")
-
-                    try:
-                        if "Cursor" in pagination_method:
-                            # ── Cursor pagination ─────────────────────────────
-                            cursor_val  = "*"   # OpenAlex convention; works for most cursor APIs
-                            page_num    = 0
-                            total_known = None
-
-                            while True:
-                                page_params = dict(params)
-                                page_params[cursor_param_name] = cursor_val
-                                r    = _fetch_with_retry(base_url, page_params, headers)
-                                data = r.json()
-
-                                # extract records from common envelope keys
-                                batch = data if isinstance(data, list) else \
-                                        data.get("results", data.get("value",
-                                        data.get("works",   data.get("items", []))))
-                                if not isinstance(batch, list):
-                                    batch = []
-
-                                all_raw_list.extend(batch)
-                                page_num += 1
-
-                                # try to read total from meta
-                                meta = data.get("meta", {}) if isinstance(data, dict) else {}
-                                if total_known is None and "count" in meta:
-                                    total_known = meta["count"]
-
-                                # update progress display
-                                pct = min(len(all_raw_list) / total_known, 1.0) if total_known else 0
-                                progress_bar.progress(pct)
-                                status_box.info(
-                                    f"Page {page_num} fetched — "
-                                    f"{len(all_raw_list):,} records collected"
-                                    + (f" of {total_known:,} total" if total_known else "")
-                                    + (f" (cap: {cap:,})" if cap else "")
-                                )
-
-                                # get next cursor
-                                next_cur = meta.get(next_cursor_key)
-                                if not next_cur or not batch:
-                                    break   # last page
-                                if cap and len(all_raw_list) >= cap:
-                                    status_box.warning(
-                                        f"Safety cap of {cap:,} records reached — stopping."
-                                    )
-                                    break
-                                cursor_val = next_cur
-                                _time.sleep(1.0)   # polite delay between pages
-
-                        else:
-                            # ── Offset pagination ─────────────────────────────
-                            page_num    = 1
-                            total_known = None
-
-                            while True:
-                                page_params = dict(params)
-                                page_params["page"] = str(page_num)
-                                r    = _fetch_with_retry(base_url, page_params, headers)
-                                data = r.json()
-
-                                batch = data if isinstance(data, list) else \
-                                        data.get("results", data.get("value",
-                                        data.get("works",   data.get("items", []))))
-                                if not isinstance(batch, list):
-                                    batch = []
-
-                                if not batch:
-                                    break   # no more records
-
-                                all_raw_list.extend(batch)
-
-                                meta = data.get("meta", {}) if isinstance(data, dict) else {}
-                                if total_known is None and "count" in meta:
-                                    total_known = meta["count"]
-
-                                pct = min(len(all_raw_list) / total_known, 1.0) if total_known else 0
-                                progress_bar.progress(pct)
-                                status_box.info(
-                                    f"Page {page_num} fetched — "
-                                    f"{len(all_raw_list):,} records collected"
-                                    + (f" of {total_known:,} total" if total_known else "")
-                                    + (f" (cap: {cap:,})" if cap else "")
-                                )
-
-                                if cap and len(all_raw_list) >= cap:
-                                    status_box.warning(
-                                        f"Safety cap of {cap:,} records reached — stopping."
-                                    )
-                                    break
-                                page_num += 1
-                                _time.sleep(1.0)   # polite delay between pages
-
-                        progress_bar.progress(1.0)
-                        status_box.success(
-                            f"✅ Pagination complete — {len(all_raw_list):,} records collected "
-                            f"across {page_num} page(s)."
-                        )
-
-                        if all_raw_list:
-                            try:
-                                df = pd.json_normalize(all_raw_list)
-                            except Exception:
-                                df = pd.DataFrame(all_raw_list)
-                            save_and_display_result(df, all_raw_list, "API (GET — paginated)")
-                        else:
-                            st.warning("No records were collected. Check your URL and parameters.")
-
-                    except Exception as e:
-                        st.error(f"Pagination error on page {page_num}: {e}")
+        if st.button("🚀 Fetch Data", key="fetch_get"):
+            if not base_url:
+                st.warning("Please enter a base URL.")
+            else:
+                headers = {"User-Agent": "workshop-byod/1.0", "Accept": "application/json"}
+                if api_key_header:
+                    headers["Authorization"] = f"Bearer {api_key_header}"
+                try:
+                    with st.spinner("Fetching data…"):
+                        r = requests.get(base_url, params=params, headers=headers, timeout=30)
+                    st.info(f"HTTP Status: {r.status_code}")
+                    if r.status_code == 200:
+                        byod_raw = r.json()
+                        raw_list = byod_raw if isinstance(byod_raw, list) else \
+                                   byod_raw.get("results", byod_raw.get("value",
+                                   byod_raw.get("studies", byod_raw.get("bills",
+                                   byod_raw.get("works", [byod_raw])))))
+                        if not isinstance(raw_list, list):
+                            raw_list = [raw_list]
+                        try:
+                            df = pd.json_normalize(raw_list)
+                        except Exception:
+                            df = pd.DataFrame(raw_list)
+                        save_and_display_result(df, byod_raw, "API (GET)")
+                    else:
+                        st.error(f"Request failed: {r.text[:300]}")
+                except Exception as e:
+                    st.error(f"Error: {e}")
 
     # ── Method 2: POST ────────────────────────────────────────────────────────
     elif method == "Query an API (POST request)":
