@@ -11,6 +11,8 @@ Uniform 6-step flow for both guided examples and BYOD:
   6. Save to session + carry-forward button
 """
 
+import gzip
+import io
 import json
 import requests
 import pandas as pd
@@ -33,8 +35,13 @@ app_choice = st.sidebar.radio(
 # ── shared helpers ─────────────────────────────────────────────────────────────
 
 def load_json_from_upload(uploaded_file):
-    """Load a JSON file into a flat DataFrame; returns (df, key_used)."""
-    raw = json.load(uploaded_file)
+    """Load a JSON or gzip-compressed JSON file into a flat DataFrame; returns (df, key_used)."""
+    name = getattr(uploaded_file, "name", "")
+    if name.endswith(".gz"):
+        with gzip.open(uploaded_file, "rt", encoding="utf-8") as f:
+            raw = json.load(f)
+    else:
+        raw = json.load(uploaded_file)
     if isinstance(raw, list):
         return pd.json_normalize(raw), None
     elif isinstance(raw, dict):
@@ -724,8 +731,8 @@ Both follow the same six-step flow.
                 )
         else:
             uploaded = st.file_uploader(
-                "Upload your Day 1 JSON file",
-                type=["json"],
+                "Upload your Day 1 JSON file (.json or .json.gz)",
+                type=["json", "gz"],
                 key="byod_upload",
             )
             if uploaded:
