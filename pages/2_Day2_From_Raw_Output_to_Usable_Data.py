@@ -11,7 +11,10 @@ Uniform 6-step flow for both guided examples and BYOD:
   6. Save to session + carry-forward button
 """
 
+import gzip
+import io
 import json
+import re
 import requests
 import pandas as pd
 import streamlit as st
@@ -60,6 +63,36 @@ def auto_detect_issues(df, prefix, extra_issues=None):
     Returns list of issue dicts.
     """
     issues = extra_issues or []
+
+    # 0. Flatten unhashable cells (lists/dicts) — must run first so all later steps work
+    _unhashable_cols = [
+        c for c in df.columns
+        if df[c].dropna().apply(lambda v: isinstance(v, (list, dict))).any()
+    ]
+    if _unhashable_cols:
+        _n_cells = int(sum(
+            df[c].apply(lambda v: isinstance(v, (list, dict))).sum()
+            for c in _unhashable_cols
+        ))
+        issues.append({
+            "id": f"{prefix}_flatten",
+            "label": f"📦 Flatten {len(_unhashable_cols)} column(s) containing lists or dicts ({_n_cells} cells)",
+            "description": (
+                "Columns **"
+                + ", ".join(_unhashable_cols[:5])
+                + ("…" if len(_unhashable_cols) > 5 else "")
+                + "** contain Python lists or dicts (unhashable types). "
+                "These are stringified with `str()` so every downstream step — "
+                "deduplication, statistics, export — works correctly."
+            ),
+            "fix": lambda d, cols=_unhashable_cols: (
+                d.assign(**{
+                    c: d[c].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                    for c in cols if c in d.columns
+                }),
+                f"Stringified list/dict cells in {len(cols)} column(s): {cols}.",
+            ),
+        })
 
     # 1. Duplicate rows — exclude unhashable columns (lists/dicts) before calling duplicated()
     _hashable_cols = [c for c in df.columns if df[c].map(lambda x: not isinstance(x, (list, dict))).all()]
@@ -206,6 +239,40 @@ def auto_detect_issues(df, prefix, extra_issues=None):
             ),
         })
 
+    # 8. Wikipedia-style citation references [1], [3], [10] embedded in cell values
+    _cit_pat = re.compile(r"\[\d+\]")
+    _str_cols_cit = df.select_dtypes(include="object").columns.tolist()
+    _cit_affected = [
+        c for c in _str_cols_cit
+        if df[c].dropna().astype(str).str.contains(_cit_pat).any()
+    ]
+    if _cit_affected:
+        _total_cit = int(
+            sum(
+                df[c].dropna().astype(str).str.contains(_cit_pat).sum()
+                for c in _cit_affected
+            )
+        )
+        issues.append({
+            "id": f"{prefix}_citations",
+            "label": f"📎 Strip citation references [N] from {len(_cit_affected)} column(s) ({_total_cit} cells affected)",
+            "description": (
+                f"Found Wikipedia-style numeric citation markers (e.g. `[1]`, `[3]`, `[10]`) in: "
+                f"**{', '.join(_cit_affected[:5])}{'…' if len(_cit_affected) > 5 else ''}**. "
+                "These will be removed with a regex substitution `re.sub(r'\\[\\d+\\]', '', value).strip()`."
+            ),
+            "fix": lambda d, cols=_cit_affected: (
+                d.assign(**{
+                    c: d[c].apply(
+                        lambda v: re.sub(r"\[\d+\]", "", str(v)).strip()
+                        if isinstance(v, str) else v
+                    )
+                    for c in cols if c in d.columns
+                }),
+                f"Stripped citation references from {len(cols)} column(s).",
+            ),
+        })
+
     return issues
 
 
@@ -270,10 +337,12 @@ def render_cleaning_flow(raw_df, prefix, session_key="byod_clean_df", extra_issu
         result = raw_df.copy()
         log = []
 
-        # Step 3: Apply — sentinel fixes must run before rename fixes
-        # Priority order: sentinel → all others
-        priority_ids = [i["id"] for i in issues if "_sentinel_" in i["id"]]
-        other_ids = [i["id"] for i in issues if "_sentinel_" not in i["id"]]
+        # Step 3: Apply — priority order: flatten → sentinel → all others
+        priority_ids = (
+            [i["id"] for i in issues if "_flatten" in i["id"]] +
+            [i["id"] for i in issues if "_sentinel_" in i["id"]]
+        )
+        other_ids = [i["id"] for i in issues if i["id"] not in priority_ids]
         ordered_issues = (
             [i for i in issues if i["id"] in priority_ids] +
             [i for i in issues if i["id"] in other_ids]
@@ -701,14 +770,24 @@ for exploration and analysis.
 
         st.markdown("---")
         st.subheader("Download")
-        col1, col2 = st.columns(2)
+
+        # ── build compressed Parquet bytes (pandas → pyarrow → gzip) ──────────
+        def _make_parquet_gz(df):
+            import pyarrow as pa
+            import pyarrow.parquet as pq
+            buf = io.BytesIO()
+            table = pa.Table.from_pandas(df, preserve_index=False)
+            pq.write_table(table, buf, compression="gzip")
+            return buf.getvalue()
+
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.download_button(
                 "⬇️ Download as CSV",
                 result.to_csv(index=False).encode("utf-8"),
                 "day2_cleaned.csv",
                 "text/csv",
-                help="Best for Excel, SPSS, R, or any spreadsheet tool.",
+                help="Best for Excel, SPSS, R (read.csv), or any spreadsheet tool.",
             )
         with col2:
             st.download_button(
@@ -718,6 +797,22 @@ for exploration and analysis.
                 "application/json",
                 help="Same format as the Day 1 output — useful if you want to re-upload in Day 3.",
             )
+        with col3:
+            try:
+                _pq_bytes = _make_parquet_gz(result)
+                st.download_button(
+                    "⬇️ Download as Parquet (gzip)",
+                    _pq_bytes,
+                    "day2_cleaned.parquet",
+                    "application/octet-stream",
+                    help=(
+                        "Compressed columnar format. "
+                        "Python: `import polars as pl; pl.read_parquet('day2_cleaned.parquet')` · "
+                        "R: `arrow::read_parquet('day2_cleaned.parquet')`"
+                    ),
+                )
+            except Exception as _e:
+                st.warning(f"Parquet export unavailable: {_e}")
 
         st.markdown("---")
         st.subheader("Carry Forward to Day 3")

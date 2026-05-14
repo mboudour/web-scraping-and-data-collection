@@ -108,7 +108,11 @@ def show_explore_flow(df, key_prefix, dataset_label):
     for col in df.columns:
         n_missing = int(df[col].isnull().sum())
         pct_missing = round(n_missing / len(df) * 100, 1) if len(df) > 0 else 0
-        n_unique = df[col].nunique()
+        # Guard against unhashable types (lists/dicts from JSON flattening)
+        try:
+            n_unique = df[col].nunique()
+        except TypeError:
+            n_unique = df[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v).nunique()
         profile_rows.append({
             "Column": col,
             "Detected Type": col_types[col],
@@ -124,9 +128,19 @@ def show_explore_flow(df, key_prefix, dataset_label):
         "All columns are pre-selected. Untick any column you want to skip, "
         "then click **Compute Statistics**."
     )
+
+    # ── Select All / Select None buttons ──────────────────────────────────────
+    col_list = list(df.columns)
+    _btn1, _btn2, _ = st.columns([0.12, 0.12, 0.76])
+    if _btn1.button("☑ Select All", key=f"{key_prefix}_selall"):
+        for _c in col_list:
+            st.session_state[f"{key_prefix}_sel_{_c}"] = True
+    if _btn2.button("☐ Select None", key=f"{key_prefix}_selnone"):
+        for _c in col_list:
+            st.session_state[f"{key_prefix}_sel_{_c}"] = False
+
     selected_cols = []
     cols_per_row = 3
-    col_list = list(df.columns)
     for i in range(0, len(col_list), cols_per_row):
         row_cols = col_list[i:i + cols_per_row]
         check_cols = st.columns(cols_per_row)
