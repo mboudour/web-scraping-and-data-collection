@@ -61,8 +61,9 @@ def auto_detect_issues(df, prefix, extra_issues=None):
     """
     issues = extra_issues or []
 
-    # 1. Duplicate rows
-    n_dupes = int(df.duplicated().sum())
+    # 1. Duplicate rows — exclude unhashable columns (lists/dicts) before calling duplicated()
+    _hashable_cols = [c for c in df.columns if df[c].map(lambda x: not isinstance(x, (list, dict))).all()]
+    n_dupes = int(df[_hashable_cols].duplicated().sum() if _hashable_cols else 0)
     if n_dupes > 0:
         issues.append({
             "id": f"{prefix}_dupes",
@@ -512,6 +513,11 @@ Both follow the same six-step flow.
                         },
                         timeout=15,
                     ).json()
+                    def _city(v):
+                        if not v:
+                            return v
+                        # title-case each word, preserving multi-word cities like "Los Angeles"
+                        return " ".join(w.capitalize() for w in str(v).split())
                     raw_df = pd.json_normalize([
                         {
                             "project_num": r.get("project_num"),
@@ -519,7 +525,7 @@ Both follow the same six-step flow.
                             "fiscal_year": r.get("fiscal_year"),
                             "award_amount": r.get("award_amount"),
                             "org_name": (r.get("organization") or {}).get("org_name"),
-                            "org_city": (r.get("organization") or {}).get("org_city"),
+                            "org_city": _city((r.get("organization") or {}).get("org_city")),
                             "org_state": (r.get("organization") or {}).get("org_state"),
                             "agency_code": r.get("agency_code"),
                         }
