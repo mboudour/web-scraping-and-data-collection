@@ -38,7 +38,9 @@ def load_json_from_upload(uploaded_file):
     """Load a JSON or gzip-compressed JSON file into a flat DataFrame; returns (df, key_used)."""
     name = getattr(uploaded_file, "name", "")
     if name.endswith(".gz"):
-        with gzip.open(uploaded_file, "rt", encoding="utf-8") as f:
+        # Read all bytes into memory first — gzip.open requires a seekable file-like object
+        raw_bytes = io.BytesIO(uploaded_file.read())
+        with gzip.open(raw_bytes, "rt", encoding="utf-8") as f:
             raw = json.load(f)
     else:
         raw = json.load(uploaded_file)
