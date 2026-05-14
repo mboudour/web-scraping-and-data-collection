@@ -241,6 +241,16 @@ def render_cleaning_flow(raw_df, prefix, session_key="byod_clean_df", extra_issu
         "All are pre-selected — untick any you want to skip."
     )
 
+    # ── Select All / Select None buttons ──────────────────────────────────────
+    _sel_key = f"sel_all_{prefix}"
+    btn_col1, btn_col2, _ = st.columns([0.12, 0.12, 0.76])
+    if btn_col1.button("☑ Select All", key=f"selall_{prefix}"):
+        for issue in issues:
+            st.session_state[f"chk_{issue['id']}"] = True
+    if btn_col2.button("☐ Select None", key=f"selnone_{prefix}"):
+        for issue in issues:
+            st.session_state[f"chk_{issue['id']}"] = False
+
     selected = {}
     for issue in issues:
         with st.container():
