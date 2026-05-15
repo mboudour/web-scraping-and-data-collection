@@ -25,3 +25,4 @@ A manuscript describing the workshope is available here:
 - [Day 2: From Raw Output to Usable Data](./slides/day2_slides.pdf)
 - [Day 2: Key Data Cleaning Concepts](./slides/slides_cleaning_data.pdf)
 - [Day 3: From Shared Workflow to Participants’ Own Data](./slides/day3_slides.pdf)
+- [Day 3: Basic Statistics Concepts Every Researcher Should Know](./slides/slides_statistics_concepts.pdf)
