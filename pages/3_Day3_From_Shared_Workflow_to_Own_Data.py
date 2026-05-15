@@ -182,22 +182,7 @@ def show_explore_flow(df, key_prefix, dataset_label):
             if check_cols[j].checkbox(label, value=True, key=f"{key_prefix}_sel_{col}"):
                 selected_cols.append(col)
 
-    # ── Histogram bin setting — only shown when numeric columns are selected ────
     _auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(df), 2)))))
-    _has_numeric_selected = any(
-        col_types.get(c) == "numeric" for c in _selectable_cols
-    )
-    if _has_numeric_selected:
-        st.markdown("#### Histogram Bin Setting")
-        st.caption(
-            f"Default bin count (Sturges\u2019 rule): **{_auto_bins}** "
-            "\u2014 adjust below if needed. Applies to numeric columns only."
-        )
-        _n_bins_pre = st.slider(
-            "Number of bins for histograms",
-            min_value=5, max_value=200, value=_auto_bins,
-            key=f"{key_prefix}_bins_pre",
-        )
 
     compute_btn = st.button("📊 Compute Statistics", key=f"{key_prefix}_compute")
 
@@ -229,12 +214,18 @@ def show_explore_flow(df, key_prefix, dataset_label):
             st.dataframe(desc, use_container_width=True)
 
             st.markdown("#### Histograms")
-            n_bins = st.session_state.get(f"{key_prefix}_bins_pre", _auto_bins)
             for col in numeric_cols:
                 series = df[col].dropna()
                 if len(series) == 0:
                     continue
                 st.markdown(f"**{col}**")
+                _col_auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(series), 2)))))
+                n_bins = st.slider(
+                    f"Bins for {col}",
+                    min_value=5, max_value=200, value=_col_auto_bins,
+                    key=f"{key_prefix}_bins_{col}",
+                    help=f"Default (Sturges\u2019 rule): {_col_auto_bins}",
+                )
                 try:
                     counts, bin_edges = np.histogram(series, bins=n_bins)
                     bin_labels = [f"{bin_edges[i]:.2f}-{bin_edges[i+1]:.2f}" for i in range(len(counts))]
