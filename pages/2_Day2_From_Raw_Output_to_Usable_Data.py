@@ -56,12 +56,42 @@ def load_json_from_upload(uploaded_file):
     return pd.DataFrame(), None
 
 
+def _flatten_value(v):
+    """Recursively stringify any remaining nested list/dict inside a scalar cell."""
+    if isinstance(v, dict):
+        return str(v)
+    if isinstance(v, list):
+        return str(v)
+    return v
+
+
+def _normalize_with_depth(records, prefix):
+    """
+    Normalize a list of dicts into a flat DataFrame, then recursively
+    stringify any columns that still contain dicts or lists.
+    """
+    flat = pd.json_normalize(records, sep="_")
+    flat.columns = [f"{prefix}_{c}" for c in flat.columns]
+    for c in flat.columns:
+        sample = flat[c].dropna().head(10)
+        if sample.apply(lambda v: isinstance(v, (dict, list))).any():
+            flat[c] = flat[c].apply(lambda v: str(v) if isinstance(v, (dict, list)) else v)
+    return flat
+
+
 def _make_flatten_fix(cols):
     """
-    Return a fix function that properly flattens list-of-dict columns
-    (e.g. OpenAlex authors, concepts) by exploding them into new prefixed
-    columns via pd.json_normalize, and stringifies any remaining
-    plain-list or plain-dict columns.
+    Return a fix function that properly flattens list-of-dict columns.
+
+    For list-of-dicts columns (e.g. OpenAlex authorships, concepts):
+      - If the column looks like an "authors" column (contains a 'display_name'
+        key at any nesting level), produce a single comma-joined
+        '<col>_display_names' column with ALL names, plus the full
+        json_normalize expansion of the FIRST item for other fields.
+      - Otherwise, expand the FIRST item per row via json_normalize and
+        recursively stringify any remaining nested objects.
+    For plain-dict columns: normalize into prefixed columns.
+    For plain-list columns: stringify.
     """
     def _fix(d, _cols=cols):
         result = d.copy()
@@ -70,46 +100,96 @@ def _make_flatten_fix(cols):
             if col not in result.columns:
                 continue
             series = result[col].dropna()
-            # Check if it's a list-of-dicts column
             sample = series.head(10)
-            is_list_of_dicts = (
-                sample.apply(lambda v: isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict)).any()
-            )
-            is_dict_col = (
-                sample.apply(lambda v: isinstance(v, dict)).any()
-            )
+            is_list_of_dicts = sample.apply(
+                lambda v: isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict)
+            ).any()
+            is_dict_col = sample.apply(lambda v: isinstance(v, dict)).any()
+
             if is_list_of_dicts:
-                # Explode: one row per list item, then normalize
                 try:
-                    exploded = result[[col]].explode(col).reset_index()
-                    normalized = pd.json_normalize(exploded[col].dropna().tolist())
-                    normalized.columns = [f"{col}_{c}" for c in normalized.columns]
-                    # Keep only the first item per original row (summary view)
-                    first_items = result[col].apply(
-                        lambda v: v[0] if isinstance(v, list) and len(v) > 0 else (v if isinstance(v, dict) else {})
+                    # ── detect if this is an "authors" style column ──────────
+                    first_valid = next(
+                        (v for v in result[col] if isinstance(v, list) and len(v) > 0), []
                     )
-                    flat = pd.json_normalize(first_items.tolist())
-                    flat.columns = [f"{col}_{c}" for c in flat.columns]
+                    first_item = first_valid[0] if first_valid else {}
+                    # flatten first item to check all keys (including nested)
+                    first_flat_keys = set(
+                        pd.json_normalize([first_item], sep="_").columns.tolist()
+                        if isinstance(first_item, dict) else []
+                    )
+                    has_display_name = any(
+                        "display_name" in k for k in first_flat_keys
+                    )
+
+                    # ── build first-item expansion (all columns) ─────────────
+                    first_items = result[col].apply(
+                        lambda v: v[0] if isinstance(v, list) and len(v) > 0
+                        else (v if isinstance(v, dict) else {})
+                    )
+                    flat = _normalize_with_depth(first_items.tolist(), col)
                     flat.index = result.index
+
+                    if has_display_name:
+                        # find the exact key path for display_name
+                        dn_key = next(
+                            k for k in pd.json_normalize([first_item], sep="_").columns
+                            if "display_name" in k
+                        )
+                        # build comma-joined string of ALL authors' display names
+                        def _join_names(cell, _key=dn_key):
+                            if not isinstance(cell, list):
+                                return ""
+                            names = []
+                            for item in cell:
+                                if not isinstance(item, dict):
+                                    continue
+                                # navigate nested key (e.g. "author_display_name")
+                                parts = _key.split("_")
+                                # try direct key first, then nested traversal
+                                val = item.get("display_name") or item.get("author", {}).get("display_name", "")
+                                if val:
+                                    names.append(str(val))
+                            return ", ".join(names)
+
+                        joined_col = f"{col}_display_names"
+                        result[joined_col] = result[col].apply(_join_names)
+                        log_parts.append(
+                            f"Added '{joined_col}' (all display names joined). "
+                        )
+
                     result = result.drop(columns=[col])
                     result = pd.concat([result, flat], axis=1)
-                    log_parts.append(f"Expanded '{col}' (list-of-dicts) into {len(flat.columns)} new column(s).")
+                    log_parts.append(
+                        f"Expanded '{col}' (list-of-dicts) into {len(flat.columns)} column(s)."
+                    )
                 except Exception as ex:
-                    result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                    result[col] = result[col].apply(
+                        lambda v: str(v) if isinstance(v, (list, dict)) else v
+                    )
                     log_parts.append(f"Stringified '{col}' (expand failed: {ex}).")
+
             elif is_dict_col:
                 try:
-                    flat = pd.json_normalize(result[col].apply(lambda v: v if isinstance(v, dict) else {}).tolist())
-                    flat.columns = [f"{col}_{c}" for c in flat.columns]
+                    flat = _normalize_with_depth(
+                        result[col].apply(lambda v: v if isinstance(v, dict) else {}).tolist(),
+                        col,
+                    )
                     flat.index = result.index
                     result = result.drop(columns=[col])
                     result = pd.concat([result, flat], axis=1)
-                    log_parts.append(f"Expanded '{col}' (dict) into {len(flat.columns)} new column(s).")
+                    log_parts.append(
+                        f"Expanded '{col}' (dict) into {len(flat.columns)} column(s)."
+                    )
                 except Exception as ex:
-                    result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                    result[col] = result[col].apply(
+                        lambda v: str(v) if isinstance(v, (list, dict)) else v
+                    )
                     log_parts.append(f"Stringified '{col}' (expand failed: {ex}).")
             else:
-                result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                result[col] = result[col].apply(
+                    lambda v: str(v) if isinstance(v, (list, dict)) else v
+                )
                 log_parts.append(f"Stringified '{col}' (plain list).")
         return result, " ".join(log_parts)
     return _fix
