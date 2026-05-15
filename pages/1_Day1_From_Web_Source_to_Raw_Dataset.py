@@ -685,24 +685,33 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                     if api_key_header:
                         headers["Authorization"] = f"Bearer {api_key_header}"
                     try:
+                        from urllib.parse import urlencode, urlparse, urlunparse
+                        qs = urlencode(params, safe="*,")
+                        parsed = urlparse(base_url)
+                        full_url = urlunparse(parsed._replace(query=qs))
                         with st.spinner("Fetching data…"):
-                            r = requests.get(base_url, params=params, headers=headers, timeout=30)
+                            r = requests.get(full_url, headers=headers, timeout=30)
                         st.info(f"HTTP Status: {r.status_code}")
                         if r.status_code == 200:
-                            byod_raw = r.json()
-                            raw_list = byod_raw if isinstance(byod_raw, list) else \
-                                       byod_raw.get("results", byod_raw.get("value",
-                                       byod_raw.get("studies", byod_raw.get("bills",
-                                       byod_raw.get("works", [byod_raw])))))
-                            if not isinstance(raw_list, list):
-                                raw_list = [raw_list]
                             try:
-                                df = pd.json_normalize(raw_list, max_level=1)
+                                byod_raw = r.json()
                             except Exception:
-                                df = pd.DataFrame(raw_list)
-                            save_and_display_result(df, byod_raw, "API (GET)")
+                                st.error(f"Response is not valid JSON. First 300 chars: {r.text[:300]}")
+                                byod_raw = None
+                            if byod_raw is not None:
+                                raw_list = byod_raw if isinstance(byod_raw, list) else \
+                                           byod_raw.get("results", byod_raw.get("value",
+                                           byod_raw.get("studies", byod_raw.get("bills",
+                                           byod_raw.get("works", [byod_raw])))))
+                                if not isinstance(raw_list, list):
+                                    raw_list = [raw_list]
+                                try:
+                                    df = pd.json_normalize(raw_list, max_level=1)
+                                except Exception:
+                                    df = pd.DataFrame(raw_list)
+                                save_and_display_result(df, byod_raw, "API (GET)")
                         else:
-                            st.error(f"Request failed: {r.text[:300]}")
+                            st.error(f"Request failed (HTTP {r.status_code}): {r.text[:300]}")
                     except Exception as e:
                         st.error(f"Error: {e}")
 
