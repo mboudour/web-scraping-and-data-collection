@@ -79,18 +79,32 @@ def _normalize_with_depth(records, prefix):
     return flat
 
 
+def _extract_display_name(v):
+    """Extract display_name from a dict, or stringify a list to comma-joined display_names."""
+    if isinstance(v, dict):
+        return v.get("display_name") or str(v)
+    if isinstance(v, list):
+        names = []
+        for item in v:
+            if isinstance(item, dict):
+                n = item.get("display_name")
+                if n:
+                    names.append(str(n))
+        return ", ".join(names) if names else str(v)
+    return v
+
+
 def _make_flatten_fix(cols):
     """
     Return a fix function that properly flattens list-of-dict columns.
 
     For list-of-dicts columns (e.g. OpenAlex authorships, concepts):
-      - If the column looks like an "authors" column (contains a 'display_name'
-        key at any nesting level), produce a single comma-joined
-        '<col>_display_names' column with ALL names, plus the full
-        json_normalize expansion of the FIRST item for other fields.
-      - Otherwise, expand the FIRST item per row via json_normalize and
-        recursively stringify any remaining nested objects.
-    For plain-dict columns: normalize into prefixed columns.
+      - EXPLODE: one row per list item (so each author/institution/concept
+        gets its own row).
+      - For each resulting column that still contains a dict or list-of-dicts,
+        extract only the display_name (or join display_names).
+      - Recursively stringify any remaining nested objects.
+    For plain-dict columns: normalize into prefixed scalar columns.
     For plain-list columns: stringify.
     """
     def _fix(d, _cols=cols):
@@ -108,60 +122,34 @@ def _make_flatten_fix(cols):
 
             if is_list_of_dicts:
                 try:
-                    # ── detect if this is an "authors" style column ──────────
-                    first_valid = next(
-                        (v for v in result[col] if isinstance(v, list) and len(v) > 0), []
+                    # Preserve the original index so we can re-join later
+                    other_cols = [c for c in result.columns if c != col]
+                    exploded = (
+                        result[[col]]
+                        .explode(col)
+                        .reset_index()
+                        .rename(columns={"index": "_orig_idx"})
                     )
-                    first_item = first_valid[0] if first_valid else {}
-                    # flatten first item to check all keys (including nested)
-                    first_flat_keys = set(
-                        pd.json_normalize([first_item], sep="_").columns.tolist()
-                        if isinstance(first_item, dict) else []
-                    )
-                    has_display_name = any(
-                        "display_name" in k for k in first_flat_keys
-                    )
-
-                    # ── build first-item expansion (all columns) ─────────────
-                    first_items = result[col].apply(
-                        lambda v: v[0] if isinstance(v, list) and len(v) > 0
-                        else (v if isinstance(v, dict) else {})
-                    )
-                    flat = _normalize_with_depth(first_items.tolist(), col)
-                    flat.index = result.index
-
-                    if has_display_name:
-                        # find the exact key path for display_name
-                        dn_key = next(
-                            k for k in pd.json_normalize([first_item], sep="_").columns
-                            if "display_name" in k
-                        )
-                        # build comma-joined string of ALL authors' display names
-                        def _join_names(cell, _key=dn_key):
-                            if not isinstance(cell, list):
-                                return ""
-                            names = []
-                            for item in cell:
-                                if not isinstance(item, dict):
-                                    continue
-                                # navigate nested key (e.g. "author_display_name")
-                                parts = _key.split("_")
-                                # try direct key first, then nested traversal
-                                val = item.get("display_name") or item.get("author", {}).get("display_name", "")
-                                if val:
-                                    names.append(str(val))
-                            return ", ".join(names)
-
-                        joined_col = f"{col}_display_names"
-                        result[joined_col] = result[col].apply(_join_names)
-                        log_parts.append(
-                            f"Added '{joined_col}' (all display names joined). "
-                        )
-
-                    result = result.drop(columns=[col])
-                    result = pd.concat([result, flat], axis=1)
+                    # Normalize the exploded dicts
+                    records = exploded[col].apply(
+                        lambda v: v if isinstance(v, dict) else {}
+                    ).tolist()
+                    flat = pd.json_normalize(records, sep="_")
+                    flat.columns = [f"{col}_{c}" for c in flat.columns]
+                    # For any sub-column that still contains dicts or lists,
+                    # extract display_name or join display_names
+                    for c in flat.columns:
+                        sub_sample = flat[c].dropna().head(10)
+                        if sub_sample.apply(lambda v: isinstance(v, (dict, list))).any():
+                            flat[c] = flat[c].apply(_extract_display_name)
+                    flat["_orig_idx"] = exploded["_orig_idx"].values
+                    # Re-join with the other columns
+                    other = result[other_cols].reset_index().rename(columns={"index": "_orig_idx"})
+                    merged = flat.merge(other, on="_orig_idx", how="left").drop(columns=["_orig_idx"])
+                    result = merged
                     log_parts.append(
-                        f"Expanded '{col}' (list-of-dicts) into {len(flat.columns)} column(s)."
+                        f"Exploded '{col}' (list-of-dicts) into {len(flat.columns)-1} column(s), "
+                        f"{len(result)} row(s)."
                     )
                 except Exception as ex:
                     result[col] = result[col].apply(
@@ -175,6 +163,11 @@ def _make_flatten_fix(cols):
                         result[col].apply(lambda v: v if isinstance(v, dict) else {}).tolist(),
                         col,
                     )
+                    # extract display_name for any remaining nested sub-columns
+                    for c in flat.columns:
+                        sub_sample = flat[c].dropna().head(10)
+                        if sub_sample.apply(lambda v: isinstance(v, (dict, list))).any():
+                            flat[c] = flat[c].apply(_extract_display_name)
                     flat.index = result.index
                     result = result.drop(columns=[col])
                     result = pd.concat([result, flat], axis=1)
