@@ -74,6 +74,10 @@ def classify_columns(df):
         if series.empty:
             types[col] = "categorical"
             continue
+        # Columns that still contain lists or dicts cannot be analysed statistically
+        if series.apply(lambda v: isinstance(v, (list, dict))).any():
+            types[col] = "complex"
+            continue
         try:
             pd.to_numeric(series, errors="raise")
             types[col] = "numeric"
@@ -139,10 +143,20 @@ def show_explore_flow(df, key_prefix, dataset_label):
         for _c in col_list:
             st.session_state[f"{key_prefix}_sel_{_c}"] = False
 
+    # Exclude complex (list/dict) columns from selection — they cannot be summarised
+    _complex_cols = [c for c in col_list if col_types.get(c) == "complex"]
+    _selectable_cols = [c for c in col_list if col_types.get(c) != "complex"]
+    if _complex_cols:
+        st.info(
+            f"⚠️ {len(_complex_cols)} column(s) contain nested lists or dicts and are excluded from "
+            f"statistics: **{', '.join(_complex_cols)}**. "
+            "Apply the **Flatten list/dict cells** fix in Day 2 to make them analysable."
+        )
+
     selected_cols = []
     cols_per_row = 3
-    for i in range(0, len(col_list), cols_per_row):
-        row_cols = col_list[i:i + cols_per_row]
+    for i in range(0, len(_selectable_cols), cols_per_row):
+        row_cols = _selectable_cols[i:i + cols_per_row]
         check_cols = st.columns(cols_per_row)
         for j, col in enumerate(row_cols):
             ctype = col_types.get(col, "categorical")
