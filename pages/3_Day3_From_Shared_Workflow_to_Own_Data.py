@@ -157,6 +157,16 @@ def show_explore_flow(df, key_prefix, dataset_label):
             st.warning("No columns selected.")
             return
 
+        # ── Guard: too many columns selected ────────────────────────────────────
+        _MAX_COLS = 10
+        if len(selected_cols) > _MAX_COLS:
+            st.error(
+                f"❌ Too many columns selected ({len(selected_cols)}). "
+                f"Please select at most **{_MAX_COLS} columns** at a time to keep the output readable. "
+                "Use **☐ Select None** above to deselect all, then tick only the columns you need."
+            )
+            return
+
         st.markdown("### Step 4 — Statistics")
 
         numeric_cols = [c for c in selected_cols if col_types.get(c) == "numeric"]
