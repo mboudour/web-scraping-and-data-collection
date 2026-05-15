@@ -208,31 +208,30 @@ def show_explore_flow(df, key_prefix, dataset_label):
         date_cols = [c for c in selected_cols if col_types.get(c) == "date"]
 
         if numeric_cols:
-            st.markdown("#### Numeric Columns — Descriptive Statistics")
-            desc = df[numeric_cols].describe().T.round(3)
-            desc.index.name = "Column"
-            st.dataframe(desc, use_container_width=True)
-
-            st.markdown("#### Histograms")
+            st.markdown("#### Numeric Columns")
             for col in numeric_cols:
                 series = df[col].dropna()
                 if len(series) == 0:
                     continue
-                st.markdown(f"**{col}**")
-                _col_auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(series), 2)))))
-                n_bins = st.slider(
-                    f"Bins for {col}",
-                    min_value=5, max_value=200, value=_col_auto_bins,
-                    key=f"{key_prefix}_bins_{col}",
-                    help=f"Default (Sturges\u2019 rule): {_col_auto_bins}",
-                )
-                try:
-                    counts, bin_edges = np.histogram(series, bins=n_bins)
-                    bin_labels = [f"{bin_edges[i]:.2f}-{bin_edges[i+1]:.2f}" for i in range(len(counts))]
-                    hist_df = pd.DataFrame({"Bin": bin_labels, "Count": counts}).set_index("Bin")
-                    st.bar_chart(hist_df)
-                except Exception:
-                    st.bar_chart(series.value_counts().sort_index().rename("Count"))
+                with st.expander(f"📈 {col}", expanded=True):
+                    # Descriptive statistics
+                    desc_col = series.describe().rename(col).to_frame().T.round(3)
+                    st.dataframe(desc_col, use_container_width=True)
+                    # Per-column bin slider + histogram
+                    _col_auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(series), 2)))))
+                    n_bins = st.slider(
+                        f"Number of bins",
+                        min_value=5, max_value=200, value=_col_auto_bins,
+                        key=f"{key_prefix}_bins_{col}",
+                        help=f"Sturges\u2019 rule default: {_col_auto_bins}",
+                    )
+                    try:
+                        counts, bin_edges = np.histogram(series, bins=n_bins)
+                        bin_labels = [f"{bin_edges[i]:.2f}-{bin_edges[i+1]:.2f}" for i in range(len(counts))]
+                        hist_df = pd.DataFrame({"Bin": bin_labels, "Count": counts}).set_index("Bin")
+                        st.bar_chart(hist_df)
+                    except Exception:
+                        st.bar_chart(series.value_counts().sort_index().rename("Count"))
 
         if categorical_cols:
             st.markdown("#### Categorical Columns — Value Counts")
