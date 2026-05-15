@@ -212,9 +212,15 @@ def show_explore_flow(df, key_prefix, dataset_label):
             st.dataframe(desc, use_container_width=True)
 
             st.markdown("#### Histograms")
+            # Auto-default: Sturges' rule capped at 100
+            _auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(df), 2)))))
+            st.caption(
+                f"Default bin count (Sturges\u2019 rule): **{_auto_bins}** "
+                "\u2014 adjust below if needed."
+            )
             n_bins = st.slider(
-                "Number of bins for histograms",
-                min_value=5, max_value=100, value=20,
+                "Custom number of bins",
+                min_value=5, max_value=200, value=_auto_bins,
                 key=f"{key_prefix}_bins",
             )
             for col in numeric_cols:
