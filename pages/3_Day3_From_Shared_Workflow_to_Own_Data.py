@@ -182,18 +182,22 @@ def show_explore_flow(df, key_prefix, dataset_label):
             if check_cols[j].checkbox(label, value=True, key=f"{key_prefix}_sel_{col}"):
                 selected_cols.append(col)
 
-    # ── Histogram bin setting (always visible, before computing) ───────────────
-    st.markdown("#### Histogram Bin Setting")
+    # ── Histogram bin setting — only shown when numeric columns are selected ────
     _auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(df), 2)))))
-    st.caption(
-        f"Default bin count (Sturges\u2019 rule): **{_auto_bins}** "
-        "\u2014 adjust below if needed."
+    _has_numeric_selected = any(
+        col_types.get(c) == "numeric" for c in _selectable_cols
     )
-    _n_bins_pre = st.slider(
-        "Number of bins for histograms",
-        min_value=5, max_value=200, value=_auto_bins,
-        key=f"{key_prefix}_bins_pre",
-    )
+    if _has_numeric_selected:
+        st.markdown("#### Histogram Bin Setting")
+        st.caption(
+            f"Default bin count (Sturges\u2019 rule): **{_auto_bins}** "
+            "\u2014 adjust below if needed. Applies to numeric columns only."
+        )
+        _n_bins_pre = st.slider(
+            "Number of bins for histograms",
+            min_value=5, max_value=200, value=_auto_bins,
+            key=f"{key_prefix}_bins_pre",
+        )
 
     compute_btn = st.button("📊 Compute Statistics", key=f"{key_prefix}_compute")
 
