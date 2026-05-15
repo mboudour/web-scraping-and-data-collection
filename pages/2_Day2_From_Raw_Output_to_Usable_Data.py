@@ -298,8 +298,8 @@ def auto_detect_issues(df, prefix, extra_issues=None):
             ),
         })
 
-    # 8. Wikipedia-style citation references [1], [3], [10] embedded in cell values
-    _cit_pat = re.compile(r"\[\d+\]")
+    # 8. Wikipedia-style citation references [1], [a], [note 1], [citation needed] etc.
+    _cit_pat = re.compile(r"\[[^\]]+\]")
     _str_cols_cit = df.select_dtypes(include="object").columns.tolist()
     _cit_affected = [
         c for c in _str_cols_cit
@@ -314,21 +314,21 @@ def auto_detect_issues(df, prefix, extra_issues=None):
         )
         issues.append({
             "id": f"{prefix}_citations",
-            "label": f"📎 Strip citation references [N] from {len(_cit_affected)} column(s) ({_total_cit} cells affected)",
+            "label": f"📎 Strip bracketed references [N] / [a] / [note] from {len(_cit_affected)} column(s) ({_total_cit} cells affected)",
             "description": (
-                f"Found Wikipedia-style numeric citation markers (e.g. `[1]`, `[3]`, `[10]`) in: "
+                f"Found Wikipedia-style bracketed markers (e.g. `[1]`, `[a]`, `[note 1]`, `[citation needed]`) in: "
                 f"**{', '.join(_cit_affected[:5])}{'…' if len(_cit_affected) > 5 else ''}**. "
-                "These will be removed with a regex substitution `re.sub(r'\\[\\d+\\]', '', value).strip()`."
+                "These will be removed with `re.sub(r'\\[[^\\]]+\\]', '', value).strip()`."
             ),
             "fix": lambda d, cols=_cit_affected: (
                 d.assign(**{
                     c: d[c].apply(
-                        lambda v: re.sub(r"\[\d+\]", "", str(v)).strip()
+                        lambda v: re.sub(r"\[[^\]]+\]", "", str(v)).strip()
                         if isinstance(v, str) else v
                     )
                     for c in cols if c in d.columns
                 }),
-                f"Stripped citation references from {len(cols)} column(s).",
+                f"Stripped bracketed references from {len(cols)} column(s).",
             ),
         })
 
