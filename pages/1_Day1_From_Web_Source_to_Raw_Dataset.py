@@ -722,6 +722,34 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                     progress_bar = st.progress(0)
                     cap = int(max_records) if max_records > 0 else None
 
+                    def _safe_get(url, prms, hdrs, status_box, page_num, max_retries=3):
+                        """GET with 429/5xx retry and clear error messages."""
+                        import time as _t
+                        for attempt in range(1, max_retries + 1):
+                            r = requests.get(url, params=prms, headers=hdrs, timeout=30)
+                            if r.status_code == 200:
+                                try:
+                                    return r.json()
+                                except Exception:
+                                    raise ValueError(
+                                        f"Page {page_num}: HTTP 200 but response is not valid JSON. "
+                                        f"First 300 chars: {r.text[:300]}"
+                                    )
+                            elif r.status_code == 429:
+                                wait = min(int(r.headers.get("Retry-After", 10)), 60)
+                                status_box.warning(
+                                    f"Rate-limited (429) on page {page_num} — "
+                                    f"waiting {wait}s before retry {attempt}/{max_retries}…"
+                                )
+                                _t.sleep(wait)
+                            else:
+                                raise ValueError(
+                                    f"Page {page_num}: HTTP {r.status_code} — {r.text[:300]}"
+                                )
+                        raise ValueError(
+                            f"Page {page_num}: gave up after {max_retries} retries (429 rate limit)."
+                        )
+
                     try:
                         if "Cursor" in pagination_method:
                             # ── Cursor pagination ─────────────────────────────
@@ -732,10 +760,7 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                             while True:
                                 page_params = dict(params)
                                 page_params[cursor_param_name] = cursor_val
-                                r = requests.get(base_url, params=page_params,
-                                                 headers=headers, timeout=30)
-                                r.raise_for_status()
-                                data = r.json()
+                                data = _safe_get(base_url, page_params, headers, status_box, page_num + 1)
 
                                 batch = data if isinstance(data, list) else \
                                         data.get("results", data.get("value",
@@ -778,10 +803,7 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                             while True:
                                 page_params = dict(params)
                                 page_params["page"] = str(page_num)
-                                r = requests.get(base_url, params=page_params,
-                                                 headers=headers, timeout=30)
-                                r.raise_for_status()
-                                data = r.json()
+                                data = _safe_get(base_url, page_params, headers, status_box, page_num)
 
                                 batch = data if isinstance(data, list) else \
                                         data.get("results", data.get("value",
