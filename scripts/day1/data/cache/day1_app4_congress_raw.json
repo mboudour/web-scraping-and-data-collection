@@ -1,0 +1,458 @@
+{
+    "count": 286672,
+    "message": null,
+    "nextPage": "https://api.govinfo.gov/collections/BILLS/2023-01-01T00:00:00Z?offset=50&pageSize=50",
+    "previousPage": null,
+    "packages": [
+        {
+            "congress": "116",
+            "dateIssued": "2019-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-11T03:07:12Z",
+            "packageId": "BILLS-116hr1222rds",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-116hr1222rds/summary",
+            "title": "Target Practice and Marksmanship Training Support Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:10:25Z",
+            "packageId": "BILLS-119hr8707ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8707ih/summary",
+            "title": "No Funds for Iran War Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:10:19Z",
+            "packageId": "BILLS-119s4428is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4428is/summary",
+            "title": "No Aid for Ghost Students Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:10:19Z",
+            "packageId": "BILLS-119hr8685ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8685ih/summary",
+            "title": "Protect the Presidency Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:10:14Z",
+            "packageId": "BILLS-119s4460is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4460is/summary",
+            "title": "Rural Community Hospital Demonstration Program Reauthorization"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:10:14Z",
+            "packageId": "BILLS-119hr8689ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8689ih/summary",
+            "title": "Strategic Export Controls and Border Security Enhancement Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-28",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:10:09Z",
+            "packageId": "BILLS-119s4421is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4421is/summary",
+            "title": "No Oil Profits for Enemies Act of 2026; NOPE Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:10:04Z",
+            "packageId": "BILLS-119s4433is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4433is/summary",
+            "title": "Disaster Declaration Transparency Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:10:04Z",
+            "packageId": "BILLS-119hr8705ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8705ih/summary",
+            "title": "Civics and History Advancement to Restore Learning, Integrity, and Education Act; CHARLIE Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:59Z",
+            "packageId": "BILLS-119hr8647ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8647ih/summary",
+            "title": "Representative Green\u2019s Original Legislation to increase from 9 to 13 the number of justices of the Supreme Court."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-28",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:54Z",
+            "packageId": "BILLS-119s4424is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4424is/summary",
+            "title": "To amend the National Defense Authorization Act for Fiscal Year 2021 to prohibit certain institutions of higher education from receiving research and development awards, and for other purposes."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:54Z",
+            "packageId": "BILLS-119hr8687ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8687ih/summary",
+            "title": "Eliminating Nefarious Distribution of Smuggled Chinese Vapes Act of 2026; ENDS Chinese Vapes Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:49Z",
+            "packageId": "BILLS-119s4439is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4439is/summary",
+            "title": "Built To Last Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-27",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:45Z",
+            "packageId": "BILLS-119s4400is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4400is/summary",
+            "title": "Optimizing the Department of Veterans Affairs Workforce for Veterans Act of 2026; Optimizing the VA Workforce for Veterans Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:44Z",
+            "packageId": "BILLS-119s4474is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4474is/summary",
+            "title": "Servicemember Civilian Transition Support Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:44Z",
+            "packageId": "BILLS-119s4459is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4459is/summary",
+            "title": "Expanding Appalachia\u2019s Broadband Access Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:44Z",
+            "packageId": "BILLS-119hr8669ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8669ih/summary",
+            "title": "To designate the facility of the United States Postal Service located at 5951 Riverdale Avenue in Bronx, New York, as the Eliot L. Engel Post Office."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:39Z",
+            "packageId": "BILLS-119hr8688ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8688ih/summary",
+            "title": "Forest Health and Wildfire Risk Reduction Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-28",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:38Z",
+            "packageId": "BILLS-119s4420is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4420is/summary",
+            "title": "Physical Therapist Workforce and Patient Access Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:33Z",
+            "packageId": "BILLS-119s4427is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4427is/summary",
+            "title": "Heat Workforce Standards Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:32Z",
+            "packageId": "BILLS-119s4466is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4466is/summary",
+            "title": "Pathways for Advancement, Transition, and Hiring to the Foreign Service; PATH to the Foreign Service Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-28",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:23Z",
+            "packageId": "BILLS-119s4413is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4413is/summary",
+            "title": "Protecting America\u2019s Workers Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:22Z",
+            "packageId": "BILLS-119s4440is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4440is/summary",
+            "title": "Clinical Trial Modernization Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-23",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:22Z",
+            "packageId": "BILLS-119hr8479ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8479ih/summary",
+            "title": "Protecting Consumers from Deceptive AI Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-28",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:12Z",
+            "packageId": "BILLS-119s4408is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4408is/summary",
+            "title": "Supporting Energy and Economic Development (SEED) Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:11Z",
+            "packageId": "BILLS-119s4462is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4462is/summary",
+            "title": "Logan's Law"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "s",
+            "lastModified": "2026-05-09T05:09:11Z",
+            "packageId": "BILLS-119s4434is",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119s4434is/summary",
+            "title": "Correcting Lapsed Enforcement in Antitrust Norms for Mergers Act; CLEAN Mergers Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:09Z",
+            "packageId": "BILLS-119hr8703ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8703ih/summary",
+            "title": "To designate the facility of the Federal Aviation Administration located at Yakima Air Terminal in Yakima, Washington, as the Roy A. Rutherford Air Traffic Control Tower."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:06Z",
+            "packageId": "BILLS-119hr8708ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8708ih/summary",
+            "title": "Main Street Business Resource Integration and Development for Growth and Equity Act; Main Street BRIDGE Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-09T05:09:06Z",
+            "packageId": "BILLS-119hr8680ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8680ih/summary",
+            "title": "Armed Forces Carry Rights Protection Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:32Z",
+            "packageId": "BILLS-119hr8679ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8679ih/summary",
+            "title": "To amend title 38, United States Code, to require the Secretary of Veterans Affairs to transmit a veteran\u2019s history of opioid prescriptions to a Community Care health care provider."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:22Z",
+            "packageId": "BILLS-119hr8637ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8637ih/summary",
+            "title": "Release Your Taxes Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:22Z",
+            "packageId": "BILLS-119hr8630ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8630ih/summary",
+            "title": "Protecting Equal Access to Thyroid Act of 2026; PEAT Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-29",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:21Z",
+            "packageId": "BILLS-119hr8588ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8588ih/summary",
+            "title": "Housing for Formerly Incarcerated Reentry and Stable Tenancy Act; Housing FIRST Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:06Z",
+            "packageId": "BILLS-119hr8678ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8678ih/summary",
+            "title": "Zero Tolerance for Political Violence Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:06Z",
+            "packageId": "BILLS-119hr8645ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8645ih/summary",
+            "title": "New Pathways Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:50:02Z",
+            "packageId": "BILLS-119hr8627ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8627ih/summary",
+            "title": "Petfax Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:51Z",
+            "packageId": "BILLS-119hr8631ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8631ih/summary",
+            "title": "Keeping Our Manufacturers from Being Unfairly taxed while Championing Health Act; KOMBUCHA"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:42Z",
+            "packageId": "BILLS-119hr8636ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8636ih/summary",
+            "title": "Strengthening Educator Workforce Data Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:41Z",
+            "packageId": "BILLS-119hr8650ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8650ih/summary",
+            "title": "Medicaid Outreach and Assistance for Communities Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:30Z",
+            "packageId": "BILLS-119hr8699ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8699ih/summary",
+            "title": "Safe Transit for All Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:30Z",
+            "packageId": "BILLS-119hr8677ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8677ih/summary",
+            "title": "Make the American Dream Real Again Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:26Z",
+            "packageId": "BILLS-119hr8632ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8632ih/summary",
+            "title": "PFAS Cleanup Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-07",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:19Z",
+            "packageId": "BILLS-119hr8667ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8667ih/summary",
+            "title": "Maximizing Individual Savings for Servicemembers In Obtaining Negotiated Rx Act; MISSION Rx Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:12Z",
+            "packageId": "BILLS-119hr8633ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8633ih/summary",
+            "title": "Competitive Prices Act."
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:49:10Z",
+            "packageId": "BILLS-119hr8635ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8635ih/summary",
+            "title": "Verification Enhancement and Reliability for Immigration Fidelity Act of 2026; VERIFY Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T09:48:55Z",
+            "packageId": "BILLS-119hr8629ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8629ih/summary",
+            "title": "Developing the Community Health Workforce Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T07:51:54Z",
+            "packageId": "BILLS-119hr8642ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8642ih/summary",
+            "title": "Pathways for Advancement, Transition, and Hiring to the Foreign Service; PATH to the Foreign Service Act"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-05-04",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T07:51:49Z",
+            "packageId": "BILLS-119hr8664ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8664ih/summary",
+            "title": "Small Business Administration Artificial Intelligence Adoption Reporting Act of 2026; SBA AI Adoption Reporting Act of 2026"
+        },
+        {
+            "congress": "119",
+            "dateIssued": "2026-04-30",
+            "docClass": "hr",
+            "lastModified": "2026-05-08T07:51:49Z",
+            "packageId": "BILLS-119hr8639ih",
+            "packageLink": "https://api.govinfo.gov/packages/BILLS-119hr8639ih/summary",
+            "title": "Critical Operation Oversight of Law Enforcement Intervention and Training Act; COOL IT Act"
+        }
+    ]
+}

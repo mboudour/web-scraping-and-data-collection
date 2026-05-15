@@ -1,0 +1,1114 @@
+{
+    "studies": [
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04195477",
+                    "briefTitle": "vDPP Facilitated With Community Care Coordination"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Yale University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Prevention"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04041375",
+                    "briefTitle": "Veteran Support and Resources for Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "VA Office of Research and Development"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05988957",
+                    "briefTitle": "Nutrition-Focused Approach During CGM Initiation: A Qualitative Study"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "HealthPartners Institute"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03847701",
+                    "briefTitle": "Cardio-metabolic and Inflammatory Impact of Starch Digestibility in Type 2 Diabetic Patients"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Mondel\u0113z International, Inc."
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00918801",
+                    "briefTitle": "Pilot Study of Hippocampal Function in Type 1 Diabetes Mellitus (T1DM)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Washington University School of Medicine"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03296436",
+                    "briefTitle": "A Pilot Study to Assess the Efficacy of NEOX\u00ae CORD 1K\u00ae in the Treatment of Complex Diabetic Wounds"
+                },
+                "statusModule": {
+                    "overallStatus": "WITHDRAWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Johns Hopkins University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Vascular Ulcer (Arterial or Venous Including Diabetic Ulcers Not Located on the Foot)",
+                        "Diabetic Foot Ulcer",
+                        "Diabetic Foot",
+                        "Diabetic Foot Infection",
+                        "Diabetic Foot Ulcer Mixed"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01088711",
+                    "briefTitle": "Evaluation of Omarigliptin (MK-3102) in Obese Participants and in Participants With Type 2 Diabetes (MK-3102-004)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Merck Sharp & Dohme LLC"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes (T2D)"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05104944",
+                    "briefTitle": "Defining Outcome Measures for Acute Charcot Neuroarthropathy in Diabetes and Their Use in Assessing Clinical Management"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Norfolk and Norwich University Hospitals NHS Foundation Trust"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02968628",
+                    "briefTitle": "Effect of Maternal Diabetes on Brain Development, as Measured by Neonatal Electroencephalogram (EEG)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Rochester"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes in Pregnancy",
+                        "Diabetes, Gestational",
+                        "Infant, Newborn, Diseases",
+                        "Perinatal Disorders of Growth and Development"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02500628",
+                    "briefTitle": "Heart Rate Variability in Response to Metformin Challenge"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Woodinville Psychiatric Associates"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Fibromyalgia",
+                        "Mitochondrial Diseases",
+                        "Movement Disorders",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03246828",
+                    "briefTitle": "Glucagon in MODY (Maturity Onset Diabetes of the Young)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Oxford"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "MODY1",
+                        "MODY3"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00225628",
+                    "briefTitle": "Improving Quality With Outpatient Decision Support"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Agency for Healthcare Research and Quality (AHRQ)"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Coronary Artery Disease",
+                        "Osteoporosis",
+                        "Hypertension",
+                        "Hyperlipidemia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05397028",
+                    "briefTitle": "Weight Management for the Remission of Type 2 Diabetes Using a Proprietary Meal Replacement System- Diabetes Remission Study (DRS)"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Loma Linda University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Obesity",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02011100",
+                    "briefTitle": "Effect of Carnosine on Diabetes and Cardiovascular Risk Factors"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Jozef Ukropec"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Metabolic Diseases, Type 2 Diabetes, Cardiovascular Disease"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03244800",
+                    "briefTitle": "A Study to Investigate Different Doses of 0382 in Overweight and Obese Subjects With Type 2 Diabetes Mellitus."
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "MedImmune LLC"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02328911",
+                    "briefTitle": "Laser Therapy for Diabetic Peripheral Neuropathic Pain"
+                },
+                "statusModule": {
+                    "overallStatus": "WITHDRAWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Miami"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetic Peripheral Neuropathy"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05538819",
+                    "briefTitle": "The Effects of Glimepiride in Patients With Type 2 Diabetes and Chronic Heart Failure"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Dao Wen Wang"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Chronic Heart Failure",
+                        "Type 2 Diabetes",
+                        "Cardiovascular Mortality",
+                        "Cohort Study"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06386328",
+                    "briefTitle": "A Clinical Trial to Evaluate the Food Effect of CKD-378"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Chong Kun Dang Pharmaceutical"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type II Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05847400",
+                    "briefTitle": "Predictors of Chronic Kidney Disease Among Type 2 Diabetic Patients in Assiut University Hospitals"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Assiut University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes With Renal Manifestations"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05478707",
+                    "briefTitle": "Therapeutic Strategies for Microvascular Dysfunction in Type 1 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "SUSPENDED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Virginia"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 1",
+                        "Endothelial Dysfunction"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06218992",
+                    "briefTitle": "Corneal and Tear Film Changes in Chinese Patients With Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "UNKNOWN"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "He Eye Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Dry Eye Disease",
+                        "Tear Film",
+                        "Corneal Nerve"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06209411",
+                    "briefTitle": "Community Health Worker-Led Postpartum Diabetes Screening"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Weill Medical College of Cornell University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2",
+                        "Gestational Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00162344",
+                    "briefTitle": "A Study of Stress Heart Imaging in Patients With Diabetes at Risk for Coronary Disease."
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Lantheus Medical Imaging"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00819975",
+                    "briefTitle": "Differential Effects of Milk Proteins on Postprandial Lipemia in Response to a Fat-Rich Meal in Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Aarhus University Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Postprandial Lipemia",
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00458081",
+                    "briefTitle": "Evaluation of the Rimonabant Impact on the Regression of Asymptomatic Damage Caused by Cardiovascular Risk Factors"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Sanofi"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Obesity",
+                        "Microalbuminuria",
+                        "Diabetes Mellitus, Type 2",
+                        "Dyslipidemia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02906319",
+                    "briefTitle": "Vitamin D and HbA1c Levels in Diabetic Patients With CKD"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Ng Yong Muh"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Vitamin D Deficiency",
+                        "Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02791867",
+                    "briefTitle": "Comparison of Laboratory Changes, Food Intake and Metabolic Profile in Patients With Obesity and Type2 Diabetes Mellitus: Before, During and After Taking AphoelineBrake"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Dasman Diabetes Institute"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06447467",
+                    "briefTitle": "Short Term Outcome of Acute Heart Failure in Diabetic and Non Diabetic Patients"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Sohag University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Acute Heart Failure",
+                        "Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00001344",
+                    "briefTitle": "Dextromethorphan Versus Placebo for Neuropathic Pain"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "National Institute of Dental and Craniofacial Research (NIDCR)"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetic Neuropathies",
+                        "Herpes Zoster",
+                        "Neuralgia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04618744",
+                    "briefTitle": "A Study to Assess the Safety and Efficacy of Oral Insulin in T2DM Patients With Nonalcoholic Steatohepatitis (NASH)"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Oramed, Ltd."
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2",
+                        "NASH - Nonalcoholic Steatohepatitis"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00484419",
+                    "briefTitle": "Effects of Colesevelam HCl, Rosiglitazone, Sitagliptin on Control of Blood Glucose and Lipids in Type 2 Diabetes Patients Whose Blood Glucose Isn't Completely Controlled With Metformin"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Daiichi Sankyo"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 2 Diabetes",
+                        "Hyperlipidemia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06812767",
+                    "briefTitle": "Risk Factors at Chronic Non-communicable Diseases in People of Working Age"
+                },
+                "statusModule": {
+                    "overallStatus": "ENROLLING_BY_INVITATION"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "National Medical Research Center for Therapy and Preventive Medicine"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Chronic Non-communicable Disease"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06820567",
+                    "briefTitle": "Effects Dapagliflozin on Inflammatory Markers Erythropoiesis and Iron Metabolism in Patients With Type 2 Diabetes and CKD"
+                },
+                "statusModule": {
+                    "overallStatus": "NOT_YET_RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Assiut University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Chronic Kidney Diseases",
+                        "Diabetes Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT05050500",
+                    "briefTitle": "Effects of Dapagliflozin on Inflammatory Factorslevel and Prognosis in Type 2 Diabetes With Acute Myocardial Infarction"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Qingdao Central Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Myocardial Infarction",
+                        "Diabete Type 2",
+                        "Glucose Intolerance"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02343471",
+                    "briefTitle": "The Effect of Whey Protein Consumed as a Pre-meal on Postprandial Lipemia in Healthy and Subjects With Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Aarhus University Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Healthy",
+                        "Type 2 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT07122271",
+                    "briefTitle": "Joint Effects of Physical Activity and Diet Quality on Depression and Mortality in Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Minghui Wang"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Complications",
+                        "Depression Anxiety Disorder",
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02877771",
+                    "briefTitle": "Tandem Predictive Low Glucose Suspend Inpatient Feasibility Study"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Tandem Diabetes Care, Inc."
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Type 1 Diabetes",
+                        "Insulin Pump"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02416765",
+                    "briefTitle": "Closed-loop Control of Postprandial Glucose Levels in Adults With Type 1 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Institut de Recherches Cliniques de Montreal"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02890836",
+                    "briefTitle": "Blood Pressure, Antihypertensive Treatment and Preeclampsia in Pregnant Wom-en With Pre-existing Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Rigshospitalet, Denmark"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Pregnancy in Diabetics"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00856011",
+                    "briefTitle": "Nerve Morphology in Diabetic Patients"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Skane University Hospital"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Peripheral Neuropathy",
+                        "Carpal Tunnel Syndrome",
+                        "Entrapment Neuropathies",
+                        "Diabetes Complications"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06955611",
+                    "briefTitle": "Is Community Based Monitoring of Diabetic Maculopathy and Pre-proliferative Diabetic Retinopathy Safe?"
+                },
+                "statusModule": {
+                    "overallStatus": "RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Hywel Dda Health Board"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Diabetic Retinopathy",
+                        "Diabetic Maculopathy"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03155867",
+                    "briefTitle": "Glycemic Response to Six Meal Replacements in Persons With Type 2 Diabetes Mellitus"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Soci\u00e9t\u00e9 des Produits Nestl\u00e9 (SPN)"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00166036",
+                    "briefTitle": "Effect of Statins on Oxidative Stress and Endothelial Progenitor Cells"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Emory University"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus",
+                        "Metabolic Syndrome X",
+                        "Hypercholesterolemia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT06794892",
+                    "briefTitle": "Comparative Outcomes of One-Anastomosis Gastric Bypass and Roux-en-Y Gastric Bypass As Revisional Procedures Following Failed Restrictive Bariatric Surgery"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Azienda Sanitaria Locale Napoli 2 Nord"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Obesity, Morbid",
+                        "Type 2 Diabetes Mellitus (T2DM)",
+                        "Hypertension",
+                        "Dyslipidemia"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT00700765",
+                    "briefTitle": "Observational Study to Evaluate Safety of Levemir\u00ae in Type 1 and Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Novo Nordisk A/S"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Diabetes Mellitus, Type 1",
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT01188200",
+                    "briefTitle": "Four-Hour Evaluation of a Medical Food in Subjects With Type 2 Diabetes"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Abbott Nutrition"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus, Type 2"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT04800471",
+                    "briefTitle": "Improving Glycemic Control in DM2 Patients in the Ambulatory Setting"
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "University of Maryland, Baltimore"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT03084471",
+                    "briefTitle": "An Open-Label, Multi-Centre, Study to Assess the Safety of Fixed-Dose Durvalumab + Tremelimumab Combination Therapy or Durvalumab Monotherapy in Advanced Solid Malignancies."
+                },
+                "statusModule": {
+                    "overallStatus": "COMPLETED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "AstraZeneca"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Advanced Solid Malignancies"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT07284511",
+                    "briefTitle": "A Clinical Trial Using Tirzepatide to Help Adults With Type 1 Diabetes Automatically Control Their Blood Sugar"
+                },
+                "statusModule": {
+                    "overallStatus": "NOT_YET_RECRUITING"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Melissa-Rosina Pasqua"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Type 1 Diabetes",
+                        "Type 1 Diabetes Mellitus",
+                        "T1D",
+                        "T1DM",
+                        "T1DM - Type 1 Diabetes Mellitus"
+                    ]
+                }
+            }
+        },
+        {
+            "protocolSection": {
+                "identificationModule": {
+                    "nctId": "NCT02758899",
+                    "briefTitle": "Diabetes and Glycosylation in Cervical Spondylosis"
+                },
+                "statusModule": {
+                    "overallStatus": "TERMINATED"
+                },
+                "sponsorCollaboratorsModule": {
+                    "leadSponsor": {
+                        "name": "Washington University School of Medicine"
+                    }
+                },
+                "conditionsModule": {
+                    "conditions": [
+                        "Diabetes",
+                        "Cervical Myelopathy",
+                        "Cervical Spondylosis"
+                    ]
+                }
+            }
+        }
+    ],
+    "nextPageToken": "ZVJj7o2Elu8o3lp1DMP64bbumpOQJJxpYfOn0A"
+}
