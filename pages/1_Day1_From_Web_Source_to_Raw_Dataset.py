@@ -572,6 +572,42 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
 - Key: `size` / Value: `50`
         """)
         base_url = st.text_input("API Base URL", placeholder="e.g. https://api.crossref.org/works")
+
+        # ── OpenAlex field selector ──────────────────────────────────────────
+        _is_openalex = base_url and "openalex.org" in base_url
+        _openalex_select = ""
+        if _is_openalex:
+            _ALL_OPENALEX_FIELDS = [
+                "id", "doi", "title", "display_name", "publication_year", "publication_date",
+                "type", "cited_by_count", "is_retracted", "is_paratext",
+                "open_access", "authorships", "primary_location", "locations",
+                "concepts", "keywords", "topics", "mesh",
+                "referenced_works", "related_works", "cited_by_api_url",
+                "abstract_inverted_index", "biblio", "ids", "language",
+                "grants", "apc_list", "apc_paid", "sustainable_development_goals",
+            ]
+            _DEFAULT_FIELDS = [
+                "id", "doi", "title", "publication_year", "cited_by_count",
+                "open_access", "authorships", "primary_location", "concepts",
+            ]
+            st.markdown(
+                "🔍 **OpenAlex detected** — choose which fields to return. "
+                "Selecting fewer fields avoids thousands of columns in the output."
+            )
+            _selected_fields = st.multiselect(
+                "Fields to include (`select` parameter)",
+                options=_ALL_OPENALEX_FIELDS,
+                default=_DEFAULT_FIELDS,
+                key="openalex_select_fields",
+                help=(
+                    "OpenAlex supports a `select` parameter that restricts which fields are returned. "
+                    "The default selection covers the most useful fields for most research tasks. "
+                    "Add or remove fields as needed."
+                ),
+            )
+            if _selected_fields:
+                _openalex_select = ",".join(_selected_fields)
+
         n_params = st.number_input("Number of parameters", min_value=1, max_value=10, value=2, step=1)
         params = {}
         for i in range(int(n_params)):
@@ -580,6 +616,9 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
             v = c2.text_input(f"Value {i+1}", key=f"get_val_{i}")
             if k:
                 params[k] = v
+        # inject select param for OpenAlex
+        if _openalex_select:
+            params["select"] = _openalex_select
         api_key_header = st.text_input(
             "API Key (optional — leave blank if not required)",
             type="password",
