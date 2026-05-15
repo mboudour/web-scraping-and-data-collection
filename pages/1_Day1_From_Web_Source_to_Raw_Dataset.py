@@ -605,7 +605,7 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                         if not isinstance(raw_list, list):
                             raw_list = [raw_list]
                         try:
-                            df = pd.json_normalize(raw_list)
+                            df = pd.json_normalize(raw_list, max_level=1)
                         except Exception:
                             df = pd.DataFrame(raw_list)
                         save_and_display_result(df, byod_raw, "API (GET)")
@@ -648,7 +648,7 @@ Paste the base URL and the JSON body below.
                         if not isinstance(raw_list, list):
                             raw_list = [raw_list]
                         try:
-                            df = pd.json_normalize(raw_list)
+                            df = pd.json_normalize(raw_list, max_level=1)
                         except Exception:
                             df = pd.DataFrame(raw_list)
                         save_and_display_result(df, byod_raw, "API (POST)")
