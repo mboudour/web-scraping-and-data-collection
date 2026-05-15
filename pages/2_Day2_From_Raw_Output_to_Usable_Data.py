@@ -56,6 +56,65 @@ def load_json_from_upload(uploaded_file):
     return pd.DataFrame(), None
 
 
+def _make_flatten_fix(cols):
+    """
+    Return a fix function that properly flattens list-of-dict columns
+    (e.g. OpenAlex authors, concepts) by exploding them into new prefixed
+    columns via pd.json_normalize, and stringifies any remaining
+    plain-list or plain-dict columns.
+    """
+    def _fix(d, _cols=cols):
+        result = d.copy()
+        log_parts = []
+        for col in _cols:
+            if col not in result.columns:
+                continue
+            series = result[col].dropna()
+            # Check if it's a list-of-dicts column
+            sample = series.head(10)
+            is_list_of_dicts = (
+                sample.apply(lambda v: isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict)).any()
+            )
+            is_dict_col = (
+                sample.apply(lambda v: isinstance(v, dict)).any()
+            )
+            if is_list_of_dicts:
+                # Explode: one row per list item, then normalize
+                try:
+                    exploded = result[[col]].explode(col).reset_index()
+                    normalized = pd.json_normalize(exploded[col].dropna().tolist())
+                    normalized.columns = [f"{col}_{c}" for c in normalized.columns]
+                    # Keep only the first item per original row (summary view)
+                    first_items = result[col].apply(
+                        lambda v: v[0] if isinstance(v, list) and len(v) > 0 else (v if isinstance(v, dict) else {})
+                    )
+                    flat = pd.json_normalize(first_items.tolist())
+                    flat.columns = [f"{col}_{c}" for c in flat.columns]
+                    flat.index = result.index
+                    result = result.drop(columns=[col])
+                    result = pd.concat([result, flat], axis=1)
+                    log_parts.append(f"Expanded '{col}' (list-of-dicts) into {len(flat.columns)} new column(s).")
+                except Exception as ex:
+                    result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                    log_parts.append(f"Stringified '{col}' (expand failed: {ex}).")
+            elif is_dict_col:
+                try:
+                    flat = pd.json_normalize(result[col].apply(lambda v: v if isinstance(v, dict) else {}).tolist())
+                    flat.columns = [f"{col}_{c}" for c in flat.columns]
+                    flat.index = result.index
+                    result = result.drop(columns=[col])
+                    result = pd.concat([result, flat], axis=1)
+                    log_parts.append(f"Expanded '{col}' (dict) into {len(flat.columns)} new column(s).")
+                except Exception as ex:
+                    result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                    log_parts.append(f"Stringified '{col}' (expand failed: {ex}).")
+            else:
+                result[col] = result[col].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
+                log_parts.append(f"Stringified '{col}' (plain list).")
+        return result, " ".join(log_parts)
+    return _fix
+
+
 def auto_detect_issues(df, prefix, extra_issues=None):
     """
     Scan df for common data quality issues.
@@ -82,16 +141,11 @@ def auto_detect_issues(df, prefix, extra_issues=None):
                 + ", ".join(_unhashable_cols[:5])
                 + ("…" if len(_unhashable_cols) > 5 else "")
                 + "** contain Python lists or dicts (unhashable types). "
-                "These are stringified with `str()` so every downstream step — "
-                "deduplication, statistics, export — works correctly."
+                "Columns whose cells are lists-of-dicts (e.g. OpenAlex authors, concepts) "
+                "are expanded into new columns via `pd.json_normalize`; "
+                "plain lists or single dicts are stringified."
             ),
-            "fix": lambda d, cols=_unhashable_cols: (
-                d.assign(**{
-                    c: d[c].apply(lambda v: str(v) if isinstance(v, (list, dict)) else v)
-                    for c in cols if c in d.columns
-                }),
-                f"Stringified list/dict cells in {len(cols)} column(s): {cols}.",
-            ),
+            "fix": _make_flatten_fix(_unhashable_cols),
         })
 
     # 1. Duplicate rows — exclude unhashable columns (lists/dicts) before calling duplicated()
