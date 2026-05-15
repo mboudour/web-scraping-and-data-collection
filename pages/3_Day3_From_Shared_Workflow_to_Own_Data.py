@@ -182,45 +182,37 @@ def show_explore_flow(df, key_prefix, dataset_label):
             if check_cols[j].checkbox(label, value=True, key=f"{key_prefix}_sel_{col}"):
                 selected_cols.append(col)
 
-    _auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(df), 2)))))
+    if not selected_cols:
+        st.info("Tick at least one column above to begin.")
+        return
 
-    compute_btn = st.button("📊 Compute Statistics", key=f"{key_prefix}_compute")
+    st.markdown("### Step 4 — Statistics")
+    st.caption("Each variable has its own independent **Compute** button and, for numeric variables, its own bin slider.")
 
-    if compute_btn:
-        if not selected_cols:
-            st.warning("No columns selected.")
-            return
+    # Track which columns have been computed
+    _computed_cols = []
 
-        # ── Guard: too many columns selected ────────────────────────────────────
-        _MAX_COLS = 10
-        if len(selected_cols) > _MAX_COLS:
-            st.error(
-                f"❌ Too many columns selected ({len(selected_cols)}). "
-                f"Please select at most **{_MAX_COLS} columns** at a time to keep the output readable. "
-                "Use **☐ Select None** above to deselect all, then tick only the columns you need."
-            )
-            return
+    for col in selected_cols:
+        ctype = col_types.get(col, "categorical")
+        series = df[col].dropna()
+        if len(series) == 0:
+            continue
 
-        st.markdown("### Step 4 — Statistics")
+        with st.expander(f"📈 {col}  \u2014  _{ctype}_", expanded=False):
+            _btn_key = f"{key_prefix}_compute_{col}"
+            _done_key = f"{key_prefix}_done_{col}"
 
-        numeric_cols = [c for c in selected_cols if col_types.get(c) == "numeric"]
-        categorical_cols = [c for c in selected_cols if col_types.get(c) == "categorical"]
-        date_cols = [c for c in selected_cols if col_types.get(c) == "date"]
+            if st.button(f"📊 Compute Statistics for **{col}**", key=_btn_key):
+                st.session_state[_done_key] = True
 
-        if numeric_cols:
-            st.markdown("#### Numeric Columns")
-            for col in numeric_cols:
-                series = df[col].dropna()
-                if len(series) == 0:
-                    continue
-                with st.expander(f"📈 {col}", expanded=True):
-                    # Descriptive statistics
+            if st.session_state.get(_done_key):
+                _computed_cols.append(col)
+                if ctype == "numeric":
                     desc_col = series.describe().rename(col).to_frame().T.round(3)
                     st.dataframe(desc_col, use_container_width=True)
-                    # Per-column bin slider + histogram
                     _col_auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(series), 2)))))
                     n_bins = st.slider(
-                        f"Number of bins",
+                        "Number of bins",
                         min_value=5, max_value=200, value=_col_auto_bins,
                         key=f"{key_prefix}_bins_{col}",
                         help=f"Sturges\u2019 rule default: {_col_auto_bins}",
@@ -233,200 +225,204 @@ def show_explore_flow(df, key_prefix, dataset_label):
                     except Exception:
                         st.bar_chart(series.value_counts().sort_index().rename("Count"))
 
-        if categorical_cols:
-            st.markdown("#### Categorical Columns — Value Counts")
-            for col in categorical_cols:
-                series = df[col].dropna()
-                if len(series) == 0:
-                    continue
-                vc = series.value_counts().head(20)
-                pct = (vc / len(series) * 100).round(1)
-                vc_df = pd.DataFrame({"Count": vc, "% of non-missing": pct})
-                st.markdown(f"**{col}** — top {min(20, len(vc))} values")
-                st.dataframe(vc_df, use_container_width=True)
-                st.bar_chart(vc.rename("Count"))
+                elif ctype == "categorical":
+                    vc = series.value_counts().head(20)
+                    pct = (vc / len(series) * 100).round(1)
+                    vc_df = pd.DataFrame({"Count": vc, "% of non-missing": pct})
+                    st.markdown(f"Top {min(20, len(vc))} values")
+                    st.dataframe(vc_df, use_container_width=True)
+                    st.bar_chart(vc.rename("Count"))
 
-        if date_cols:
-            st.markdown("#### Date Columns — Records Over Time")
-            for col in date_cols:
-                try:
-                    parsed = pd.to_datetime(df[col], infer_datetime_format=True, errors="coerce")
-                    year_counts = parsed.dt.year.value_counts().sort_index()
-                    st.markdown(f"**{col}** — records by year")
-                    st.bar_chart(year_counts.rename("Count"))
-                except Exception as ex:
-                    st.warning(f"Could not parse {col} as dates: {ex}")
+                elif ctype == "date":
+                    try:
+                        parsed = pd.to_datetime(series, infer_datetime_format=True, errors="coerce")
+                        year_counts = parsed.dt.year.value_counts().sort_index()
+                        st.markdown("Records by year")
+                        st.bar_chart(year_counts.rename("Count"))
+                    except Exception as ex:
+                        st.warning(f"Could not parse as dates: {ex}")
 
-        st.markdown("#### Missingness Report")
-        miss = df[selected_cols].isnull().sum()
-        miss = miss[miss > 0]
-        if miss.empty:
-            st.success("No missing values in the selected columns.")
-        else:
-            miss_pct = (miss / len(df) * 100).round(1)
-            miss_df = pd.DataFrame({"Missing Count": miss, "% Missing": miss_pct})
-            st.dataframe(miss_df, use_container_width=True)
-            st.bar_chart(miss_pct.rename("% Missing"))
+                # Missingness for this column
+                n_miss = int(df[col].isnull().sum())
+                pct_miss = round(n_miss / len(df) * 100, 1) if len(df) > 0 else 0
+                if n_miss > 0:
+                    st.caption(f"🟡 Missing: {n_miss} values ({pct_miss}%)")
+                else:
+                    st.caption("🟢 No missing values.")
 
-        if len(numeric_cols) >= 2:
-            st.markdown("#### Correlation Matrix (Numeric Columns)")
-            with st.expander("What is a correlation matrix?"):
-                st.markdown("""
+    # Correlation matrix — shown only when 2+ numeric computed columns
+    numeric_computed = [c for c in _computed_cols if col_types.get(c) == "numeric"]
+    if len(numeric_computed) >= 2:
+        st.markdown("#### Correlation Matrix (Computed Numeric Columns)")
+        with st.expander("What is a correlation matrix?"):
+            st.markdown("""
 A correlation matrix shows how strongly pairs of numeric columns move together.
 Values range from -1 (perfect negative) to +1 (perfect positive). 0 means no linear relationship.
 This is a Pearson correlation, which only detects straight-line relationships.
-                """)
-            corr = df[numeric_cols].corr().round(2)
-            st.dataframe(corr, use_container_width=True)
+            """)
+        corr = df[numeric_computed].corr().round(2)
+        st.dataframe(corr, use_container_width=True)
 
-        # Step 5
-        st.markdown("### Step 5 — Four-Criteria Self-Assessment")
-        with st.expander("What do the four criteria mean?"):
-            st.markdown("""
+    # Step 5 — only show when at least one column has been computed
+    if not _computed_cols:
+        return
+
+    numeric_cols = [c for c in selected_cols if col_types.get(c) == "numeric"]
+
+    # Step 5
+    st.markdown("### Step 5 — Four-Criteria Self-Assessment")
+    with st.expander("What do the four criteria mean?"):
+        st.markdown("""
 1. **Representativeness** — Does the sample reflect the population you want to study?
 2. **Completeness** — Are there systematic missing values in key fields?
 3. **Consistency** — Are values recorded in the same format throughout?
 4. **Validity** — Are values within expected and logically coherent ranges?
-            """)
+        """)
 
-        # ── Auto-generate draft observations ──────────────────────────────────
-        n_rows = len(df)
-        # Representativeness
-        rep_auto = f"This dataset contains {n_rows} records. "
-        if n_rows < 50:
-            rep_auto += "The sample is very small (<50 rows) — results may not generalise. Check whether the API page limit excluded relevant records."
-            rep_light = "🔴"
-        elif n_rows < 200:
-            rep_auto += "The sample size is moderate. Consider whether the API page limit may have excluded relevant records or groups."
-            rep_light = "🟡"
-        else:
-            rep_auto += "The sample size is reasonably large. Still verify that no systematic groups or time periods are excluded by the query or API limits."
-            rep_light = "🟢"
+    # ── Auto-generate draft observations ────────────────────────────────────────────
+    n_rows = len(df)
+    # Representativeness
+    rep_auto = f"This dataset contains {n_rows} records. "
+    if n_rows < 50:
+        rep_auto += "The sample is very small (<50 rows) — results may not generalise. Check whether the API page limit excluded relevant records."
+        rep_light = "🔴"
+    elif n_rows < 200:
+        rep_auto += "The sample size is moderate. Consider whether the API page limit may have excluded relevant records or groups."
+        rep_light = "🟡"
+    else:
+        rep_auto += "The sample size is reasonably large. Still verify that no systematic groups or time periods are excluded by the query or API limits."
+        rep_light = "🟢"
 
-        # Completeness
-        if miss.empty:
-            comp_auto = "No missing values were detected in the selected columns — completeness looks good."
-            comp_light = "🟢"
-        else:
-            high_miss = miss_pct[miss_pct > 20]
-            low_miss = miss_pct[(miss_pct > 0) & (miss_pct <= 20)]
-            parts = []
-            if not high_miss.empty:
-                cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in high_miss.items()])
-                parts.append(f"Columns with >20% missing values: {cols_str}. These may be unreliable for analysis.")
-            if not low_miss.empty:
-                cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in low_miss.items()])
-                parts.append(f"Columns with minor missingness (≤20%): {cols_str}.")
-            comp_auto = " ".join(parts)
-            comp_light = "🔴" if not high_miss.empty else "🟡"
+    # Completeness — based on all selected columns
+    miss_all = df[selected_cols].isnull().sum()
+    miss_all = miss_all[miss_all > 0]
+    miss_pct_all = (miss_all / len(df) * 100).round(1) if len(df) > 0 else pd.Series(dtype=float)
+    if miss_all.empty:
+        comp_auto = "No missing values were detected in the selected columns — completeness looks good."
+        comp_light = "🟢"
+    else:
+        high_miss = miss_pct_all[miss_pct_all > 20]
+        low_miss = miss_pct_all[(miss_pct_all > 0) & (miss_pct_all <= 20)]
+        parts = []
+        if not high_miss.empty:
+            cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in high_miss.items()])
+            parts.append(f"Columns with >20% missing values: {cols_str}. These may be unreliable for analysis.")
+        if not low_miss.empty:
+            cols_str = ", ".join([f"`{c}` ({v:.1f}%)" for c, v in low_miss.items()])
+            parts.append(f"Columns with minor missingness (≤20%): {cols_str}.")
+        comp_auto = " ".join(parts)
+        comp_light = "🔴" if not high_miss.empty else "🟡"
 
-        # Consistency
-        con_parts = []
-        for col in categorical_cols:
-            series = df[col].dropna().astype(str)
-            lower_vals = series.str.lower().unique()
-            actual_vals = series.unique()
-            if len(lower_vals) < len(actual_vals):
-                con_parts.append(f"`{col}` has values that differ only in capitalisation — consider standardising.")
-            elif series.nunique() > 50:
-                con_parts.append(f"`{col}` has {series.nunique()} unique values — check for spelling variants or encoding differences.")
-        for col in date_cols:
-            con_parts.append(f"`{col}` was detected as a date column — verify all values follow a consistent format after parsing.")
-        if not con_parts:
-            con_auto = "No obvious consistency issues detected in the selected columns."
-            con_light = "🟢"
-        else:
-            con_auto = " ".join(con_parts)
-            con_light = "🟡"
+    # Consistency
+    categorical_cols_all = [c for c in selected_cols if col_types.get(c) == "categorical"]
+    date_cols_all = [c for c in selected_cols if col_types.get(c) == "date"]
+    con_parts = []
+    for col in categorical_cols_all:
+        series = df[col].dropna().astype(str)
+        lower_vals = series.str.lower().unique()
+        actual_vals = series.unique()
+        if len(lower_vals) < len(actual_vals):
+            con_parts.append(f"`{col}` has values that differ only in capitalisation — consider standardising.")
+        elif series.nunique() > 50:
+            con_parts.append(f"`{col}` has {series.nunique()} unique values — check for spelling variants or encoding differences.")
+    for col in date_cols_all:
+        con_parts.append(f"`{col}` was detected as a date column — verify all values follow a consistent format after parsing.")
+    if not con_parts:
+        con_auto = "No obvious consistency issues detected in the selected columns."
+        con_light = "🟢"
+    else:
+        con_auto = " ".join(con_parts)
+        con_light = "🟡"
 
-        # Validity
-        val_parts = []
-        for col in numeric_cols:
-            series = df[col].dropna()
-            if len(series) < 4:
-                continue
-            mean_val = series.mean()
-            std_val = series.std()
-            if std_val == 0:
-                continue
-            outliers = series[(series - mean_val).abs() > 3 * std_val]
-            if len(outliers) > 0:
-                val_parts.append(
-                    f"`{col}`: {len(outliers)} value(s) are more than 3 standard deviations from the mean "
-                    f"(range: {series.min():.2f} – {series.max():.2f}) — check for data entry errors or genuine extremes."
-                )
-        if not val_parts:
-            val_auto = "No extreme outliers detected (>3 standard deviations from the mean) in numeric columns."
-            val_light = "🟢"
-        else:
-            val_auto = " ".join(val_parts)
-            val_light = "🟡"
+    # Validity
+    val_parts = []
+    for col in numeric_cols:
+        series = df[col].dropna()
+        if len(series) < 4:
+            continue
+        mean_val = series.mean()
+        std_val = series.std()
+        if std_val == 0:
+            continue
+        outliers = series[(series - mean_val).abs() > 3 * std_val]
+        if len(outliers) > 0:
+            val_parts.append(
+                f"`{col}`: {len(outliers)} value(s) are more than 3 standard deviations from the mean "
+                f"(range: {series.min():.2f} – {series.max():.2f}) — check for data entry errors or genuine extremes."
+            )
+    if not val_parts:
+        val_auto = "No extreme outliers detected (>3 standard deviations from the mean) in numeric columns."
+        val_light = "🟢"
+    else:
+        val_auto = " ".join(val_parts)
+        val_light = "🟡"
 
-        # ── Display the four criteria with traffic lights and editable text areas
-        st.markdown(
-            "**Traffic-light guide:** 🟢 No issues detected &nbsp;|&nbsp; "
-            "🟡 Minor issues — review recommended &nbsp;|&nbsp; 🔴 Significant issues — action needed"
+    # ── Display the four criteria with traffic lights and editable text areas
+    st.markdown(
+        "**Traffic-light guide:** 🟢 No issues detected &nbsp;|&nbsp; "
+        "🟡 Minor issues — review recommended &nbsp;|&nbsp; 🔴 Significant issues — action needed"
+    )
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f"**1. Representativeness** {rep_light}")
+        rep = st.text_area(
+            "Does the sample represent your target population?",
+            value=rep_auto,
+            key=f"{key_prefix}_rep",
+        )
+        st.markdown(f"**3. Consistency** {con_light}")
+        con = st.text_area(
+            "Are values recorded consistently across rows?",
+            value=con_auto,
+            key=f"{key_prefix}_con",
+        )
+    with c2:
+        st.markdown(f"**2. Completeness** {comp_light}")
+        comp = st.text_area(
+            "Are there systematic missing values?",
+            value=comp_auto,
+            key=f"{key_prefix}_comp",
+        )
+        st.markdown(f"**4. Validity** {val_light}")
+        val = st.text_area(
+            "Are values within expected ranges?",
+            value=val_auto,
+            key=f"{key_prefix}_val",
         )
 
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown(f"**1. Representativeness** {rep_light}")
-            rep = st.text_area(
-                "Does the sample represent your target population?",
-                value=rep_auto,
-                key=f"{key_prefix}_rep",
-            )
-            st.markdown(f"**3. Consistency** {con_light}")
-            con = st.text_area(
-                "Are values recorded consistently across rows?",
-                value=con_auto,
-                key=f"{key_prefix}_con",
-            )
-        with c2:
-            st.markdown(f"**2. Completeness** {comp_light}")
-            comp = st.text_area(
-                "Are there systematic missing values?",
-                value=comp_auto,
-                key=f"{key_prefix}_comp",
-            )
-            st.markdown(f"**4. Validity** {val_light}")
-            val = st.text_area(
-                "Are values within expected ranges?",
-                value=val_auto,
-                key=f"{key_prefix}_val",
-            )
-        # Step 6
-        st.markdown("### Step 6 — Download Summary")
+    # Step 6
+    st.markdown("### Step 6 — Download Summary")
 
-        summary_parts = []
-        if numeric_cols:
-            desc_out = df[numeric_cols].describe().T.round(3).reset_index()
-            desc_out.insert(0, "section", "Descriptive Statistics")
-            summary_parts.append(desc_out.rename(columns={"index": "column"}))
-        if categorical_cols:
-            for col in categorical_cols:
-                vc = df[col].dropna().value_counts().head(20).reset_index()
-                vc.columns = ["value", "count"]
-                vc.insert(0, "column", col)
-                vc.insert(0, "section", "Value Counts")
-                summary_parts.append(vc)
-        if not miss.empty:
-            miss_out = pd.DataFrame({"Missing Count": miss, "% Missing": miss_pct}).reset_index()
-            miss_out.insert(0, "section", "Missingness")
-            summary_parts.append(miss_out)
+    summary_parts = []
+    if numeric_cols:
+        desc_out = df[numeric_cols].describe().T.round(3).reset_index()
+        desc_out.insert(0, "section", "Descriptive Statistics")
+        summary_parts.append(desc_out.rename(columns={"index": "column"}))
+    if categorical_cols_all:
+        for col in categorical_cols_all:
+            vc = df[col].dropna().value_counts().head(20).reset_index()
+            vc.columns = ["value", "count"]
+            vc.insert(0, "column", col)
+            vc.insert(0, "section", "Value Counts")
+            summary_parts.append(vc)
+    if not miss_all.empty:
+        miss_out = pd.DataFrame({"Missing Count": miss_all, "% Missing": miss_pct_all}).reset_index()
+        miss_out.insert(0, "section", "Missingness")
+        summary_parts.append(miss_out)
 
-        if summary_parts:
-            summary_csv = pd.concat(summary_parts, ignore_index=True)
-            csv_bytes = summary_csv.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                "Download Statistics Summary (CSV)",
-                csv_bytes,
-                f"{key_prefix}_statistics_summary.csv",
-                "text/csv",
-                key=f"{key_prefix}_dl_stats",
-            )
+    if summary_parts:
+        summary_csv = pd.concat(summary_parts, ignore_index=True)
+        csv_bytes = summary_csv.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            "Download Statistics Summary (CSV)",
+            csv_bytes,
+            f"{key_prefix}_statistics_summary.csv",
+            "text/csv",
+            key=f"{key_prefix}_dl_stats",
+        )
 
-        assessment_text = f"""Four-Criteria Self-Assessment -- {dataset_label}
+    assessment_text = f"""Four-Criteria Self-Assessment -- {dataset_label}
 
 1. Representativeness:
 {rep if rep else "(not filled in)"}
@@ -440,15 +436,15 @@ This is a Pearson correlation, which only detects straight-line relationships.
 4. Validity:
 {val if val else "(not filled in)"}
 """
-        st.download_button(
-            "Download Self-Assessment (TXT)",
-            assessment_text.encode("utf-8"),
-            f"{key_prefix}_self_assessment.txt",
-            "text/plain",
-            key=f"{key_prefix}_dl_assess",
-        )
+    st.download_button(
+        "Download Self-Assessment (TXT)",
+        assessment_text.encode("utf-8"),
+        f"{key_prefix}_self_assessment.txt",
+        "text/plain",
+        key=f"{key_prefix}_dl_assess",
+    )
 
-        st.success(f"Exploration of **{dataset_label}** complete.")
+    st.success(f"Exploration of **{dataset_label}** complete.")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
