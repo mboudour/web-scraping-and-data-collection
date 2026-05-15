@@ -363,6 +363,19 @@ def render_cleaning_flow(raw_df, prefix, session_key="byod_clean_df", extra_issu
         c3.metric("Missing Cells", int(result.isnull().sum().sum()))
         st.dataframe(result.head(20), use_container_width=True)
 
+        # If flatten fix was applied, highlight the formerly-complex columns
+        _flat_entry = next((e for e in log if "Stringified list/dict" in e), None)
+        if _flat_entry:
+            import re as _re
+            _flat_cols = _re.findall(r"'([^']+)'", _flat_entry)
+            _flat_cols = [c for c in _flat_cols if c in result.columns]
+            if _flat_cols:
+                st.markdown(
+                    f"📦 **Flattened columns** — previously contained nested lists or dicts, "
+                    f"now stringified: **{', '.join(_flat_cols)}**"
+                )
+                st.dataframe(result[_flat_cols].head(20), use_container_width=True)
+
         st.markdown("---")
 
         # Step 5: Report changes

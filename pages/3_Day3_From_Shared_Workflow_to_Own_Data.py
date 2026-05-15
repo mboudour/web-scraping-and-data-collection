@@ -105,6 +105,24 @@ def show_explore_flow(df, key_prefix, dataset_label):
     st.markdown("**First 20 rows:**")
     st.dataframe(df.head(20), use_container_width=True)
 
+    # Detect and display any columns that still contain lists/dicts
+    import re as _re
+    _complex_preview = [
+        c for c in df.columns
+        if df[c].dropna().apply(lambda v: isinstance(v, (list, dict))).any()
+    ]
+    if _complex_preview:
+        with st.expander(
+            f"📦 {len(_complex_preview)} column(s) contain nested lists/dicts — click to preview",
+            expanded=True,
+        ):
+            st.caption(
+                "These columns were not flattened in Day 2. "
+                "Go back to Day 2 and apply the **Flatten list/dict cells** fix, "
+                "then re-export to analyse them here."
+            )
+            st.dataframe(df[_complex_preview].head(20), use_container_width=True)
+
     # Step 2
     st.markdown("### Step 2 — Column Profile")
     col_types = classify_columns(df)
