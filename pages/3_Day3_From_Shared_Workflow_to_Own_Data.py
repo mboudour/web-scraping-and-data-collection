@@ -211,36 +211,17 @@ def show_explore_flow(df, key_prefix, dataset_label):
                     desc_col = series.describe().rename(col).to_frame().T.round(3)
                     st.dataframe(desc_col, use_container_width=True)
                     _col_auto_bins = min(100, max(5, int(1 + 3.322 * np.log10(max(len(series), 2)))))
-                    _ctrl1, _ctrl2 = st.columns([3, 1])
-                    n_bins = _ctrl1.slider(
+                    n_bins = st.slider(
                         "Number of bins",
                         min_value=5, max_value=200, value=_col_auto_bins,
                         key=f"{key_prefix}_bins_{col}",
                         help=f"Sturges\u2019 rule default: {_col_auto_bins}",
                     )
-                    use_log = _ctrl2.checkbox(
-                        "Log scale (y)",
-                        value=False,
-                        key=f"{key_prefix}_log_{col}",
-                        help="Apply a logarithmic scale to the count axis. Useful for heavily skewed distributions.",
-                    )
                     try:
-                        import plotly.graph_objects as go
                         counts, bin_edges = np.histogram(series, bins=n_bins)
-                        bin_labels = [f"{bin_edges[i]:.2f}" for i in range(len(counts))]
-                        fig = go.Figure(go.Bar(
-                            x=bin_labels,
-                            y=counts,
-                            marker_color="steelblue",
-                        ))
-                        fig.update_layout(
-                            xaxis_title=col,
-                            yaxis_title="Count",
-                            yaxis_type="log" if use_log else "linear",
-                            margin=dict(l=20, r=20, t=20, b=40),
-                            height=350,
-                        )
-                        st.plotly_chart(fig, use_container_width=True)
+                        bin_labels = [f"{bin_edges[i]:.2f}-{bin_edges[i+1]:.2f}" for i in range(len(counts))]
+                        hist_df = pd.DataFrame({"Bin": bin_labels, "Count": counts}).set_index("Bin")
+                        st.bar_chart(hist_df)
                     except Exception:
                         st.bar_chart(series.value_counts().sort_index().rename("Count"))
 
