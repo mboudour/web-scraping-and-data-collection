@@ -616,32 +616,29 @@ The same six-step flow applies to all datasets.
     elif dataset_choice == "🏙️ Example 4 — Congress.gov Bills (Social Sciences)":
         dataset_label = "Congress.gov Bills"
         st.markdown("**Dataset:** Bills introduced in the 118th US Congress — title, type, chamber, latest action.")
-        congress_key = st.text_input("Congress.gov API Key", type="password", key="d3_congress_key")
+        st.caption("Uses the public Congress.gov API (no key required).")
         if st.button("▶ Fetch & Explore — Congress.gov", key="d3_fetch_congress"):
-            if not congress_key:
-                st.warning("Please enter your Congress.gov API key.")
-            else:
-                try:
-                    with st.spinner("Fetching Congress.gov data..."):
-                        r = requests.get(
-                            "https://api.congress.gov/v3/bill/118",
-                            params={"limit": 50, "api_key": congress_key},
-                            timeout=30,
-                        )
-                        r.raise_for_status()
-                        data = r.json()
-                    bills = data.get("bills", [])
-                    df_fetched = pd.DataFrame([{
-                        "BillNumber": f"{b.get('type','')}{b.get('number','')}",
-                        "Title": str(b.get("title", ""))[:60],
-                        "BillType": b.get("type", ""),
-                        "OriginChamber": b.get("originChamber", ""),
-                        "LatestActionDate": b.get("latestAction", {}).get("actionDate", ""),
-                    } for b in bills])
-                    st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
-                    st.session_state["d3_example_label"] = dataset_label
-                except Exception as e:
-                    st.error(f"Could not load data: {e}")
+            try:
+                with st.spinner("Fetching Congress.gov data..."):
+                    r = requests.get(
+                        "https://api.congress.gov/v3/bill/118",
+                        params={"limit": 50, "api_key": "DEMO_KEY"},
+                        timeout=30,
+                    )
+                    r.raise_for_status()
+                    data = r.json()
+                bills = data.get("bills", [])
+                df_fetched = pd.DataFrame([{
+                    "BillNumber": f"{b.get('type','')}{b.get('number','')}",
+                    "Title": str(b.get("title", ""))[:60],
+                    "BillType": b.get("type", ""),
+                    "OriginChamber": b.get("originChamber", ""),
+                    "LatestActionDate": b.get("latestAction", {}).get("actionDate", ""),
+                } for b in bills])
+                st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
+                st.session_state["d3_example_label"] = dataset_label
+            except Exception as e:
+                st.error(f"Could not load data: {e}")
         if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
             df = st.session_state["d3_example_df"]
 
