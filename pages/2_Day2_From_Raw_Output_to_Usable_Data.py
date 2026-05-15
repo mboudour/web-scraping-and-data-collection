@@ -298,37 +298,54 @@ def auto_detect_issues(df, prefix, extra_issues=None):
             ),
         })
 
-    # 8. Wikipedia-style citation references [1], [a], [note 1], [citation needed] etc.
+    # 8. Wikipedia-style citation references [1], [a], [n 1], [citation needed] etc.
+    #    — detected in both cell values AND column headers
     _cit_pat = re.compile(r"\[[^\]]+\]")
     _str_cols_cit = df.select_dtypes(include="object").columns.tolist()
-    _cit_affected = [
+    _cit_affected_cells = [
         c for c in _str_cols_cit
         if df[c].dropna().astype(str).str.contains(_cit_pat).any()
     ]
-    if _cit_affected:
+    _cit_affected_headers = [
+        c for c in df.columns
+        if _cit_pat.search(str(c))
+    ]
+    _cit_affected_all = list(dict.fromkeys(_cit_affected_cells + _cit_affected_headers))
+    if _cit_affected_all:
         _total_cit = int(
             sum(
                 df[c].dropna().astype(str).str.contains(_cit_pat).sum()
-                for c in _cit_affected
+                for c in _cit_affected_cells
             )
+        ) + len(_cit_affected_headers)
+        _header_examples = ", ".join(
+            f"`{c}`" for c in _cit_affected_headers[:3]
         )
         issues.append({
             "id": f"{prefix}_citations",
-            "label": f"📎 Strip bracketed references [N] / [a] / [note] from {len(_cit_affected)} column(s) ({_total_cit} cells affected)",
-            "description": (
-                f"Found Wikipedia-style bracketed markers (e.g. `[1]`, `[a]`, `[note 1]`, `[citation needed]`) in: "
-                f"**{', '.join(_cit_affected[:5])}{'…' if len(_cit_affected) > 5 else ''}**. "
-                "These will be removed with `re.sub(r'\\[[^\\]]+\\]', '', value).strip()`."
+            "label": (
+                f"📎 Strip bracketed references [N]/[a]/[note] from "
+                f"{len(_cit_affected_cells)} column(s) + "
+                f"{len(_cit_affected_headers)} header(s)"
             ),
-            "fix": lambda d, cols=_cit_affected: (
-                d.assign(**{
-                    c: d[c].apply(
+            "description": (
+                "Found Wikipedia-style bracketed markers (e.g. `[1]`, `[a]`, `[n 1]`, `[citation needed]`) "
+                "in cell values and/or column headers. "
+                + (f"Headers affected: {_header_examples}. " if _cit_affected_headers else "")
+                + "All will be removed with `re.sub(r'\\[[^\\]]+\\]', '', s).strip()`."
+            ),
+            "fix": lambda d, cell_cols=_cit_affected_cells, hdr_cols=_cit_affected_headers: (
+                d.rename(columns={
+                    c: re.sub(r"\[[^\]]+\]", "", str(c)).strip()
+                    for c in hdr_cols if c in d.columns
+                }).assign(**{
+                    re.sub(r"\[[^\]]+\]", "", str(c)).strip(): d[c].apply(
                         lambda v: re.sub(r"\[[^\]]+\]", "", str(v)).strip()
                         if isinstance(v, str) else v
                     )
-                    for c in cols if c in d.columns
+                    for c in cell_cols if c in d.columns
                 }),
-                f"Stripped bracketed references from {len(cols)} column(s).",
+                f"Stripped bracketed references from {len(cell_cols)} column(s) and {len(hdr_cols)} header(s).",
             ),
         })
 
