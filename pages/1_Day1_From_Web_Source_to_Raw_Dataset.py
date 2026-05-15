@@ -723,10 +723,16 @@ For example, `query=insulin&format=json&size=50` → set *Number of parameters* 
                     cap = int(max_records) if max_records > 0 else None
 
                     def _safe_get(url, prms, hdrs, status_box, page_num, max_retries=3):
-                        """GET with 429/5xx retry and clear error messages."""
+                        """GET with 429/5xx retry and clear error messages.
+                        Builds URL manually to avoid encoding cursor=* as cursor=%2A."""
                         import time as _t
+                        from urllib.parse import urlencode, urlparse, urlunparse, parse_qs
+                        # Build query string — keep * unencoded (safe='*')
+                        qs = urlencode(prms, safe="*,")
+                        parsed = urlparse(url)
+                        full_url = urlunparse(parsed._replace(query=qs))
                         for attempt in range(1, max_retries + 1):
-                            r = requests.get(url, params=prms, headers=hdrs, timeout=30)
+                            r = requests.get(full_url, headers=hdrs, timeout=30)
                             if r.status_code == 200:
                                 try:
                                     return r.json()
