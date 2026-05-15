@@ -507,7 +507,7 @@ The same six-step flow applies to all datasets.
             "🏥 Example 1 — ClinicalTrials.gov (Health)",
             "🌍 Example 2 — WHO Global Health Observatory (Health)",
             "🔬 Example 3 — NIH RePORTER (Life Sciences)",
-            "🏛️ Example 4 — Congress.gov Bills (Social Sciences)",
+            "🏙️ Example 4 — World Bank GDP (Social Sciences)",
             "📂 My Own Data (from Day 2)",
         ],
         key="d3_dataset_choice",
@@ -613,28 +613,27 @@ The same six-step flow applies to all datasets.
         if "d3_example_df" in st.session_state and st.session_state.get("d3_example_label") == dataset_label:
             df = st.session_state["d3_example_df"]
 
-    elif dataset_choice == "🏙️ Example 4 — Congress.gov Bills (Social Sciences)":
-        dataset_label = "Congress.gov Bills"
-        st.markdown("**Dataset:** Bills introduced in the 118th US Congress — title, type, chamber, latest action.")
-        st.caption("Uses the public Congress.gov API (no key required).")
-        if st.button("▶ Fetch & Explore — Congress.gov", key="d3_fetch_congress"):
+    elif dataset_choice == "🏙️ Example 4 — World Bank GDP (Social Sciences)":
+        dataset_label = "World Bank GDP"
+        st.markdown("**Dataset:** GDP (current US$) by country — most recent available year. Source: World Bank Open Data.")
+        st.caption("Uses the public World Bank API (no key required).")
+        if st.button("▶ Fetch & Explore — World Bank", key="d3_fetch_wb"):
             try:
-                with st.spinner("Fetching Congress.gov data..."):
+                with st.spinner("Fetching World Bank data..."):
                     r = requests.get(
-                        "https://api.congress.gov/v3/bill/118",
-                        params={"limit": 50, "api_key": "DEMO_KEY"},
+                        "https://api.worldbank.org/v2/country/all/indicator/NY.GDP.MKTP.CD",
+                        params={"format": "json", "per_page": 100, "mrv": 1},
                         timeout=30,
                     )
                     r.raise_for_status()
                     data = r.json()
-                bills = data.get("bills", [])
+                rows = data[1] if isinstance(data, list) and len(data) > 1 else []
                 df_fetched = pd.DataFrame([{
-                    "BillNumber": f"{b.get('type','')}{b.get('number','')}",
-                    "Title": str(b.get("title", ""))[:60],
-                    "BillType": b.get("type", ""),
-                    "OriginChamber": b.get("originChamber", ""),
-                    "LatestActionDate": b.get("latestAction", {}).get("actionDate", ""),
-                } for b in bills])
+                    "CountryName": rec.get("country", {}).get("value", ""),
+                    "CountryCode": rec.get("countryiso3code", ""),
+                    "Year": rec.get("date", ""),
+                    "GDP_USD": rec.get("value", None),
+                } for rec in rows if rec.get("value") is not None])
                 st.session_state["d3_example_df"] = clean_sentinels(df_fetched)
                 st.session_state["d3_example_label"] = dataset_label
             except Exception as e:
