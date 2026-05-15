@@ -115,6 +115,38 @@ def _make_flatten_fix(cols):
     return _fix
 
 
+def _make_citation_fix(cell_cols, hdr_cols):
+    """
+    Return a fix function that:
+    1. Renames column headers by stripping any [\u2026] bracketed tokens.
+    2. Strips the same tokens from string cell values in the affected columns.
+    Both steps use re.sub(r'\\[[^\\]]+\\]', '', s).strip().
+    """
+    import re as _re
+    _pat = _re.compile(r"\[[^\]]+\]")
+
+    def _fix(d, _cell_cols=cell_cols, _hdr_cols=hdr_cols):
+        result = d.copy()
+        # Step 1: clean headers
+        rename_map = {
+            c: _pat.sub("", str(c)).strip()
+            for c in _hdr_cols if c in result.columns
+        }
+        result = result.rename(columns=rename_map)
+        # Step 2: clean cell values — use NEW column names after rename
+        for old_col in _cell_cols:
+            new_col = rename_map.get(old_col, old_col)
+            if new_col in result.columns:
+                result[new_col] = result[new_col].apply(
+                    lambda v: _pat.sub("", str(v)).strip() if isinstance(v, str) else v
+                )
+        n_cells = len(_cell_cols)
+        n_hdrs = len(_hdr_cols)
+        return result, f"Stripped bracketed references from {n_cells} column(s) and {n_hdrs} header(s)."
+
+    return _fix
+
+
 def auto_detect_issues(df, prefix, extra_issues=None):
     """
     Scan df for common data quality issues.
@@ -334,19 +366,7 @@ def auto_detect_issues(df, prefix, extra_issues=None):
                 + (f"Headers affected: {_header_examples}. " if _cit_affected_headers else "")
                 + "All will be removed with `re.sub(r'\\[[^\\]]+\\]', '', s).strip()`."
             ),
-            "fix": lambda d, cell_cols=_cit_affected_cells, hdr_cols=_cit_affected_headers: (
-                d.rename(columns={
-                    c: re.sub(r"\[[^\]]+\]", "", str(c)).strip()
-                    for c in hdr_cols if c in d.columns
-                }).assign(**{
-                    re.sub(r"\[[^\]]+\]", "", str(c)).strip(): d[c].apply(
-                        lambda v: re.sub(r"\[[^\]]+\]", "", str(v)).strip()
-                        if isinstance(v, str) else v
-                    )
-                    for c in cell_cols if c in d.columns
-                }),
-                f"Stripped bracketed references from {len(cell_cols)} column(s) and {len(hdr_cols)} header(s).",
-            ),
+            "fix": _make_citation_fix(_cit_affected_cells, _cit_affected_headers),
         })
 
     return issues
