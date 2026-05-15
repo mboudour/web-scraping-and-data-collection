@@ -123,29 +123,34 @@ def auto_detect_issues(df, prefix, extra_issues=None):
     """
     issues = extra_issues or []
 
-    # 0. Flatten unhashable cells (lists/dicts) — must run first so all later steps work
+    # 0. One flatten issue per list/dict column — user picks which ones to expand
     _unhashable_cols = [
         c for c in df.columns
         if df[c].dropna().apply(lambda v: isinstance(v, (list, dict))).any()
     ]
-    if _unhashable_cols:
-        _n_cells = int(sum(
-            df[c].apply(lambda v: isinstance(v, (list, dict))).sum()
-            for c in _unhashable_cols
-        ))
+    for _col in _unhashable_cols:
+        _sample = df[_col].dropna().head(5)
+        _is_lod = _sample.apply(
+            lambda v: isinstance(v, list) and len(v) > 0 and isinstance(v[0], dict)
+        ).any()
+        _is_dict = _sample.apply(lambda v: isinstance(v, dict)).any()
+        _n = int(df[_col].apply(lambda v: isinstance(v, (list, dict))).sum())
+        if _is_lod:
+            _kind = "list-of-dicts"
+            _hint = "will be expanded into new prefixed columns via `pd.json_normalize` (first item per row)."
+        elif _is_dict:
+            _kind = "dict"
+            _hint = "will be expanded into new prefixed columns via `pd.json_normalize`."
+        else:
+            _kind = "plain list"
+            _hint = "will be stringified (converted to text)."
         issues.append({
-            "id": f"{prefix}_flatten",
-            "label": f"📦 Flatten {len(_unhashable_cols)} column(s) containing lists or dicts ({_n_cells} cells)",
+            "id": f"{prefix}_flatten_{_col}",
+            "label": f"📦 Flatten `{_col}` ({_kind}, {_n} cells)",
             "description": (
-                "Columns **"
-                + ", ".join(_unhashable_cols[:5])
-                + ("…" if len(_unhashable_cols) > 5 else "")
-                + "** contain Python lists or dicts (unhashable types). "
-                "Columns whose cells are lists-of-dicts (e.g. OpenAlex authors, concepts) "
-                "are expanded into new columns via `pd.json_normalize`; "
-                "plain lists or single dicts are stringified."
+                f"Column **`{_col}`** contains {_kind} values — {_hint}"
             ),
-            "fix": _make_flatten_fix(_unhashable_cols),
+            "fix": _make_flatten_fix([_col]),
         })
 
     # 1. Duplicate rows — exclude unhashable columns (lists/dicts) before calling duplicated()
@@ -393,7 +398,7 @@ def render_cleaning_flow(raw_df, prefix, session_key="byod_clean_df", extra_issu
 
         # Step 3: Apply — priority order: flatten → sentinel → all others
         priority_ids = (
-            [i["id"] for i in issues if "_flatten" in i["id"]] +
+            [i["id"] for i in issues if "_flatten_" in i["id"]] +
             [i["id"] for i in issues if "_sentinel_" in i["id"]]
         )
         other_ids = [i["id"] for i in issues if i["id"] not in priority_ids]
